@@ -85,6 +85,15 @@ table.dt td b{font-weight:700}
 .baxis{display:flex;margin-left:98px;font-size:10.5px;color:var(--mute);justify-content:space-between;padding-top:3px}
 .foot{margin-top:12px;padding-top:8px;border-top:1px dashed var(--line);font-size:11px;color:var(--mute);line-height:1.5}
 .cmp{font-weight:700}
+#sidebody{overflow-x:auto}
+.lab{font-weight:700;color:#12206b;font-size:17px;line-height:1;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff;pointer-events:none;transform:translate(-50%,-50%);white-space:nowrap}
+.lab.sm{font-size:13px}
+.dot{width:20px;height:20px;border-radius:50%;background:#0f8f89;color:#fff;font-weight:700;font-size:10px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px #0006;cursor:pointer;transform:translate(-50%,-50%);font-family:inherit}
+.legend i.lg-el{display:inline-block;width:18px;height:10px;border-radius:50%;transform:none;margin-right:7px;vertical-align:-1px;border:1px solid #fff9}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 2px}
+.tabs button{font:inherit;font-size:11.5px;border:1px solid var(--line);background:#fff;border-radius:14px;padding:3px 10px;cursor:pointer;color:var(--navy)}
+.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tip .ln{display:block;line-height:1.5}
 @media(max-width:900px){
   #wrap{flex-direction:column}
   #mapbox{flex:none;height:48%}
@@ -99,8 +108,8 @@ table.dt td b{font-weight:700}
   <div id="mapbox">
     <div id="map"></div>
     <div class="legend">
-      <span><i style="background:var(--in)"></i>단지내 상가</span>
-      <span><i style="background:var(--bld)"></i>상가건물</span>
+      <span><i class="lg-el" style="background:#6f86c4"></i>단지내 상가</span>
+      <span><i class="lg-el" style="background:#4fb0a8"></i>상가건물</span>
       <span><i style="background:var(--site)"></i>SITE (사업지)</span>
     </div>
     <div class="tools">
@@ -200,44 +209,114 @@ async function autoLocate(e) {
 }
 window.__autoReport = {};
 
-/* ---------- 마커 ---------- */
-function tipHtml(e) {
-  var s = DATA.summary.filter(function (x) { return x.id === e.id; })[0];
-  if (e.label === "SITE") return "<b>SITE</b> · " + esc(e.name);
-  var f1 = s && s.f1 ? s.f1.curTxt : "-";
-  var v = /^\d/.test(f1) ? "<b>" + f1 + "</b> 만원/평" : "<span style='opacity:.8'>" + (f1 === "-" ? "1층 호가 정보 없음" : f1) + "</span>";
-  return "<b>" + esc(e.id) + ". " + esc(e.name) + "</b><br><small>1층 평당 호가 </small>" + (/^\d/.test(f1) ? v : "<small>" + (f1 === "-" ? "-" : esc(f1)) + "</small>");
+/* ---------- 마커 / PPT식 타원 ---------- */
+var CIRC = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳";
+function circ(n) { n = parseInt(n, 10); return n >= 1 && n <= 20 ? CIRC.charAt(n - 1) : String(n); }
+var SHAPES = [], shapeObjs = {}, dotObjs = {}, handles = {}, SITE_PINS = {};
+function members(no) { return DATA.complexes.filter(function (c) { return String(c.no) === String(no); }); }
+function isGroup(no) { return members(no).length > 1; }
+function shapeKeys() { return SHAPES.map(function (sh) { return sh.id; }); }
+function hasShape(c) { return SHAPES.some(function (sh) { return sh.n === String(c.no); }); }
+function shapeCenter(sh) { return coordOf(sh.id) || sh.c; }
+function dotEntries() { return DATA.complexes.filter(function (c) { return isGroup(c.no) && hasShape(c); }); }
+function pinEntries() { return DATA.sites.concat(DATA.complexes.filter(function (c) { return !hasShape(c); })); }
+
+function ellipsePath(sh) {
+  var c = shapeCenter(sh), a = sh.w / 2, b = sh.h / 2, th = (sh.rot || 0) * Math.PI / 180, pts = [];
+  var kLat = 111320, kLng = 111320 * Math.cos(c[0] * Math.PI / 180);
+  for (var i = 0; i < 48; i++) {
+    var t = i / 48 * 2 * Math.PI, x = a * Math.cos(t), y = b * Math.sin(t);
+    var xr = x * Math.cos(th) - y * Math.sin(th), yr = x * Math.sin(th) + y * Math.cos(th);
+    pts.push(new kakao.maps.LatLng(c[0] - yr / kLat, c[1] + xr / kLng));
+  }
+  return pts;
 }
-function placeMarker(e) {
-  var c = coordOf(e.id) || (e.tmp || null);
-  if (!c) return;
-  var pos = new kakao.maps.LatLng(c[0], c[1]);
-  var m = markers[e.id];
+function shapeColor(sh) { var m = members(sh.n)[0]; return m && m.cat === "상가건물" ? "#4fb0a8" : "#6f86c4"; }
+function shapeTip(sh) {
+  var ms = members(sh.n);
+  if (ms.length > 1) {
+    return "<b>" + circ(sh.n) + " 상가건물 " + ms.length + "곳</b>" + ms.map(function (m) { return '<span class="ln">' + esc(m.id) + " " + esc(m.name) + " · " + f1Txt(m) + "</span>"; }).join("");
+  }
+  var m = ms[0]; return "<b>" + esc(m.id) + ". " + esc(m.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(m) + "</span>";
+}
+function f1Txt(e) {
+  var s = DATA.summary.filter(function (x) { return x.id === e.id; })[0], f = s && s.f1 ? s.f1.curTxt : "-";
+  return /^\d/.test(f) ? "<b>" + f + "</b> 만원/평" : (f === "-" ? "-" : esc(f));
+}
+function drawShape(sh) {
+  var old = shapeObjs[sh.id];
+  if (old) { old.poly.setMap(null); old.lab.setMap(null); }
+  var col = shapeColor(sh), c = shapeCenter(sh);
+  var poly = new kakao.maps.Polygon({ map: map, path: ellipsePath(sh), strokeWeight: 2, strokeColor: "#3b4a7a", strokeOpacity: 0.9, fillColor: col, fillOpacity: 0.62, zIndex: 2 });
+  var lab = new kakao.maps.CustomOverlay({ map: map, position: new kakao.maps.LatLng(c[0], c[1]), content: '<div class="lab' + (parseInt(sh.n, 10) > 20 ? " sm" : "") + '">' + circ(sh.n) + "</div>", zIndex: 4, clickable: false });
+  kakao.maps.event.addListener(poly, "mouseover", function (ev) { tipOv.setContent('<div class="tip">' + shapeTip(sh) + "</div>"); tipOv.setPosition(ev.latLng); tipOv.setMap(map); });
+  kakao.maps.event.addListener(poly, "mousemove", function (ev) { tipOv.setPosition(ev.latLng); });
+  kakao.maps.event.addListener(poly, "mouseout", function () { tipOv.setMap(null); });
+  kakao.maps.event.addListener(poly, "click", function () { var ms = members(sh.n); if (ms.length) openDetail(ms[0].id, false); });
+  shapeObjs[sh.id] = { poly: poly, lab: lab };
+}
+function drawDot(e) {
+  var c = coordOf(e.id) || e.tmp; if (!c) return;
+  var old = dotObjs[e.id]; if (old) old.setMap(null);
+  var div = document.createElement("div"); div.className = "dot"; div.textContent = e.id.split("-")[1] || e.id;
+  div.onmouseenter = function () { tipOv.setContent('<div class="tip"><b>' + esc(e.id) + ". " + esc(e.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(e) + "</span></div>"); tipOv.setPosition(new kakao.maps.LatLng(c[0], c[1])); tipOv.setMap(map); };
+  div.onmouseleave = function () { tipOv.setMap(null); };
+  div.onclick = function () { openDetail(e.id, false); };
+  var ov = new kakao.maps.CustomOverlay({ position: new kakao.maps.LatLng(c[0], c[1]), content: div, zIndex: 6, yAnchor: 0.5, xAnchor: 0.5 });
+  dotObjs[e.id] = ov; ov.__e = e;
+}
+function updateDots() {
+  var show = map.getLevel() <= 3 && !fixMode;
+  Object.keys(dotObjs).forEach(function (k) { dotObjs[k].setMap(show ? map : null); });
+}
+function pinImage(label, color, selected) {
+  var w = selected ? 40 : 32, h = selected ? 52 : 42, fs = label.length > 3 ? (selected ? 12 : 10) : (selected ? 16 : 13), r = w / 2 - 2;
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + " " + h + '">' +
+    '<path d="M' + w / 2 + " " + (h - 1) + " C" + (w / 2 - 3) + " " + (h - 9) + " 2 " + (w * 0.62) + " 2 " + w / 2 + " A" + r + " " + r + " 0 1 1 " + (w - 2) + " " + w / 2 +
+    " C" + (w - 2) + " " + (w * 0.62) + " " + (w / 2 + 3) + " " + (h - 9) + " " + w / 2 + " " + (h - 1) + 'Z" fill="' + color + '" stroke="' + (selected ? "#1d2433" : "#fff") + '" stroke-width="' + (selected ? 2.5 : 1.8) + '"/>' +
+    '<text x="' + w / 2 + '" y="' + (w / 2 + fs * 0.36) + '" text-anchor="middle" font-family="Malgun Gothic,Arial,sans-serif" font-weight="700" font-size="' + fs + '" fill="#fff">' + label + "</text></svg>";
+  return new kakao.maps.MarkerImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg), new kakao.maps.Size(w, h), { offset: new kakao.maps.Point(w / 2, h - 1) });
+}
+function handleImage() {
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"><circle cx="11" cy="11" r="8" fill="#ffd400" stroke="#1d2433" stroke-width="2"/><path d="M11 5v12M5 11h12" stroke="#1d2433" stroke-width="2"/></svg>';
+  return new kakao.maps.MarkerImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg), new kakao.maps.Size(22, 22), { offset: new kakao.maps.Point(11, 11) });
+}
+function colorOf(e) { return e.label === "SITE" ? "#c0392b" : (e.cat === "상가건물" ? "#12a39c" : "#2f6fd6"); }
+function placePin(e) {
+  var c = coordOf(e.id) || e.tmp; if (!c) return;
+  var pos = new kakao.maps.LatLng(c[0], c[1]), m = SITE_PINS[e.id];
   if (!m) {
     m = new kakao.maps.Marker({ position: pos, image: pinImage(e.label, colorOf(e), false), draggable: false, clickable: true, zIndex: 3 });
-    m.setMap(map); markers[e.id] = m; m.__e = e;
-    kakao.maps.event.addListener(m, "mouseover", function () {
-      tipOv.setContent('<div class="tip">' + tipHtml(e) + "</div>"); tipOv.setPosition(m.getPosition()); tipOv.setMap(map);
-    });
+    m.setMap(map); SITE_PINS[e.id] = m; m.__e = e;
+    kakao.maps.event.addListener(m, "mouseover", function () { tipOv.setContent('<div class="tip">' + (e.label === "SITE" ? "<b>SITE</b> · " + esc(e.name) : "<b>" + esc(e.id) + ". " + esc(e.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(e) + "</span>") + "</div>"); tipOv.setPosition(m.getPosition()); tipOv.setMap(map); });
     kakao.maps.event.addListener(m, "mouseout", function () { tipOv.setMap(null); });
     kakao.maps.event.addListener(m, "click", function () { if (e.label !== "SITE") openDetail(e.id, false); });
-    kakao.maps.event.addListener(m, "dragend", function () {
-      var p = m.getPosition(); LOCAL_FIX[e.id] = [+p.getLat().toFixed(6), +p.getLng().toFixed(6)]; saveFix(); renderFix();
-    });
-  } else { m.setPosition(pos); }
+    kakao.maps.event.addListener(m, "dragend", function () { var p = m.getPosition(); LOCAL_FIX[e.id] = [+p.getLat().toFixed(6), +p.getLng().toFixed(6)]; saveFix(); renderFix(); });
+  } else m.setPosition(pos);
 }
 function setSelected(id) {
   selectedId = id;
-  Object.keys(markers).forEach(function (k) {
-    var m = markers[k], e = m.__e, sel = k === id;
-    m.setImage(pinImage(e.label, colorOf(e), sel)); m.setZIndex(sel ? 10 : 3);
-  });
+  var no = null; var c = DATA.complexes.filter(function (x) { return x.id === id; })[0]; if (c) no = String(c.no);
+  SHAPES.forEach(function (sh) { var o = shapeObjs[sh.id]; if (o) { var sel = no !== null && sh.n === no; o.poly.setOptions({ strokeWeight: sel ? 4 : 2, strokeColor: sel ? "#111a44" : "#3b4a7a", fillOpacity: sel ? 0.85 : 0.62, zIndex: sel ? 5 : 2 }); } });
+  Object.keys(SITE_PINS).forEach(function (k) { var m = SITE_PINS[k], e = m.__e, sel = k === id; m.setImage(pinImage(e.label, colorOf(e), sel)); m.setZIndex(sel ? 10 : 3); });
+  Object.keys(dotObjs).forEach(function (k) { var d = dotObjs[k].getContent(); d.style.background = k === id ? "#111a44" : "#0f8f89"; d.style.transform = "translate(-50%,-50%)" + (k === id ? " scale(1.25)" : ""); });
   document.querySelectorAll("tr.row").forEach(function (tr) { tr.classList.toggle("sel", tr.dataset.id === id); });
 }
+function allPoints() {
+  var pts = [];
+  SHAPES.forEach(function (sh) { pts.push(shapeCenter(sh)); });
+  pinEntries().forEach(function (e) { var c = coordOf(e.id) || e.tmp; if (c) pts.push(c); });
+  return pts;
+}
 function fitAll() {
-  var b = new kakao.maps.LatLngBounds(), n = 0;
-  entries().forEach(function (e) { var c = coordOf(e.id) || e.tmp; if (c) { b.extend(new kakao.maps.LatLng(c[0], c[1])); n++; } });
-  if (n) map.setBounds(b, 70, 70, 70, 70);
+  var b = new kakao.maps.LatLngBounds(), pts = allPoints();
+  pts.forEach(function (c) { b.extend(new kakao.maps.LatLng(c[0], c[1])); });
+  if (pts.length) map.setBounds(b, 70, 70, 70, 70);
+}
+function focusComplex(id) {
+  var c = DATA.complexes.filter(function (x) { return x.id === id; })[0]; if (!c) return;
+  var co = coordOf(id) || c.tmp; if (!co) { var sh = SHAPES.filter(function (s) { return s.n === String(c.no); })[0]; co = sh && shapeCenter(sh); }
+  if (co) { if (map.getLevel() > 4) map.setLevel(4); map.panTo(new kakao.maps.LatLng(co[0], co[1])); }
 }
 
 /* ---------- 보정 모드 ---------- */
@@ -245,20 +324,34 @@ function saveFix() { try { localStorage.setItem(LS_KEY, JSON.stringify(LOCAL_FIX
 function loadFix() { try { LOCAL_FIX = JSON.parse(localStorage.getItem(LS_KEY) || "{}") || {}; } catch (e) { LOCAL_FIX = {}; } }
 function allCoords() {
   var o = {};
-  entries().forEach(function (e) { var c = coordOf(e.id) || e.tmp; if (c) o[e.id] = c; });
+  SHAPES.forEach(function (sh) { o[sh.id] = shapeCenter(sh); });
+  dotEntries().forEach(function (e) { var c = coordOf(e.id) || e.tmp; if (c) o[e.id] = c; });
+  pinEntries().forEach(function (e) { var c = coordOf(e.id) || e.tmp; if (c) o[e.id] = c; });
   return o;
 }
 function renderFix() {
   var o = allCoords(), lines = Object.keys(o).map(function (k) { return '  "' + k + '": [' + o[k][0] + ", " + o[k][1] + "]"; });
   document.getElementById("fixout").value = lines.join(",\n");
 }
+function clearHandles() { Object.keys(handles).forEach(function (k) { handles[k].setMap(null); }); handles = {}; }
+function makeHandle(key, c, onMove) {
+  var m = new kakao.maps.Marker({ position: new kakao.maps.LatLng(c[0], c[1]), image: handleImage(), draggable: true, zIndex: 30 });
+  m.setMap(map); handles[key] = m;
+  kakao.maps.event.addListener(m, "dragend", function () { var p = m.getPosition(); LOCAL_FIX[key] = [+p.getLat().toFixed(6), +p.getLng().toFixed(6)]; saveFix(); onMove(); renderFix(); });
+}
 function setFixMode(on) {
   fixMode = on;
   document.getElementById("fixBtn").classList.toggle("on", on);
   document.getElementById("fixBtn").textContent = on ? "좌표 보정 모드 끄기" : "좌표 보정 모드";
   document.getElementById("fixpanel").style.display = on ? "block" : "none";
-  Object.keys(markers).forEach(function (k) { markers[k].setDraggable(on); });
-  if (on) renderFix();
+  clearHandles();
+  Object.keys(SITE_PINS).forEach(function (k) { SITE_PINS[k].setDraggable(on); });
+  if (on) {
+    SHAPES.forEach(function (sh) { makeHandle(sh.id, shapeCenter(sh), function () { drawShape(sh); }); });
+    dotEntries().forEach(function (e) { var c = coordOf(e.id) || e.tmp; if (c) makeHandle(e.id, c, function () { drawDot(e); }); });
+    renderFix();
+  }
+  updateDots();
 }
 
 /* ---------- 우측 패널: 층별 요약 (기본) ---------- */
@@ -305,12 +398,14 @@ function barRow(r) {
 function openDetail(id, pan) {
   var c = DATA.complexes.filter(function (x) { return x.id === id; })[0]; if (!c) return;
   setSelected(id);
-  if (pan) { var co = coordOf(id) || c.tmp; if (co) { map.panTo(new kakao.maps.LatLng(co[0], co[1])); } }
+  if (pan) focusComplex(id);
   document.getElementById("sidehead").innerHTML = '<button class="back" id="backBtn">← 층별 요약 표로</button>' +
     '<div class="dh"><span class="no ' + catOf(c) + '">' + esc(c.id) + "</span><h2>" + esc(c.name) + '</h2><span class="unit" style="margin-left:auto">단위: 만원<br>평당가는 전용면적 3.3㎡당</span></div>';
   var base = c.basis === "(기준 없음)" ? "기준가" : c.basis;
-  var h = '<div class="meta">' + esc(c.meta) + "</div>";
-  h += '<table class="dt"><thead><tr><th rowspan="2">면적</th><th colspan="2">' + esc(base) + '</th><th colspan="2">현재 호가 (네이버)</th><th rowspan="2">변동<br><small>' + esc(base) + ' 대비</small></th><th rowspan="2">실거래<br><small>국토부 · 참고</small></th></tr><tr><th>' + esc(base) + "</th><th>전용 평당가</th><th>호가</th><th>전용 평당가</th></tr></thead><tbody>";
+  var h = "", ms = members(c.no);
+  if (ms.length > 1) h += '<div class="tabs">' + ms.map(function (m) { return '<button data-id="' + esc(m.id) + '" class="' + (m.id === c.id ? "on" : "") + '">' + esc(m.id) + " " + esc(m.name) + "</button>"; }).join("") + "</div>";
+  h += '<div class="meta">' + esc(c.meta) + "</div>";
+  h += '<div style="overflow-x:auto"><table class="dt" style="min-width:480px"><thead><tr><th rowspan="2">면적</th><th colspan="2">' + esc(base) + '</th><th colspan="2">현재 호가 (네이버)</th><th rowspan="2">변동<br><small>' + esc(base) + ' 대비</small></th><th rowspan="2">실거래<br><small>국토부 · 참고</small></th></tr><tr><th>' + esc(base) + "</th><th>전용 평당가</th><th>호가</th><th>전용 평당가</th></tr></thead><tbody>";
   c.rows.forEach(function (r) {
     h += "<tr><td class='l'>" + esc(r.area) + "<small>" + esc(r.areaSub) + "</small></td>" +
       "<td>" + (r.base != null ? "<b>" + fmt(r.base) + "</b>" + (r.baseNote ? "<small>" + esc(r.baseNote) + "</small>" : "") : '<span class="na">-</span>') + "</td>" +
@@ -320,13 +415,14 @@ function openDetail(id, pan) {
       "<td>" + chgHtml(r.chgTxt) + (r.chgNote ? "<small>" + esc(r.chgNote) + "</small>" : "") + "</td>" +
       "<td>" + (r.trade.length > 1 || /\d/.test(r.trade[0] || "") ? esc(r.trade[0]) + (r.trade[1] ? "<small>" + esc(r.trade[1]) + "</small>" : "") : '<span class="na">' + esc(r.trade[0] || "-") + "</span>") + "</td></tr>";
   });
-  h += "</tbody></table>";
+  h += "</tbody></table></div>";
   h += '<div class="bars"><h3>' + esc(base) + ' 대비 현재 호가 변동률</h3><div class="hint">오른쪽 상승 ▲(빨강) / 왼쪽 하락 ▼(파랑) · 눈금 ±30% 고정</div>' +
     c.rows.map(barRow).join("") + '<div class="baxis"><span>-30%</span><span>0</span><span>+30%</span></div></div>';
   if (c.notes && c.notes.length) h += '<div class="note">' + c.notes.map(esc).join("<br>") + "</div>";
   h += '<div class="foot">' + esc(DATA.source) + "</div>";
   var body = document.getElementById("sidebody"); body.innerHTML = h; body.scrollTop = 0;
   document.getElementById("backBtn").onclick = showSummary;
+  body.querySelectorAll(".tabs button").forEach(function (b) { b.onclick = function () { openDetail(b.dataset.id, true); }; });
 }
 
 /* ---------- 시작 ---------- */
@@ -335,6 +431,7 @@ async function main() {
     await loadScript("data-" + REGION + ".js");
     DATA = window.SHOP_REGIONS[REGION];
     try { await loadScript("data-" + REGION + "-coords.js"); COORDS = (window.SHOP_COORDS || {})[REGION] || {}; } catch (e) { }
+    try { await loadScript("data-" + REGION + "-shapes.js"); SHAPES = (window.SHOP_SHAPES || {})[REGION] || []; } catch (e) { SHAPES = []; }
   } catch (e) { document.getElementById("sidebody").textContent = "지역 데이터를 불러오지 못했습니다: " + REGION; return; }
   document.title = DATA.title; document.getElementById("ttl").textContent = DATA.title;
   document.getElementById("srcline").textContent = DATA.source;
@@ -349,13 +446,17 @@ async function main() {
   map = new kakao.maps.Map(document.getElementById("map"), { center: new kakao.maps.LatLng(centerLL[0], centerLL[1]), level: 4 });  // ROADMAP 일반지도만 사용
   tipOv = new kakao.maps.CustomOverlay({ yAnchor: 1.45, zIndex: 20 });
   // 좌표가 없는 항목은 키워드 검색으로 임시 좌표 부여 (보정 후 coords 파일에 저장)
-  var missing = entries().filter(function (e) { return !coordOf(e.id); });
+  var missing = pinEntries().concat(dotEntries()).filter(function (e) { return !coordOf(e.id); });
   for (var i = 0; i < missing.length; i++) {
     var r = await autoLocate(missing[i]);
     if (r) { missing[i].tmp = r.ll; window.__autoReport[missing[i].id] = r; }
     else window.__autoReport[missing[i].id] = null;
   }
-  entries().forEach(placeMarker);
+  SHAPES.forEach(drawShape);
+  dotEntries().forEach(drawDot);
+  pinEntries().forEach(placePin);
+  kakao.maps.event.addListener(map, "zoom_changed", updateDots);
+  updateDots();
   fitAll();
   document.getElementById("fixBtn").onclick = function () { setFixMode(!fixMode); };
   document.getElementById("copyBtn").onclick = function () {
@@ -364,7 +465,10 @@ async function main() {
     document.getElementById("copyBtn").textContent = "복사됨 ✓"; setTimeout(function () { document.getElementById("copyBtn").textContent = "좌표 복사"; }, 1500);
   };
   document.getElementById("resetBtn").onclick = function () {
-    LOCAL_FIX = {}; saveFix(); entries().forEach(function (e) { var c = coordOf(e.id) || e.tmp; if (c && markers[e.id]) markers[e.id].setPosition(new kakao.maps.LatLng(c[0], c[1])); }); renderFix();
+    LOCAL_FIX = {}; saveFix();
+    SHAPES.forEach(drawShape); dotEntries().forEach(drawDot); updateDots();
+    pinEntries().forEach(function (e) { var c = coordOf(e.id) || e.tmp; if (c && SITE_PINS[e.id]) SITE_PINS[e.id].setPosition(new kakao.maps.LatLng(c[0], c[1])); });
+    if (fixMode) { setFixMode(false); setFixMode(true); } else renderFix();
   };
   window.__ready = true;
 }
