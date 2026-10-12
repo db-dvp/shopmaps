@@ -23,7 +23,7 @@ td.l{text-align:left}
 .up{color:var(--up);font-weight:700}.dn{color:var(--down);font-weight:700}
 .note{font-size:11px;color:var(--mut);line-height:1.55;margin-top:8px}
 .tag{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px}
-.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}.tab{border:1px solid var(--line);background:#fff;border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:inherit}.tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}.x{color:#6b7280;font-size:11px}.big{display:flex;gap:10px;margin:6px 0}.big>div{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}.big .k{display:block;font-size:11px;color:var(--mut)}.big b{font-size:24px;color:var(--navy)}.big .u{font-size:11px;color:var(--mut);margin-left:4px}.warn{font-size:12px;color:var(--up);margin-top:6px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}.tab{border:1px solid var(--line);background:#fff;border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:inherit}.tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}.x{color:#6b7280;font-size:11px}.big{display:flex;gap:10px;margin:6px 0}.big>div{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}.big .k{display:block;font-size:11px;color:var(--mut)}.big b{font-size:24px;color:var(--navy)}.big .u{font-size:11px;color:var(--mut);margin-left:4px}.rg{font-size:15px;margin:20px 0 0;padding-top:8px;border-top:2px solid var(--navy)}tr.go{cursor:pointer}tr.go:hover td{background:var(--bg)}.warn{font-size:12px;color:var(--up);margin-top:6px}
 #err{padding:20px;color:#b91c1c;font-size:13px}
 @media(max-width:800px){#wrap{flex-direction:column}#map{height:45%;flex:none}#panel{width:100%;max-width:none;border-left:0;border-top:1px solid var(--line)}}
 </style>
@@ -44,11 +44,37 @@ function chg(cur,base){
 }
 var cur=0;
 function tabs(){
-  var h='<div class="tabs">';
+  var h='<div class="tabs"><button class="tab'+(cur===-1?' on':'')+'" data-i="-1">전체 요약</button>';
   D.forEach(function(c,i){h+='<button class="tab'+(i===cur?' on':'')+'" data-i="'+i+'">'+c.short+'</button>'});
   return h+'</div>';
 }
+function sizeOf(c){ if(c.byType){var m=Math.max.apply(null,c.byType.map(function(r){return r.ex}));return m>=60?'L':'S'} return (c.target&&c.target.min>=60)?'L':'S'; }
+function statOf(c){ if(c.byType) return {n:c.overall.n,avg:c.overall.ppEx.avg,med:c.overall.ppEx.med}; var a=c.asking; if(!a) return null; var m=a.label.match(/(\d+)건/); return {n:m?+m[1]:0,avg:a.perPyeong.avg,med:a.perPyeong.median}; }
+var REGIONS=['운정','야당','대화'];
+function overview(){
+  var h=tabs()+'<h2>운정·야당·대화 오피스텔 호가 평당가</h2><div class="sub">전용 평당가(만원/평) · 대형 = 전용 60㎡ 이상, 소형 = 전용 60㎡ 미만 · 단지를 누르면 상세가 열립니다</div>';
+  REGIONS.forEach(function(rg){
+    h+='<h3 class="rg">'+rg+'</h3>';
+    [['L','대형 (전용 60㎡ 이상)'],['S','소형 (전용 60㎡ 미만)']].forEach(function(sz){
+      var list=[]; D.forEach(function(c,i){ if((c.region||'운정')===rg && sizeOf(c)===sz[0]){var st=statOf(c); if(st) list.push({c:c,i:i,st:st});} });
+      h+='<div class="note" style="margin-top:10px"><b>'+sz[1]+'</b></div>';
+      if(!list.length){h+='<div class="note">조사 예정</div>';return;}
+      list.sort(function(a,b){return b.st.avg-a.st.avg});
+      var tn=0,ta=0,tm=0; list.forEach(function(x){tn+=x.st.n;ta+=x.st.avg*x.st.n;});
+      h+='<table><tr><th>단지</th><th>입주</th><th>호가 건수</th><th>평균 평당</th><th>중앙 평당</th></tr>';
+      list.forEach(function(x){h+='<tr class="go" data-i="'+x.i+'"><td class="l">'+x.c.short+(x.st.n<5?' <span class="x">(표본 적음)</span>':'')+'</td><td>'+x.c.approval+'</td><td>'+x.st.n+'</td><td>'+x.st.avg.toLocaleString()+'</td><td>'+x.st.med.toLocaleString()+'</td></tr>'});
+      if(list.length>1) h+='<tr><td class="l"><b>건수 가중 평균</b></td><td></td><td>'+tn+'</td><td><b>'+Math.round(ta/tn).toLocaleString()+'</b></td><td></td></tr>';
+      h+='</table>';
+    });
+  });
+  h+='<div class="note">출처: 네이버부동산·KB부동산 매물 호가(2026.10.12 조회, 같은 매물 합침). 호가는 실제 거래가보다 높을 수 있고, 표본이 적은 단지는 평균이 흔들립니다.</div>';
+  $('panel').innerHTML=h; wire();
+}
+function wire(){
+  [].forEach.call(document.querySelectorAll('.tab,tr.go'),function(b){b.onclick=function(){var k=+b.getAttribute('data-i');render(k);if(window.__go&&k>=0)window.__go(k)}});
+}
 function render(i){
+  if(i<0){cur=-1;overview();return;}
   cur=i; var c=D[i], a=c.asking;
   var h=tabs()+'<h2>'+c.name+'</h2><div class="sub">'+(c.address?c.address+' · ':'')+c.households.toLocaleString()+'세대 · 입주 '+c.approval+'<br>'+c.developer+'</div>';
   if(c.byType){
@@ -93,9 +119,9 @@ function render(i){
   (c.extra||[]).forEach(function(t){h+='<div class="note">· '+t+'</div>'});
   h+='<div class="note">출처: 네이버부동산·KB부동산 매물 호가, 국토부 신고 실거래(호갱노노). 중개사 중복 등록 가능성이 있고 호가는 실제 거래가보다 높을 수 있습니다.</div>';
   $('panel').innerHTML=h;
-  [].forEach.call(document.querySelectorAll('.tab'),function(b){b.onclick=function(){render(+b.getAttribute('data-i'));if(window.__go)window.__go(+b.getAttribute('data-i'))}});
+  wire();
 }
-render(0);
+render(-1);
 
 // 카카오 지도: 기존 index.html 과 같은 JavaScript 키를 index.html 에서 읽어 사용
 fetch('index.html').then(function(r){return r.text()}).then(function(t){
@@ -121,7 +147,10 @@ function initMap(){
       var pos=new kakao.maps.LatLng(res[0].y,res[0].x); pts[i]=pos;
       bounds.extend(pos);
       var mk=new kakao.maps.Marker({map:map,position:pos});
-      var iw=new kakao.maps.CustomOverlay({position:pos,yAnchor:2.3,content:'<div style="background:#1b2a5c;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;white-space:nowrap">'+c.short+(c.asking?' · '+c.asking.perPyeong.avg.toLocaleString():(c.overall?' · '+c.overall.ppEx.avg.toLocaleString():''))+'</div>'});
+      var el=document.createElement('div'); el.style.cssText='background:#1b2a5c;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;white-space:nowrap;cursor:pointer';
+      el.textContent=c.short+(c.asking?' · '+c.asking.perPyeong.avg.toLocaleString():(c.overall?' · '+c.overall.ppEx.avg.toLocaleString():''));
+      el.onclick=function(){render(i)};
+      var iw=new kakao.maps.CustomOverlay({position:pos,yAnchor:2.3,content:el,clickable:true});
       iw.setMap(map);
       kakao.maps.event.addListener(mk,'click',function(){render(i)});
       map.setBounds(bounds);
