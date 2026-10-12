@@ -32,9 +32,10 @@ td.l{text-align:left}
 <header><div id="title"></div><span class="s" id="src"></span></header>
 <div id="wrap"><div id="map"></div><div id="panel"><div id="err"></div></div></div>
 <script src="data-officetel.js"></script>
+<script src="data-officetel-kb.js"></script>
 <script>
 (function(){
-var D=window.OFFICETEL_DATA, $=function(i){return document.getElementById(i)};
+var D=(window.OFFICETEL_DATA||[]).concat(window.OFFICETEL_DATA2||[]), $=function(i){return document.getElementById(i)};
 $('title').textContent='운정역 오피스텔 최근 호가 · 평당가';
 function eok(v){return (v/10000).toFixed(2)+'억'}
 function chg(cur,base){
@@ -49,7 +50,23 @@ function tabs(){
 }
 function render(i){
   cur=i; var c=D[i], a=c.asking;
-  var h=tabs()+'<h2>'+c.name+'</h2><div class="sub">'+c.address+' · '+c.households.toLocaleString()+'세대 · 입주 '+c.approval+'<br>'+c.developer+'</div>';
+  var h=tabs()+'<h2>'+c.name+'</h2><div class="sub">'+(c.address?c.address+' · ':'')+c.households.toLocaleString()+'세대 · 입주 '+c.approval+'<br>'+c.developer+'</div>';
+  if(c.byType){
+    var o=c.overall;
+    h+='<div class="big"><div><span class="k">평균 평당가 (전용)</span><b>'+o.ppEx.avg.toLocaleString()+'</b><span class="u">만원/평</span></div><div><span class="k">중앙값 평당가 (전용)</span><b>'+o.ppEx.med.toLocaleString()+'</b><span class="u">만원/평</span></div></div>';
+    h+='<div class="note">'+o.label+' · 조회 '+o.date+' · 전용 평당 = 호가 ÷ (전용㎡ ÷ 3.3058), 공급 평당 = 호가 ÷ (계약㎡ ÷ 3.3058)</div>';
+    h+='<div class="note">공급 기준 평당가: 평균 '+o.ppSu.avg.toLocaleString()+' · 중앙 '+o.ppSu.med.toLocaleString()+' 만원/평 (KB 매물 목록에 표시되는 방식)</div>';
+    if(o.n<10) h+='<div class="warn">※ 호가 표본이 '+o.n+'건뿐이라 대표성이 낮습니다.</div>';
+    h+='<h3>평형(타입)별 호가</h3><table><tr><th>타입</th><th>전용/계약㎡</th><th>건수</th><th>평균(만원)</th><th>최저~최고</th><th>전용 평당</th><th>공급 평당</th></tr>';
+    c.byType.forEach(function(r){h+='<tr><td>'+r.type+'</td><td>'+r.ex.toFixed(1)+' / '+r.su.toFixed(1)+'</td><td>'+r.n+'</td><td>'+r.avg.toLocaleString()+' ('+eok(r.avg)+')</td><td>'+eok(r.mn)+(r.mx>r.mn?' ~ '+eok(r.mx):'')+'</td><td>'+r.ppEx.toLocaleString()+'</td><td>'+r.ppSu.toLocaleString()+'</td></tr>'});
+    h+='</table>';
+    if((c.refs||[]).length){
+      h+='<h3>참고: KB 시세 · 실거래</h3><table><tr><th>구분</th><th>금액(만원)</th><th>전용 평당(만원)</th></tr>';
+      c.refs.forEach(function(r){h+='<tr><td class="l">'+r.label+'<br><span class="x">'+r.note+'</span></td><td>'+r.v.toLocaleString()+' ('+eok(r.v)+')</td><td>'+Math.round(r.v/(r.ex/3.3058)).toLocaleString()+'</td></tr>'});
+      h+='</table>';
+    }
+  } else {
+  h=tabs()+'<h2>'+c.name+'</h2><div class="sub">'+c.address+' · '+c.households.toLocaleString()+'세대 · 입주 '+c.approval+'<br>'+c.developer+'</div>';
   if(!a){ h+='<div class="note">네이버 호가: 미확보</div>'; }
   else {
     var div=a.avg/a.perPyeong.avg;
@@ -72,8 +89,9 @@ function render(i){
       h+='</table>';
     }
   }
+  }
   (c.extra||[]).forEach(function(t){h+='<div class="note">· '+t+'</div>'});
-  h+='<div class="note">출처: 네이버부동산 호가, 국토부 신고 실거래(호갱노노), KB부동산. 중개사 중복 등록 가능성이 있고 호가는 실제 거래가보다 높을 수 있습니다.</div>';
+  h+='<div class="note">출처: 네이버부동산·KB부동산 매물 호가, 국토부 신고 실거래(호갱노노). 중개사 중복 등록 가능성이 있고 호가는 실제 거래가보다 높을 수 있습니다.</div>';
   $('panel').innerHTML=h;
   [].forEach.call(document.querySelectorAll('.tab'),function(b){b.onclick=function(){render(+b.getAttribute('data-i'));if(window.__go)window.__go(+b.getAttribute('data-i'))}});
 }
@@ -95,15 +113,15 @@ fetch('index.html').then(function(r){return r.text()}).then(function(t){
 
 function initMap(){
   var map=new kakao.maps.Map($('map'),{center:new kakao.maps.LatLng(37.7215,126.7640),level:4});
-  var g=new kakao.maps.services.Geocoder(), pts=[], bounds=new kakao.maps.LatLngBounds();
+  var ps=new kakao.maps.services.Places(), g=new kakao.maps.services.Geocoder(), pts=[], bounds=new kakao.maps.LatLngBounds();
   window.__go=function(i){ if(pts[i]) map.panTo(pts[i]); };
   D.forEach(function(c,i){
-    g.addressSearch(c.geocode,function(res,st){
+    (c.kw?function(cb){ps.keywordSearch(c.kw,cb)}:function(cb){g.addressSearch(c.geocode,cb)})(function(res,st){
       if(st!==kakao.maps.services.Status.OK||!res.length) return;
       var pos=new kakao.maps.LatLng(res[0].y,res[0].x); pts[i]=pos;
       bounds.extend(pos);
       var mk=new kakao.maps.Marker({map:map,position:pos});
-      var iw=new kakao.maps.CustomOverlay({position:pos,yAnchor:2.3,content:'<div style="background:#1b2a5c;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;white-space:nowrap">'+c.short+(c.asking?' · '+c.asking.perPyeong.avg.toLocaleString():'')+'</div>'});
+      var iw=new kakao.maps.CustomOverlay({position:pos,yAnchor:2.3,content:'<div style="background:#1b2a5c;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;white-space:nowrap">'+c.short+(c.asking?' · '+c.asking.perPyeong.avg.toLocaleString():(c.overall?' · '+c.overall.ppEx.avg.toLocaleString():''))+'</div>'});
       iw.setMap(map);
       kakao.maps.event.addListener(mk,'click',function(){render(i)});
       map.setBounds(bounds);
