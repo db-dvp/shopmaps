@@ -147,7 +147,7 @@ var LS_KEY = "shopmaps:" + REGION + ":fix";
 
 function loadScript(src) {
   return new Promise(function (res, rej) {
-    var s = document.createElement("script"); s.src = src;
+    var s = document.createElement("script"); s.src = src + (src.indexOf("data-") === 0 ? "?v=" + Date.now() : "");
     s.onload = res; s.onerror = function () { rej(new Error("load fail: " + src)); };
     document.head.appendChild(s);
   });
