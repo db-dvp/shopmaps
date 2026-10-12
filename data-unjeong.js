@@ -289,6 +289,24 @@ window.SHOP_REGIONS.unjeong={
      ]
     },
     {
+     "area": "1층 · 31㎡",
+     "areaSub": "전용 9.29평",
+     "floor": "1층",
+     "base": 63000.0,
+     "baseNote": null,
+     "basePP": 6784.0,
+     "ask": null,
+     "askN": "",
+     "askNote": null,
+     "askPP": null,
+     "chg": null,
+     "chgTxt": "-",
+     "chgNote": "",
+     "trade": [
+      "거래 없음"
+     ]
+    },
+    {
      "area": "1층 · 32㎡",
      "areaSub": "전용 9.57평",
      "floor": "1층",
@@ -645,9 +663,9 @@ window.SHOP_REGIONS.unjeong={
    "sub": 1,
    "name": "에비뉴엘타워",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "낙찰가",
    "meta": "근생상가건물 | 상가 104호 | 준공 2024.12 | 분양률 미기재",
-   "baseHead": "기존 조사가",
+   "baseHead": "낙찰가",
    "rows": [
     {
      "area": "1층 · 50㎡",
@@ -686,6 +704,24 @@ window.SHOP_REGIONS.unjeong={
      ]
     },
     {
+     "area": "2층 · 298㎡",
+     "areaSub": "전용 90.2평",
+     "floor": "2층",
+     "base": 229500.0,
+     "baseNote": null,
+     "basePP": 2544.0,
+     "ask": null,
+     "askN": "",
+     "askNote": null,
+     "askPP": null,
+     "chg": null,
+     "chgTxt": "-",
+     "chgNote": "",
+     "trade": [
+      "거래 없음"
+     ]
+    },
+    {
      "area": "3층 · 34㎡",
      "areaSub": "전용 10.3평",
      "floor": "3층",
@@ -699,6 +735,24 @@ window.SHOP_REGIONS.unjeong={
      "chg": 2.5,
      "chgTxt": "▲ 2.5%",
      "chgNote": "평당 +48",
+     "trade": [
+      "거래 없음"
+     ]
+    },
+    {
+     "area": "3층 · 310㎡",
+     "areaSub": "전용 93.89평",
+     "floor": "3층",
+     "base": 181400.0,
+     "baseNote": null,
+     "basePP": 1932.0,
+     "ask": null,
+     "askN": "",
+     "askNote": null,
+     "askPP": null,
+     "chg": null,
+     "chgTxt": "-",
+     "chgNote": "",
      "trade": [
       "거래 없음"
      ]
@@ -756,6 +810,24 @@ window.SHOP_REGIONS.unjeong={
      "trade": [
       "거래 없음"
      ]
+    },
+    {
+     "area": "4층 · 225㎡",
+     "areaSub": "전용 68.09평",
+     "floor": "4층",
+     "base": 115000.0,
+     "baseNote": null,
+     "basePP": 1689.0,
+     "ask": null,
+     "askN": "",
+     "askNote": null,
+     "askPP": null,
+     "chg": null,
+     "chgTxt": "-",
+     "chgNote": "",
+     "trade": [
+      "거래 없음"
+     ]
     }
    ],
    "notes": [
@@ -774,9 +846,9 @@ window.SHOP_REGIONS.unjeong={
    "sub": 2,
    "name": "반석프라자",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "낙찰가",
    "meta": "근생상가건물 | 상가 60호 | 준공 2022.12 | 분양률 90%",
-   "baseHead": "기존 조사가",
+   "baseHead": "낙찰가",
    "rows": [
     {
      "area": "1층 · 84㎡",
@@ -851,9 +923,9 @@ window.SHOP_REGIONS.unjeong={
    "sub": 3,
    "name": "스타타워",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "낙찰가",
    "meta": "근생상가건물 | 상가 137호 | 준공 2023.03 | 분양률 미기재",
-   "baseHead": "기존 조사가",
+   "baseHead": "낙찰가",
    "rows": [
     {
      "area": "1층 · 42㎡",
@@ -926,9 +998,9 @@ window.SHOP_REGIONS.unjeong={
    "sub": 4,
    "name": "운정 퍼스트타워",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "낙찰가",
    "meta": "근생상가건물 | 상가 37호 | 준공 2022.08 | 분양률 100%",
-   "baseHead": "기존 조사가",
+   "baseHead": "낙찰가",
    "rows": [
     {
      "area": "1층 · 42㎡",
@@ -1243,9 +1315,9 @@ window.SHOP_REGIONS.unjeong={
    "sub": 1,
    "name": "운정 SB타워",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "분양가",
    "meta": "근생상가건물 | 상가 56호 | 준공 2024.01 | 분양률 60%",
-   "baseHead": "기존 조사가",
+   "baseHead": "분양가",
    "rows": [
     {
      "area": "1층 · 36㎡",
@@ -1304,7 +1376,7 @@ window.SHOP_REGIONS.unjeong={
     }
    ],
    "notes": [
-    "※ 기존 조사가는 원본 PPT 수치(출처 표기: 네이버 매매 호가)이며 분양가·낙찰가가 아닙니다. 0.0%는 원본과 같은 매물이 그대로 올라와 있는 경우입니다.",
+    "※ 기준가는 분양가(분양 당시 공급가). 0.0%는 분양가와 같은 가격의 매물이 그대로 올라와 있는 경우입니다.",
     "* 면적 차이 12~25%의 근사 매칭 · 실거래는 2023.10 이후 같은 층·면적 평균(일자는 최근 거래, 국토부)"
    ],
    "id": "14-1",
@@ -1320,9 +1392,9 @@ window.SHOP_REGIONS.unjeong={
    "sub": 2,
    "name": "진영프라자",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "분양가",
    "meta": "근생상가건물 | 상가 25호 | 준공 2023.05 | 분양률 84%",
-   "baseHead": "기존 조사가",
+   "baseHead": "분양가",
    "rows": [
     {
      "area": "1층 · 34㎡",
@@ -1420,7 +1492,7 @@ window.SHOP_REGIONS.unjeong={
     }
    ],
    "notes": [
-    "※ 기존 조사가는 원본 PPT 수치(출처 표기: 네이버 매매 호가)이며 분양가·낙찰가가 아닙니다. 0.0%는 원본과 같은 매물이 그대로 올라와 있는 경우입니다.",
+    "※ 기준가는 분양가(분양 당시 공급가). 0.0%는 분양가와 같은 가격의 매물이 그대로 올라와 있는 경우입니다.",
     "* 면적 차이 12~25%의 근사 매칭 · 실거래는 2023.10 이후 같은 층·면적 평균(일자는 최근 거래, 국토부)"
    ],
    "id": "14-2",
@@ -1436,9 +1508,9 @@ window.SHOP_REGIONS.unjeong={
    "sub": 3,
    "name": "신화프라자",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "분양가",
    "meta": "근생상가건물 | 상가 25호 | 준공 2023.08 | 분양률 72%",
-   "baseHead": "기존 조사가",
+   "baseHead": "분양가",
    "rows": [
     {
      "area": "1층 · 83㎡",
@@ -1494,9 +1566,9 @@ window.SHOP_REGIONS.unjeong={
    "sub": 4,
    "name": "예스프라자",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "분양가",
    "meta": "근생상가건물 | 상가 22호 | 준공 2023.05 | 분양률 82%",
-   "baseHead": "기존 조사가",
+   "baseHead": "분양가",
    "rows": [
     {
      "area": "1층 · 40㎡",
@@ -2053,7 +2125,7 @@ window.SHOP_REGIONS.unjeong={
    "no": "11",
    "name": "에비뉴엘타워",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "낙찰가",
    "f1": {
     "base": 4893.0,
     "cur": 5510.0,
@@ -2081,7 +2153,7 @@ window.SHOP_REGIONS.unjeong={
    "no": "11",
    "name": "반석프라자",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "낙찰가",
    "f1": {
     "base": 5510.0,
     "cur": 5510.0,
@@ -2109,7 +2181,7 @@ window.SHOP_REGIONS.unjeong={
    "no": "11",
    "name": "스타타워",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "낙찰가",
    "f1": {
     "base": 5116.0,
     "cur": 3936.0,
@@ -2137,7 +2209,7 @@ window.SHOP_REGIONS.unjeong={
    "no": "11",
    "name": "운정 퍼스트타워",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "낙찰가",
    "f1": {
     "base": 6563.0,
     "cur": 6229.0,
@@ -2221,7 +2293,7 @@ window.SHOP_REGIONS.unjeong={
    "no": "14",
    "name": "운정 SB타워",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "분양가",
    "f1": {
     "base": 5834.0,
     "cur": 5950.0,
@@ -2249,7 +2321,7 @@ window.SHOP_REGIONS.unjeong={
    "no": "14",
    "name": "진영프라자",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "분양가",
    "f1": {
     "base": 5568.0,
     "cur": 5710.0,
@@ -2277,7 +2349,7 @@ window.SHOP_REGIONS.unjeong={
    "no": "14",
    "name": "신화프라자",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "분양가",
    "f1": {
     "base": 5977.0,
     "cur": 4838.0,
@@ -2305,7 +2377,7 @@ window.SHOP_REGIONS.unjeong={
    "no": "14",
    "name": "예스프라자",
    "cat": "상가건물",
-   "basis": "기존 조사가",
+   "basis": "분양가",
    "f1": {
     "base": 6440.0,
     "cur": 6364.0,
