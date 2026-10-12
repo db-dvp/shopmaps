@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>운정역 오피스텔 분양가 검토</title>
+<title>운정역 오피스텔 호가 평당가</title>
 <style>
 :root{--navy:#1b2a5c;--line:#d9dee8;--up:#d93025;--down:#1a6fd1;--mut:#6b7280;--bg:#f4f6fa}
 *{box-sizing:border-box}
@@ -23,7 +23,7 @@ td.l{text-align:left}
 .up{color:var(--up);font-weight:700}.dn{color:var(--down);font-weight:700}
 .note{font-size:11px;color:var(--mut);line-height:1.55;margin-top:8px}
 .tag{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px}
-.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}.tab{border:1px solid var(--line);background:#fff;border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:inherit}.tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}.x{color:#6b7280;font-size:11px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}.tab{border:1px solid var(--line);background:#fff;border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:inherit}.tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}.x{color:#6b7280;font-size:11px}.big{display:flex;gap:10px;margin:6px 0}.big>div{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}.big .k{display:block;font-size:11px;color:var(--mut)}.big b{font-size:24px;color:var(--navy)}.big .u{font-size:11px;color:var(--mut);margin-left:4px}.warn{font-size:12px;color:var(--up);margin-top:6px}
 #err{padding:20px;color:#b91c1c;font-size:13px}
 @media(max-width:800px){#wrap{flex-direction:column}#map{height:45%;flex:none}#panel{width:100%;max-width:none;border-left:0;border-top:1px solid var(--line)}}
 </style>
@@ -35,7 +35,7 @@ td.l{text-align:left}
 <script>
 (function(){
 var D=window.OFFICETEL_DATA, $=function(i){return document.getElementById(i)};
-$('title').textContent=window.OFFICETEL_TITLE;
+$('title').textContent='운정역 오피스텔 최근 호가 · 평당가';
 function eok(v){return (v/10000).toFixed(2)+'억'}
 function chg(cur,base){
   var p=(cur/base-1)*100; var c=p>0.05?'up':(p<-0.05?'dn':'');
@@ -48,34 +48,32 @@ function tabs(){
   return h+'</div>';
 }
 function render(i){
-  cur=i; var c=D[i];
-  var tg=c.target, tt=c.types.filter(function(t){return t.area>=tg.min&&t.area<tg.max});
-  var units=tt.reduce(function(a,t){return a+t.units},0);
-  var base=tt.reduce(function(a,t){return a+t.price*t.units},0)/units;
-  var minP=Math.min.apply(null,tt.map(function(t){return t.price})), maxP=Math.max.apply(null,tt.map(function(t){return t.price}));
+  cur=i; var c=D[i], a=c.asking;
   var h=tabs()+'<h2>'+c.name+'</h2><div class="sub">'+c.address+' · '+c.households.toLocaleString()+'세대 · 입주 '+c.approval+'<br>'+c.developer+'</div>';
-  h+='<span class="tag">모집공고 '+c.notice.date+'</span><span class="tag">청약 '+c.notice.apply+'</span><span class="tag">계약 '+c.notice.contract+'</span>';
-  h+='<h3>① 분양가 (입주자모집공고 · 타입별 최고금액, 부가세 포함)</h3><table><tr><th>타입</th><th>호갱노노·KB 표기</th><th>전용㎡</th><th>세대</th><th>분양가(만원)</th><th>전용 평당</th></tr>';
-  c.types.forEach(function(t){
-    var py=t.price/(t.area/3.3058);
-    h+='<tr><td>'+t.code+'</td><td>'+t.alias+'</td><td>'+t.area.toFixed(2)+'</td><td>'+t.units+'</td><td>'+t.price.toLocaleString()+' ('+eok(t.price)+')</td><td>'+Math.round(py).toLocaleString()+'</td></tr>';
-  });
-  h+='</table><div class="note">'+tg.label+' '+tt.length+'개 타입('+units.toLocaleString()+'세대) 최고가 범위 '+eok(minP)+' ~ '+eok(maxP)+', 세대수 가중평균 '+eok(base)+'. 아래 증감률은 이 가중평균(최고금액 기준)과 비교합니다.</div>';
-  h+='<h3>② 현재 가격 vs 분양가 ('+tg.label+')</h3><table><tr><th>구분</th><th>금액(만원)</th><th>분양가 대비</th></tr>';
-  function row(label,v,extra){h+='<tr><td class="l">'+label+(extra?'<br><span class="x">'+extra+'</span>':'')+'</td><td>'+v.toLocaleString()+' ('+eok(v)+')</td><td>'+chg(v,base)+'</td></tr>'}
-  var a=c.asking;
-  if(a){
-    row('네이버 호가 평균',a.avg,a.label+' · '+a.date);
-    row('네이버 호가 중앙값',a.median);
-    row('네이버 호가 최저',a.min);
-    row('네이버 호가 최고',a.max);
+  if(!a){ h+='<div class="note">네이버 호가: 미확보</div>'; }
+  else {
+    var div=a.avg/a.perPyeong.avg;
+    function pp(v){return Math.round(v/div)}
+    var m=a.label.match(/(\d+)건/), n=m?+m[1]:0;
+    h+='<div class="big"><div><span class="k">평균 평당가</span><b>'+a.perPyeong.avg.toLocaleString()+'</b><span class="u">만원/평</span></div><div><span class="k">중앙값 평당가</span><b>'+a.perPyeong.median.toLocaleString()+'</b><span class="u">만원/평</span></div></div>';
+    h+='<div class="note">'+a.label+' · 조회 '+a.date+' · 전용면적 기준 평당가 (평 = 전용㎡ ÷ 3.3058)</div>';
+    if(n&&n<5) h+='<div class="warn">※ 호가 표본이 '+n+'건뿐이라 대표성이 낮습니다.</div>';
+    h+='<h3>최근 호가 ('+c.target.label+')</h3><table><tr><th>구분</th><th>호가(만원)</th><th>전용 평당(만원)</th></tr>';
+    function row(label,v,extra,pv){h+='<tr><td class="l">'+label+(extra?'<br><span class="x">'+extra+'</span>':'')+'</td><td>'+v.toLocaleString()+' ('+eok(v)+')</td><td>'+(pv||pp(v)).toLocaleString()+'</td></tr>'}
+    row('평균',a.avg,null,a.perPyeong.avg);
+    row('중앙값',a.median,null,a.perPyeong.median);
+    row('최저',a.min,null,a.perPyeong.min);
+    row('최고',a.max,null,a.perPyeong.max);
     (a.byFloor||[]).forEach(function(f){row('호가 '+f.f+' 평균',f.avg,f.n+'건')});
-  } else { h+='<tr><td class="l" colspan="3">네이버 호가: 미확보</td></tr>'; }
-  (c.refs||[]).forEach(function(r){row(r.label,r.v,r.note)});
-  h+='</table>';
-  if(a&&a.perPyeong) h+='<div class="note">호가 전용 평당가('+tg.label+'): 평균 '+a.perPyeong.avg.toLocaleString()+' · 중앙 '+a.perPyeong.median.toLocaleString()+' · 최저 '+a.perPyeong.min.toLocaleString()+' · 최고 '+a.perPyeong.max.toLocaleString()+' (만원/평)</div>';
+    h+='</table>';
+    if((c.refs||[]).length){
+      h+='<h3>참고: 타입별 호가 · 실거래 · KB</h3><table><tr><th>구분</th><th>금액(만원)</th><th>전용 평당(만원)</th></tr>';
+      c.refs.forEach(function(r){row(r.label,r.v,r.note)});
+      h+='</table>';
+    }
+  }
   (c.extra||[]).forEach(function(t){h+='<div class="note">· '+t+'</div>'});
-  h+='<div class="note">※ '+c.memo+'</div><div class="note">출처: '+window.OFFICETEL_SOURCE+'</div>';
+  h+='<div class="note">출처: 네이버부동산 호가, 국토부 신고 실거래(호갱노노), KB부동산. 중개사 중복 등록 가능성이 있고 호가는 실제 거래가보다 높을 수 있습니다.</div>';
   $('panel').innerHTML=h;
   [].forEach.call(document.querySelectorAll('.tab'),function(b){b.onclick=function(){render(+b.getAttribute('data-i'));if(window.__go)window.__go(+b.getAttribute('data-i'))}});
 }
@@ -105,7 +103,7 @@ function initMap(){
       var pos=new kakao.maps.LatLng(res[0].y,res[0].x); pts[i]=pos;
       bounds.extend(pos);
       var mk=new kakao.maps.Marker({map:map,position:pos});
-      var iw=new kakao.maps.CustomOverlay({position:pos,yAnchor:2.3,content:'<div style="background:#1b2a5c;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;white-space:nowrap">'+c.short+'</div>'});
+      var iw=new kakao.maps.CustomOverlay({position:pos,yAnchor:2.3,content:'<div style="background:#1b2a5c;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;white-space:nowrap">'+c.short+(c.asking?' · '+c.asking.perPyeong.avg.toLocaleString():'')+'</div>'});
       iw.setMap(map);
       kakao.maps.event.addListener(mk,'click',function(){render(i)});
       map.setBounds(bounds);
