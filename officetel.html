@@ -70,13 +70,15 @@ function render(c){
 }
 render(D[0]);
 
+// 카카오 지도: 기존 index.html 과 같은 JavaScript 키를 index.html 에서 읽어 사용
 fetch('index.html').then(function(r){return r.text()}).then(function(t){
-  var m=t.match(/https:\/\/dapi\.kakao\.com\/v2\/maps\/sdk\.js[^"']*/);
-  if(!m) throw new Error('SDK 주소를 찾지 못함');
-  var u=m[0].replace(/&amp;/g,'&');
-  if(u.indexOf('autoload')<0) u+='&autoload=false'; else u=u.replace(/autoload=[^&]*/,'autoload=false');
-  if(u.indexOf('libraries')<0) u+='&libraries=services';
-  var s=document.createElement('script'); s.src=u;
+  var im=t.match(/appkey=['"`]\s*\+\s*([A-Za-z_$][\w$.]*)/);
+  if(!im) throw new Error('키 위치를 찾지 못함');
+  var last=im[1].split('.').pop();
+  var km=new RegExp('\\b'+last.replace(/\$/g,'\\$')+'\\b\\s*[:=]\\s*[\'"`]([^\'"`]{10,})[\'"`]').exec(t);
+  if(!km) throw new Error('키 값을 찾지 못함');
+  var s=document.createElement('script');
+  s.src='https://dapi.kakao.com/v2/maps/sdk.js'+String.fromCharCode(63)+'appkey='+km[1]+'&libraries=services&autoload=false';
   s.onload=function(){kakao.maps.load(initMap)};
   s.onerror=function(){$('map').innerHTML='<div id="err">지도 SDK를 불러오지 못했습니다.</div>'};
   document.head.appendChild(s);
