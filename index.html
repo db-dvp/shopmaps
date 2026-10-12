@@ -46,6 +46,8 @@ table.st tr.row{cursor:pointer}
 table.st tr.row:hover td{background:#f6f8fd}
 table.st tr.sel td{background:#fff6d8}
 table.st tr.grp td{border-top:2px solid #b9c1d6}
+table.st tr.avg td{background:#eef1f8;font-weight:700;border-top:2px solid #1f2d5c}
+table.st tr.avg td.nm{color:var(--navy)}
 .no{display:inline-block;min-width:22px;padding:1px 5px;border-radius:11px;color:#fff;font-weight:700;font-size:11px}
 .no.in{background:var(--in)} .no.bld{background:var(--bld)}
 .cat{font-size:10.5px;color:var(--mute)}
@@ -361,6 +363,14 @@ function floorCells(f) {
   var base = f.baseTxt === "-" ? '<span class="na">-</span>' : fmt(f.base);
   return "<td>" + base + "</td><td><b>" + cur + "</b></td><td>" + chgHtml(f.chg) + "</td>";
 }
+function avgCells(key) {
+  var rows = DATA.summary.filter(function (s) { var f = s[key]; return f && f.base != null && f.cur != null && /^\d/.test(f.curTxt); });
+  if (!rows.length) return '<td class="na">-</td><td class="na">-</td><td class="na">-</td>';
+  var b = 0, c = 0; rows.forEach(function (s) { b += s[key].base; c += s[key].cur; });
+  b /= rows.length; c /= rows.length;
+  var ch = (c / b - 1) * 100, t = (ch > 0 ? "▲ " : ch < 0 ? "▼ " : "") + Math.abs(ch).toFixed(1) + "%";
+  return "<td>" + fmt(Math.round(b)) + "</td><td>" + fmt(Math.round(c)) + "</td><td>" + chgHtml(t) + '<br><span class="na" style="font-size:9.5px">' + rows.length + "곳</span></td>";
+}
 function showSummary() {
   selectedId = null; setSelected(null);
   document.getElementById("sidehead").innerHTML = '<h2>운정중앙역 상가 층별 기준가 대비 현재 호가</h2><div class="sub">단위: 만원/평 · 전용면적 3.3㎡당 · 기준가(분양가·낙찰가·내정가·기존 조사가) 대비 현재 네이버 호가의 전용 평당가 변화 · 행을 누르면 단지 상세</div>';
@@ -375,8 +385,9 @@ function showSummary() {
       '<td class="nm">' + esc(s.name) + '<br><span class="cat">' + esc(s.cat) + "</span></td><td class='bs'>" + esc(s.basis) + "</td>" +
       floorCells(s.f1) + floorCells(s.f2) + floorCells(s.f3) + "</tr>";
   });
+  h += '<tr class="avg"><td colspan="3" class="nm">평균<br><span class="cat">기준가·호가가 모두 있는 단지</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
   h += "</tbody></table>";
-  h += '<div class="note">' + DATA.summaryNotes.map(esc).join("<br>") + "</div>";
+  h += '<div class="note">' + DATA.summaryNotes.map(esc).join("<br>") + "<br>· 평균 = 기준가와 현재 호가가 모두 있는 단지의 단순평균(층별 곳 수 표기), 증감률 = 평균 호가 ÷ 평균 기준가 − 1" + "</div>";
   h += '<div class="foot">' + esc(DATA.source) + " · " + esc(DATA.unit) + "</div>";
   var body = document.getElementById("sidebody"); body.innerHTML = h; body.scrollTop = 0;
   body.querySelectorAll("tr.row").forEach(function (tr) { tr.onclick = function () { openDetail(tr.dataset.id, true); }; });
