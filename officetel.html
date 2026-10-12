@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>운정역 오피스텔 분양가 검토</title>
+<style>
+:root{--navy:#1b2a5c;--line:#d9dee8;--up:#d93025;--down:#1a6fd1;--mut:#6b7280;--bg:#f4f6fa}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;color:#1f2937}
+header{height:38px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:14px;font-weight:700}
+header span.s{font-weight:400;font-size:12px;opacity:.9}
+#wrap{display:flex;height:calc(100% - 38px)}
+#map{flex:1;min-width:0}
+#panel{width:520px;max-width:55%;overflow:auto;border-left:1px solid var(--line);background:#fff;padding:14px 16px}
+h2{font-size:16px;margin:0 0 2px}
+.sub{font-size:12px;color:var(--mut);margin-bottom:10px;line-height:1.5}
+h3{font-size:13px;margin:16px 0 6px;color:var(--navy)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{border:1px solid var(--line);padding:5px 6px;text-align:right}
+th{background:var(--bg);text-align:center;font-weight:700}
+td.l{text-align:left}
+.up{color:var(--up);font-weight:700}.dn{color:var(--down);font-weight:700}
+.note{font-size:11px;color:var(--mut);line-height:1.55;margin-top:8px}
+.tag{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px}
+#err{padding:20px;color:#b91c1c;font-size:13px}
+@media(max-width:800px){#wrap{flex-direction:column}#map{height:45%;flex:none}#panel{width:100%;max-width:none;border-left:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header><div id="title"></div><span class="s" id="src"></span></header>
+<div id="wrap"><div id="map"></div><div id="panel"><div id="err"></div></div></div>
+<script src="data-officetel.js"></script>
+<script>
+(function(){
+var D=window.OFFICETEL_DATA, $=function(i){return document.getElementById(i)};
+$('title').textContent=window.OFFICETEL_TITLE;
+function eok(v){return (v/10000).toFixed(2)+'억'}
+function chg(cur,base){
+  var p=(cur/base-1)*100; var c=p>0.05?'up':(p<-0.05?'dn':'');
+  return '<span class="'+c+'">'+(p>0?'▲ ':(p<0?'▼ ':''))+Math.abs(p).toFixed(1)+'%</span>';
+}
+function render(c){
+  var t84=c.types.filter(function(t){return t.area<100});
+  var units=t84.reduce(function(a,t){return a+t.units},0);
+  var base=t84.reduce(function(a,t){return a+t.price*t.units},0)/units;
+  var minP=Math.min.apply(null,t84.map(function(t){return t.price})), maxP=Math.max.apply(null,t84.map(function(t){return t.price}));
+  var h='<h2>'+c.name+'</h2><div class="sub">'+c.address+' · '+c.households.toLocaleString()+'세대 · 입주 '+c.approval+'<br>'+c.developer+'</div>';
+  h+='<span class="tag">모집공고 '+c.notice.date+'</span><span class="tag">청약 '+c.notice.apply+'</span><span class="tag">계약 '+c.notice.contract+'</span>';
+  h+='<h3>① 분양가 (입주자모집공고 · 타입별 최고금액, 부가세 포함)</h3><table><tr><th>타입</th><th>호갱노노·KB 표기</th><th>전용㎡</th><th>세대</th><th>분양가(만원)</th><th>전용 평당</th></tr>';
+  c.types.forEach(function(t){
+    var py=t.price/(t.area/3.3058);
+    h+='<tr><td>'+t.code+'</td><td>'+t.alias+'</td><td>'+t.area.toFixed(2)+'</td><td>'+t.units+'</td><td>'+t.price.toLocaleString()+' ('+eok(t.price)+')</td><td>'+Math.round(py).toLocaleString()+'</td></tr>';
+  });
+  h+='</table><div class="note">84㎡ 4개 타입('+units.toLocaleString()+'세대) 최고가 범위 '+eok(minP)+' ~ '+eok(maxP)+', 세대수 가중평균 '+eok(base)+'. 아래 증감률은 이 가중평균(최고금액 기준)과 비교합니다.</div>';
+  var a=c.asking;
+  h+='<h3>② 현재 가격 vs 분양가 (전용 84㎡)</h3><table><tr><th>구분</th><th>금액(만원)</th><th>분양가 대비</th></tr>';
+  function row(label,v,extra){h+='<tr><td class="l">'+label+(extra?'<br><span style="color:#6b7280;font-size:11px">'+extra+'</span>':'')+'</td><td>'+v.toLocaleString()+' ('+eok(v)+')</td><td>'+chg(v,base)+'</td></tr>'}
+  row('네이버 호가 평균',a.avg,a.label+' · '+a.date);
+  row('네이버 호가 중앙값',a.median);
+  row('네이버 호가 최저',a.min);
+  row('네이버 호가 최고',a.max);
+  a.byFloor.forEach(function(f){row('호가 '+f.f+' 평균',f.avg,f.n+'건')});
+  c.trades.forEach(function(t){row('실거래 '+t.date,t.price,t.note)});
+  row('KB 매물 평균가',c.kb.listAvg,'매매 매물 '+c.kb.listCount+'건');
+  h+='</table>';
+  h+='<div class="note">호가 전용 평당가(84㎡): 평균 '+a.perPyeong.avg.toLocaleString()+' · 중앙 '+a.perPyeong.median.toLocaleString()+' · 최저 '+a.perPyeong.min.toLocaleString()+' · 최고 '+a.perPyeong.max.toLocaleString()+' (만원/평)<br>KB AI시세 없음 · 전세 실거래 '+eok(c.kb.jeonse)+' ('+c.kb.jeonseDate+')</div>';
+  h+='<div class="note">※ '+c.memo+'</div><div class="note">출처: '+window.OFFICETEL_SOURCE+'</div>';
+  $('panel').innerHTML=h;
+}
+render(D[0]);
+
+fetch('index.html').then(function(r){return r.text()}).then(function(t){
+  var m=t.match(/https:\/\/dapi\.kakao\.com\/v2\/maps\/sdk\.js[^"']*/);
+  if(!m) throw new Error('SDK 주소를 찾지 못함');
+  var u=m[0].replace(/&amp;/g,'&');
+  if(u.indexOf('autoload')<0) u+='&autoload=false'; else u=u.replace(/autoload=[^&]*/,'autoload=false');
+  if(u.indexOf('libraries')<0) u+='&libraries=services';
+  var s=document.createElement('script'); s.src=u;
+  s.onload=function(){kakao.maps.load(initMap)};
+  s.onerror=function(){$('map').innerHTML='<div id="err">지도 SDK를 불러오지 못했습니다.</div>'};
+  document.head.appendChild(s);
+}).catch(function(e){$('map').innerHTML='<div id="err">지도를 불러오지 못했습니다: '+e.message+'</div>'});
+
+function initMap(){
+  var map=new kakao.maps.Map($('map'),{center:new kakao.maps.LatLng(37.7215,126.7640),level:4});
+  var g=new kakao.maps.services.Geocoder();
+  D.forEach(function(c){
+    g.addressSearch(c.geocode,function(res,st){
+      if(st!==kakao.maps.services.Status.OK||!res.length) return;
+      var pos=new kakao.maps.LatLng(res[0].y,res[0].x);
+      map.setCenter(pos);
+      var mk=new kakao.maps.Marker({map:map,position:pos});
+      var iw=new kakao.maps.CustomOverlay({position:pos,yAnchor:2.3,content:'<div style="background:#1b2a5c;color:#fff;padding:4px 8px;border-radius:4px;font-size:12px;white-space:nowrap">'+c.name+'</div>'});
+      iw.setMap(map);
+      kakao.maps.event.addListener(mk,'click',function(){render(c)});
+    });
+  });
+}
+})();
+</script>
+</body>
+</html>
