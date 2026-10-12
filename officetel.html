@@ -84,7 +84,7 @@ function overview(){
     });
   });
   h+='<div class="note">출처: 네이버부동산·KB부동산 매물 호가(2026.10.12 조회, 같은 매물 합침). 호가는 실제 거래가보다 높을 수 있고, 표본이 적은 단지는 평균이 흔들립니다.'+(mode!=='m'?' 오피스텔은 전세보다 월세 매물이 훨씬 많아 전세 표본이 적거나 없는 단지가 많습니다. 보증금·월세 단위는 만원.':'')+'</div>';
-  $('panel').innerHTML=h; wire();
+  $('panel').innerHTML=h; wire(); if(window.__lab)window.__lab();
 }
 function wire(){
   [].forEach.call(document.querySelectorAll('.mode'),function(b){b.onclick=function(){mode=b.getAttribute('data-m');render(cur)}});
