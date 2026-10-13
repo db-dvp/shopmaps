@@ -28,6 +28,7 @@ td.l{text-align:left}
 .note{font-size:11px;color:var(--mut);line-height:1.55;margin-top:8px}
 .tag{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px}
 .tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}.tab{border:1px solid var(--line);background:#fff;border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:inherit}.tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}.x{color:#6b7280;font-size:11px}.big{display:flex;gap:10px;margin:6px 0}.big>div{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}.big .k{display:block;font-size:11px;color:var(--mut)}.big b{font-size:24px;color:var(--navy)}.big .u{font-size:11px;color:var(--mut);margin-left:4px}.rg{font-size:15px;margin:20px 0 0;padding-top:8px;border-top:2px solid var(--navy)}tr.go{cursor:pointer}tr.go:hover td{background:var(--bg)}.warn{font-size:12px;color:var(--up);margin-top:6px}.modes{display:flex;gap:0;margin:0 0 12px;border:1px solid var(--navy);border-radius:6px;overflow:hidden}.mode{flex:1;border:0;background:#fff;color:var(--navy);padding:7px 0;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}.mode.on{background:var(--navy);color:#fff}.mode+.mode{border-left:1px solid var(--navy)}
+table.cmp{table-layout:auto}table.cmp th.sk{cursor:pointer;user-select:none;white-space:nowrap}table.cmp th.sk:hover{background:#e3e8f3}table.cmp th .ar{color:var(--navy);font-size:10px}table.cmp td small{display:block;color:var(--mut);font-size:10.5px;font-weight:400}table.cmp td.l small{margin-left:23px}.lo{color:#9aa1b2}.chips{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 8px;align-items:center}.chips .lb{font-size:11px;color:var(--mut);margin-right:2px}.chip{border:1px solid var(--line);background:#fff;border-radius:12px;padding:2px 10px;font-size:11.5px;cursor:pointer;font-family:inherit}.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 #err{padding:20px;color:#b91c1c;font-size:13px}
 @media(max-width:800px){#wrap{flex-direction:column}#mapbox{height:45%;flex:none}#panel{width:100%;max-width:none;border-left:0;border-top:1px solid var(--line)}}
 </style>
@@ -53,15 +54,52 @@ var cur=0, mode='m', RENT=window.OFFICETEL_RENT||{}, MN={m:'매매',j:'전세',w
 function rentOf(c){return RENT[c.id]||{}}
 function bd(i){return '<span class="bd '+sizeOf(D[i])+'">'+(i+1)+'</span>'}
 function tabs(){
-  var h='<div class="tabs"><button class="tab'+(cur===-1?' on':'')+'" data-i="-1">전체 요약</button>';
+  var h='<div class="tabs"><button class="tab'+(cur===-2?' on':'')+'" data-i="-2">한눈에 비교</button><button class="tab'+(cur===-1?' on':'')+'" data-i="-1">지역별 요약</button>';
   D.forEach(function(c,i){h+='<button class="tab'+(i===cur?' on':'')+'" data-i="'+i+'">'+bd(i)+c.short+'</button>'});
-  h+='</div><div class="modes">';
+  h+='</div>'; if(cur===-2) return h;
+  h+='<div class="modes">';
   ['m','j','w'].forEach(function(k){h+='<button class="mode'+(mode===k?' on':'')+'" data-m="'+k+'">'+MN[k]+'</button>'});
   return h+'</div>';
 }
 function sizeOf(c){ if(c.kind==='생숙')return 'H'; if(c.byType){var m=c.byType.length?Math.max.apply(null,c.byType.map(function(r){return r.ex})):(c.maxEx||0);return m>=60?'L':'S'} return (c.target&&c.target.min>=60)?'L':'S'; }
 function statOf(c){ if(c.byType) return c.overall.n?{n:c.overall.n,avg:c.overall.ppEx.avg,med:c.overall.ppEx.med}:null; var a=c.asking; if(!a) return null; var m=a.label.match(/(\d+)건/); return {n:m?+m[1]:0,avg:a.perPyeong.avg,med:a.perPyeong.median}; }
 var REGIONS=['운정','야당','대화','탄현'];
+var CS={k:'m',d:-1,rg:'',sz:''};
+function cmpRows(){
+  var rows=[]; D.forEach(function(c,i){
+    var st=statOf(c),R=rentOf(c),sz=sizeOf(c),rg=c.region||'운정';
+    if(CS.rg&&rg!==CS.rg)return; if(CS.sz&&sz!==CS.sz)return;
+    var j=R.j,w=R.w;
+    rows.push({i:i,c:c,rg:rg,sz:sz,m:st,j:j||null,w:w||null,
+      mv:st?st.avg:null,jv:j?j.ppAvg:null,
+      ratio:(st&&j&&j.n>=3&&st.n>=3)?j.ppAvg/st.avg*100:null,
+      wv:w?w.ppRent:null,y:yld(c,w),no:i,ap:c.approval&&c.approval!=='-'?c.approval:null});
+  });
+  var key={m:'mv',j:'jv',r:'ratio',w:'wv',y:'y',no:'no',ap:'ap'}[CS.k]||'mv';
+  rows.sort(function(a,b){var x=a[key],y=b[key]; if(x==null&&y==null)return a.no-b.no; if(x==null)return 1; if(y==null)return -1; return x<y?-CS.d:(x>y?CS.d:0)});
+  return rows;
+}
+function cmpCell(v,n,fmt){ if(v==null)return '<td class="lo">-</td>'; return '<td'+(n<3?' class="lo"':'')+'>'+fmt(v)+'<small>'+n+'건</small></td>'; }
+function compare(){
+  var SN={L:'대형',S:'소형',H:'생숙'}, rgs=[]; D.forEach(function(c){var r=c.region||'운정'; if(rgs.indexOf(r)<0)rgs.push(r)});
+  var h=tabs()+'<h2>오피스텔 한눈에 비교</h2><div class="sub">단지를 한 줄씩 비교합니다 · 머리글을 누르면 정렬 · 행을 누르면 상세와 지도 위치로 이동 · 회색 글씨는 표본 3건 미만(참고용)</div>';
+  h+='<div class="chips"><span class="lb">지역</span><button class="chip'+(CS.rg===''?' on':'')+'" data-rg="">전체</button>'+rgs.map(function(r){return '<button class="chip'+(CS.rg===r?' on':'')+'" data-rg="'+r+'">'+r+'</button>'}).join('')+'<span class="lb" style="margin-left:8px">구분</span><button class="chip'+(CS.sz===''?' on':'')+'" data-sz="">전체</button><button class="chip'+(CS.sz==='L'?' on':'')+'" data-sz="L">대형</button><button class="chip'+(CS.sz==='S'?' on':'')+'" data-sz="S">소형</button><button class="chip'+(CS.sz==='H'?' on':'')+'" data-sz="H">생숙</button></div>';
+  var cols=[['no','단지'],['ap','입주'],['m','매매 평당'],['j','전세 평당'],['r','전세가율'],['w','월세 평당'],['y','수익률(연)']];
+  h+='<table class="cmp"><tr>'+cols.map(function(c){return '<th class="sk" data-k="'+c[0]+'">'+c[1]+(CS.k===c[0]?' <span class="ar">'+(CS.d>0?'▲':'▼')+'</span>':'')+'</th>'}).join('')+'</tr>';
+  var rows=cmpRows();
+  rows.forEach(function(o){
+    var c=o.c, f0=function(v){return Math.round(v).toLocaleString()};
+    h+='<tr class="go" data-i="'+o.i+'"><td class="l">'+bd(o.i)+c.short+'<small>'+o.rg+' · '+SN[o.sz]+(c.households?' · '+c.households.toLocaleString()+'세대':'')+'</small></td><td>'+(o.ap||'-')+'</td>'+
+      cmpCell(o.mv,o.m?o.m.n:0,f0)+cmpCell(o.jv,o.j?o.j.n:0,f0)+
+      (o.ratio!=null?'<td>'+o.ratio.toFixed(0)+'%</td>':'<td class="lo">-</td>')+
+      cmpCell(o.wv,o.w?o.w.n:0,function(v){return v.toFixed(1)})+
+      (o.y!=null?'<td>'+o.y.toFixed(1)+'%</td>':'<td class="lo">-</td>')+'</tr>';
+  });
+  if(!rows.length) h+='<tr><td colspan="7" style="text-align:center;color:#6b7280">조건에 맞는 단지가 없습니다</td></tr>';
+  h+='</table><div class="note">매매·전세 평당 = 전용 평당 호가(만원/평), 월세 평당 = 월세(만원)÷전용평. 전세가율 = 전세 평당 ÷ 매매 평당(두 쪽 모두 3건 이상일 때), 수익률 = 월세×12 ÷ (매매 평당 − 보증금 평당)(3건 이상). 생활숙박시설은 오피스텔과 성격이 달라 구분 칩으로 따로 볼 수 있습니다. 호가는 실제 거래가보다 높을 수 있습니다.</div>';
+  $('panel').innerHTML=h; wire(); if(window.__lab)window.__lab();
+}
+
 function yld(c,w){ var st=statOf(c); if(!st||!w||w.n<3||st.n<3) return null; var base=st.avg-w.ppDep; return base>0?(w.ppRent*12/base*100):null; }
 function overview(){
   var h=tabs()+'<h2>파주·일산 오피스텔 '+MN[mode]+' 호가 평당가</h2><div class="sub">'+(mode==='m'?'전용 평당 매매 호가':mode==='j'?'전용 평당 전세 호가 · 전세가율 = 전세 평당 ÷ 매매 호가 평당':'전용 평당 월세(만원/평/월) · 수익률 = 월세×12 ÷ (매매 평당 − 보증금 평당)')+' · 대형 = 전용 60㎡ 이상, 소형 = 전용 60㎡ 미만 · 단지를 누르면 상세가 열립니다</div>';
@@ -95,6 +133,8 @@ function overview(){
   $('panel').innerHTML=h; wire(); if(window.__lab)window.__lab();
 }
 function wire(){
+  [].forEach.call(document.querySelectorAll('th.sk'),function(b){b.onclick=function(){var k=b.getAttribute('data-k'); if(CS.k===k)CS.d=-CS.d; else{CS.k=k;CS.d=(k==='no'||k==='ap')?1:-1} compare()}});
+  [].forEach.call(document.querySelectorAll('.chip'),function(b){b.onclick=function(){ if(b.hasAttribute('data-rg'))CS.rg=b.getAttribute('data-rg'); else CS.sz=b.getAttribute('data-sz'); compare()}});
   [].forEach.call(document.querySelectorAll('.mode'),function(b){b.onclick=function(){mode=b.getAttribute('data-m');render(cur)}});
   [].forEach.call(document.querySelectorAll('.tab,tr.go'),function(b){b.onclick=function(){var k=+b.getAttribute('data-i');render(k);if(window.__go&&k>=0)window.__go(k)}});
 }
@@ -122,6 +162,7 @@ function rentDetail(c){
   return h;
 }
 function render(i){
+  if(i===-2){cur=-2;compare();return;}
   if(i<0){cur=-1;overview();return;}
   cur=i; var c=D[i], a=c.asking;
   var h=tabs()+'<h2>'+c.name+'</h2><div class="sub">'+(c.address?c.address+' · ':'')+(c.households?c.households.toLocaleString()+'세대 · ':'')+(c.approval&&c.approval!=='-'?'입주 '+c.approval:'세대수·입주 미확인')+'<br>'+c.developer+'</div>';
@@ -171,7 +212,7 @@ function render(i){
   $('panel').innerHTML=h;
   wire(); if(window.__lab)window.__lab();
 }
-render(-1);
+render(-2);
 
 // 카카오 지도: 기존 index.html 과 같은 JavaScript 키를 index.html 에서 읽어 사용
 fetch('index.html').then(function(r){return r.text()}).then(function(t){
