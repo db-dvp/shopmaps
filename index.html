@@ -91,8 +91,8 @@ table.dt td b{font-weight:700}
 .foot{margin-top:12px;padding-top:8px;border-top:1px dashed var(--line);font-size:11px;color:var(--mute);line-height:1.5}
 .cmp{font-weight:700}
 #sidebody{overflow-x:auto}
-.lab{font-weight:700;color:#12206b;font-size:17px;line-height:1;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff;pointer-events:none;transform:translate(-50%,-50%);white-space:nowrap}
-.lab.sm{font-size:13px}
+.lab{font-weight:700;color:#12206b;font-size:11.5px;line-height:1;text-align:center;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff;pointer-events:auto;cursor:pointer;white-space:nowrap;padding:4px 6px}
+.lab.sm{font-size:10px}
 .dot{width:20px;height:20px;border-radius:50%;background:#0f8f89;color:#fff;font-weight:700;font-size:10px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px #0006;cursor:pointer;transform:translate(-50%,-50%);font-family:inherit}
 .legend i.lg-el{display:inline-block;width:18px;height:10px;border-radius:50%;transform:none;margin-right:7px;vertical-align:-1px;border:1px solid #fff9}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 2px}
@@ -263,7 +263,11 @@ function drawShape(sh) {
   if (old) { old.poly.setMap(null); old.lab.setMap(null); }
   var col = shapeColor(sh), c = shapeCenter(sh);
   var poly = new kakao.maps.Polygon({ map: map, path: ellipsePath(sh), strokeWeight: 2, strokeColor: "#3b4a7a", strokeOpacity: 0.9, fillColor: col, fillOpacity: 0.62, zIndex: 2 });
-  var lab = new kakao.maps.CustomOverlay({ map: map, position: new kakao.maps.LatLng(c[0], c[1]), content: '<div class="lab' + (dispNo(sh.n).length > 3 ? " sm" : "") + '">' + dispNo(sh.n) + "</div>", zIndex: 4, clickable: false });
+  var el = document.createElement("div"); el.className = "lab" + (dispNo(sh.n).length > 3 ? " sm" : ""); el.textContent = dispNo(sh.n);
+  el.onclick = function () { var ms = members(sh.n); if (ms.length) openDetail(ms[0].id, false); };
+  el.onmouseenter = function () { tipOv.setContent('<div class="tip">' + shapeTip(sh) + "</div>"); tipOv.setPosition(new kakao.maps.LatLng(c[0], c[1])); tipOv.setMap(map); };
+  el.onmouseleave = function () { tipOv.setMap(null); };
+  var lab = new kakao.maps.CustomOverlay({ map: map, position: new kakao.maps.LatLng(c[0], c[1]), content: el, zIndex: 4, clickable: true, xAnchor: 0.5, yAnchor: 0.5 });
   kakao.maps.event.addListener(poly, "mouseover", function (ev) { tipOv.setContent('<div class="tip">' + shapeTip(sh) + "</div>"); tipOv.setPosition(ev.latLng); tipOv.setMap(map); });
   kakao.maps.event.addListener(poly, "mousemove", function (ev) { tipOv.setPosition(ev.latLng); });
   kakao.maps.event.addListener(poly, "mouseout", function () { tipOv.setMap(null); });
