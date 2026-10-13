@@ -14,9 +14,9 @@ header span.s{margin-left:auto;font-weight:400;font-size:11.5px;opacity:.85;whit
 #mapbox{flex:1;position:relative;min-width:0}
 #map{position:absolute;inset:0}
 #panel{width:clamp(560px,48vw,720px);overflow:auto;border-left:1px solid var(--line);background:#fff;padding:12px 14px 18px}
-.legend{position:absolute;left:12px;top:12px;z-index:5;background:#fffffff2;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;display:flex;flex-direction:column;gap:5px;box-shadow:0 1px 6px #0002}.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:7px;vertical-align:-1px}.legend .lg2{color:var(--mut);font-size:11px}
-.pin{position:relative;cursor:pointer}.pin.L{--c:#2f6fd6}.pin.S{--c:#12a39c}.pin .n{width:22px;height:22px;border-radius:50%;background:var(--c);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px #0006}.pin .t{display:none;position:absolute;left:26px;top:50%;transform:translateY(-50%);background:var(--c);color:#fff;padding:3px 9px;border-radius:12px;font-size:12px;font-weight:700;white-space:nowrap;border:2px solid #fff;box-shadow:0 1px 4px #0006}.pin:hover .t,.pin.sel .t{display:block}.pin.sel .n{transform:scale(1.25)}
-.bd{display:inline-flex;width:17px;height:17px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:1px}.bd.L{background:#2f6fd6}.bd.S{background:#12a39c}
+.legend{position:absolute;left:12px;top:12px;z-index:5;background:#fffffff2;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;display:flex;flex-direction:column;gap:5px;box-shadow:0 1px 6px #0002}.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:7px;vertical-align:-1px}.legend .lg2{color:var(--mut);font-size:11px}.legend .zb{display:flex;gap:4px}.legend .zb button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:2px 9px;font-size:11.5px;cursor:pointer;font-family:inherit}.legend .zb button:hover{background:var(--bg)}
+.pin{position:relative;cursor:pointer}.pin.L{--c:#2f6fd6}.pin.S{--c:#12a39c}.pin.H{--c:#8a5cc7}.pin .n{width:22px;height:22px;border-radius:50%;background:var(--c);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px #0006}.pin .t{display:none;position:absolute;left:26px;top:50%;transform:translateY(-50%);background:var(--c);color:#fff;padding:3px 9px;border-radius:12px;font-size:12px;font-weight:700;white-space:nowrap;border:2px solid #fff;box-shadow:0 1px 4px #0006}.pin:hover .t,.pin.sel .t{display:block}.pin.sel .n{transform:scale(1.25)}
+.bd{display:inline-flex;width:17px;height:17px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-right:6px;vertical-align:1px}.bd.L{background:#2f6fd6}.bd.S{background:#12a39c}.bd.H{background:#8a5cc7}
 h2{font-size:16px;margin:0 0 2px}
 .sub{font-size:12px;color:var(--mut);margin-bottom:10px;line-height:1.5}
 h3{font-size:13px;margin:16px 0 6px;color:var(--navy)}
@@ -34,13 +34,14 @@ td.l{text-align:left}
 </head>
 <body>
 <header><div id="title"></div><span class="s" id="src"></span></header>
-<div id="wrap"><div id="mapbox"><div id="map"></div><div class="legend"><span><i style="background:var(--in)"></i>대형 단지 (전용 60㎡ 이상)</span><span><i style="background:var(--bld)"></i>소형 단지 (전용 60㎡ 미만)</span><span class="lg2">번호 = 단지 번호 · 마우스를 올리면 이름·평당가(선택한 탭 기준)</span></div></div><div id="panel"><div id="err"></div></div></div>
+<div id="wrap"><div id="mapbox"><div id="map"></div><div class="legend"><span><i style="background:var(--in)"></i>대형 단지 (전용 60㎡ 이상)</span><span><i style="background:var(--bld)"></i>소형 단지 (전용 60㎡ 미만)</span><span><i style="background:#8a5cc7"></i>생활숙박시설 (오피스텔과 별도)</span><span class="zb" id="zb"></span><span class="lg2">번호 = 단지 번호 · 마우스를 올리면 이름·평당가(선택한 탭 기준)</span></div></div><div id="panel"><div id="err"></div></div></div>
 <script src="data-officetel.js"></script>
 <script src="data-officetel-kb.js"></script>
 <script src="data-officetel-rent.js"></script>
+<script src="data-officetel-yadang.js"></script>
 <script>
 (function(){
-var D=(window.OFFICETEL_DATA||[]).concat(window.OFFICETEL_DATA2||[]), $=function(i){return document.getElementById(i)};
+var D=(window.OFFICETEL_DATA||[]).concat(window.OFFICETEL_DATA2||[]).concat(window.OFFICETEL_DATA3||[]), $=function(i){return document.getElementById(i)};
 $('title').textContent='파주 오피스텔 최근 호가 · 평당가'; $('src').textContent='호가: 네이버·KB부동산 26.10 / 같은 매물 합침';
 function eok(v){return (v/10000).toFixed(2)+'억'}
 function chg(cur,base){
@@ -49,7 +50,7 @@ function chg(cur,base){
 }
 var cur=0, mode='m', RENT=window.OFFICETEL_RENT||{}, MN={m:'매매',j:'전세',w:'월세'};
 function rentOf(c){return RENT[c.id]||{}}
-function bd(i){return '<span class="bd '+(sizeOf(D[i])==='L'?'L':'S')+'">'+(i+1)+'</span>'}
+function bd(i){return '<span class="bd '+sizeOf(D[i])+'">'+(i+1)+'</span>'}
 function tabs(){
   var h='<div class="tabs"><button class="tab'+(cur===-1?' on':'')+'" data-i="-1">전체 요약</button>';
   D.forEach(function(c,i){h+='<button class="tab'+(i===cur?' on':'')+'" data-i="'+i+'">'+bd(i)+c.short+'</button>'});
@@ -57,23 +58,24 @@ function tabs(){
   ['m','j','w'].forEach(function(k){h+='<button class="mode'+(mode===k?' on':'')+'" data-m="'+k+'">'+MN[k]+'</button>'});
   return h+'</div>';
 }
-function sizeOf(c){ if(c.byType){var m=Math.max.apply(null,c.byType.map(function(r){return r.ex}));return m>=60?'L':'S'} return (c.target&&c.target.min>=60)?'L':'S'; }
-function statOf(c){ if(c.byType) return {n:c.overall.n,avg:c.overall.ppEx.avg,med:c.overall.ppEx.med}; var a=c.asking; if(!a) return null; var m=a.label.match(/(\d+)건/); return {n:m?+m[1]:0,avg:a.perPyeong.avg,med:a.perPyeong.median}; }
+function sizeOf(c){ if(c.kind==='생숙')return 'H'; if(c.byType){var m=c.byType.length?Math.max.apply(null,c.byType.map(function(r){return r.ex})):(c.maxEx||0);return m>=60?'L':'S'} return (c.target&&c.target.min>=60)?'L':'S'; }
+function statOf(c){ if(c.byType) return c.overall.n?{n:c.overall.n,avg:c.overall.ppEx.avg,med:c.overall.ppEx.med}:null; var a=c.asking; if(!a) return null; var m=a.label.match(/(\d+)건/); return {n:m?+m[1]:0,avg:a.perPyeong.avg,med:a.perPyeong.median}; }
 var REGIONS=['운정','야당','대화','탄현'];
 function yld(c,w){ var st=statOf(c); if(!st||!w||w.n<3||st.n<3) return null; var base=st.avg-w.ppDep; return base>0?(w.ppRent*12/base*100):null; }
 function overview(){
   var h=tabs()+'<h2>파주 오피스텔 '+MN[mode]+' 호가 평당가</h2><div class="sub">'+(mode==='m'?'전용 평당 매매 호가':mode==='j'?'전용 평당 전세 호가 · 전세가율 = 전세 평당 ÷ 매매 호가 평당':'전용 평당 월세(만원/평/월) · 수익률 = 월세×12 ÷ (매매 평당 − 보증금 평당)')+' · 대형 = 전용 60㎡ 이상, 소형 = 전용 60㎡ 미만 · 단지를 누르면 상세가 열립니다</div>';
   REGIONS.forEach(function(rg){
     h+='<h3 class="rg">'+rg+'</h3>';
-    [['L','대형 (전용 60㎡ 이상)'],['S','소형 (전용 60㎡ 미만)']].forEach(function(sz){
+    [['L','대형 (전용 60㎡ 이상)'],['S','소형 (전용 60㎡ 미만)'],['H','생활숙박시설 (오피스텔과 별도)']].forEach(function(sz){
       var list=[]; D.forEach(function(c,i){ if((c.region||'운정')===rg && sizeOf(c)===sz[0]){
         var st=statOf(c), R=rentOf(c), x=null;
         if(mode==='m'){ if(st) x={n:st.n,v:st.avg,med:st.med}; }
         else if(mode==='j'){ if(R.j) x={n:R.j.n,v:R.j.ppAvg,med:R.j.ppMed,ratio:(st&&R.j.n>=3&&st.n>=3)?R.j.ppAvg/st.avg*100:null}; }
         else { if(R.w) x={n:R.w.n,v:R.w.ppRent,med:R.w.ppRentMed,dep:R.w.dep,rent:R.w.rent,y:yld(c,R.w)}; }
         list.push({c:c,i:i,x:x}); } });
+      if(!list.length&&sz[0]==='H')return;
       h+='<div class="note" style="margin-top:10px"><b>'+sz[1]+'</b></div>';
-      if(!list.length){h+='<div class="note">조사 예정</div>';return;}
+      if(!list.length){ if(sz[0]!=='H') h+='<div class="note">조사 예정</div>'; return;}
       var have=list.filter(function(o){return o.x}), none=list.filter(function(o){return !o.x});
       have.sort(function(a,b){return b.x.v-a.x.v});
       var f1=function(v){return mode==='w'?v.toFixed(1):Math.round(v).toLocaleString()};
@@ -81,9 +83,9 @@ function overview(){
       var tn=0,ta=0; have.forEach(function(o){tn+=o.x.n;ta+=o.x.v*o.x.n});
       h+='<table><tr>'+th+'</tr>';
       have.forEach(function(o){var x=o.x,c=o.c;
-        h+='<tr class="go" data-i="'+o.i+'"><td class="l">'+bd(o.i)+c.short+(x.n<5?' <span class="x">(표본 적음)</span>':'')+'</td><td>'+c.approval+'</td><td>'+x.n+'</td><td>'+f1(x.v)+'</td>'+
+        h+='<tr class="go" data-i="'+o.i+'"><td class="l">'+bd(o.i)+c.short+(x.n<5?' <span class="x">(표본 적음)</span>':'')+'</td><td>'+(c.approval||'-')+'</td><td>'+x.n+'</td><td>'+f1(x.v)+'</td>'+
         (mode==='m'?'<td>'+Math.round(x.med).toLocaleString()+'</td>':mode==='j'?'<td>'+Math.round(x.med).toLocaleString()+'</td><td>'+(x.ratio?x.ratio.toFixed(0)+'%':'-')+'</td>':'<td>'+x.dep.toLocaleString()+' / '+x.rent+'</td><td>'+(x.y!=null?x.y.toFixed(1)+'%':'-')+'</td>')+'</tr>'});
-      none.forEach(function(o){var cs=mode==='w'?5:(mode==='j'?5:4);h+='<tr class="go" data-i="'+o.i+'"><td class="l">'+bd(o.i)+o.c.short+'</td><td>'+o.c.approval+'</td><td colspan="'+cs+'" style="text-align:center;color:#6b7280">'+MN[mode]+' 매물 없음</td></tr>'});
+      none.forEach(function(o){var cs=mode==='w'?5:(mode==='j'?5:4);h+='<tr class="go" data-i="'+o.i+'"><td class="l">'+bd(o.i)+o.c.short+'</td><td>'+(o.c.approval||'-')+'</td><td colspan="'+cs+'" style="text-align:center;color:#6b7280">'+MN[mode]+' 매물 없음</td></tr>'});
       if(have.length>1) h+='<tr><td class="l"><b>건수 가중 평균</b></td><td></td><td>'+tn+'</td><td><b>'+f1(ta/tn)+'</b></td><td colspan="'+(mode==='m'?1:2)+'"></td></tr>';
       h+='</table>';
     });
@@ -121,8 +123,9 @@ function rentDetail(c){
 function render(i){
   if(i<0){cur=-1;overview();return;}
   cur=i; var c=D[i], a=c.asking;
-  var h=tabs()+'<h2>'+c.name+'</h2><div class="sub">'+(c.address?c.address+' · ':'')+c.households.toLocaleString()+'세대 · 입주 '+c.approval+'<br>'+c.developer+'</div>';
+  var h=tabs()+'<h2>'+c.name+'</h2><div class="sub">'+(c.address?c.address+' · ':'')+(c.households?c.households.toLocaleString()+'세대 · ':'')+(c.approval&&c.approval!=='-'?'입주 '+c.approval:'세대수·입주 미확인')+'<br>'+c.developer+'</div>';
   if(mode!=='m'){ h+=rentDetail(c); }
+  else if(c.byType&&!c.byType.length){ h+='<div class="note" style="margin-top:12px">이 단지는 KB부동산에 등록된 <b>매매 매물이 없습니다</b>. 전세·월세 탭을 확인하세요.</div>'; }
   else if(c.byType){
     var o=c.overall;
     h+='<div class="big"><div><span class="k">평균 평당가 (전용)</span><b>'+o.ppEx.avg.toLocaleString()+'</b><span class="u">만원/평</span></div><div><span class="k">중앙값 평당가 (전용)</span><b>'+o.ppEx.med.toLocaleString()+'</b><span class="u">만원/평</span></div></div>';
@@ -190,18 +193,27 @@ function initMap(){
   window.__lab=function(){ D.forEach(function(c,i){ if(!els[i])return; var R=rentOf(c),st=statOf(c),v='';
     if(mode==='m') v=st?st.avg.toLocaleString():''; else if(mode==='j') v=R.j?R.j.ppAvg.toLocaleString():'전세 없음'; else v=R.w?'월 '+R.w.ppRent.toFixed(1):'월세 없음';
     els[i].lastChild.textContent=c.short+(v?' · '+v:''); els[i].classList.toggle('sel',i===cur); ovs[i].setZIndex(i===cur?10:1); }); };
+  function relax(){ try{ var pr=map.getProjection(),P=[],ids=[],k,i,j;
+    for(i=0;i<D.length;i++){ if(!pts[i]||!els[i])continue; var p=pr.containerPointFromCoords(pts[i]); P[i]={x:p.x,y:p.y,ox:0,oy:0}; ids.push(i); }
+    for(k=0;k<40;k++){ for(var a=0;a<ids.length;a++)for(var b=a+1;b<ids.length;b++){ i=ids[a];j=ids[b];
+      var dx=P[i].x+P[i].ox-P[j].x-P[j].ox, dy=P[i].y+P[i].oy-P[j].y-P[j].oy, d=Math.sqrt(dx*dx+dy*dy), m=27;
+      if(d<m){ if(d<0.5){dx=Math.cos(i*2.4);dy=Math.sin(i*2.4);d=1;} var f=(m-d)/2/d; P[i].ox+=dx*f;P[i].oy+=dy*f;P[j].ox-=dx*f;P[j].oy-=dy*f; } } }
+    ids.forEach(function(i){ els[i].style.left=Math.round(P[i].ox)+'px'; els[i].style.top=Math.round(P[i].oy)+'px'; }); }catch(e){} }
+  kakao.maps.event.addListener(map,'idle',relax);
+  window.__zoom=function(rg){ var b=new kakao.maps.LatLngBounds(),n=0; D.forEach(function(c,i){ if(pts[i]&&(!rg||(c.region||'운정')===rg)){b.extend(pts[i]);n++} }); if(n){window.__zoomed=true;map.setBounds(b);} };
+  (function(){ var z=$('zb'); if(!z)return; z.innerHTML='<button data-r="">전체</button><button data-r="운정">운정</button><button data-r="야당">야당</button>'; [].forEach.call(z.querySelectorAll('button'),function(b){b.onclick=function(){window.__zoom(b.getAttribute('data-r'))}}); })();
   D.forEach(function(c,i){
-    (c.kw?function(cb){ps.keywordSearch(c.kw,cb)}:function(cb){g.addressSearch(c.geocode,cb)})(function(res,st){
+    (c.ll?function(cb){cb([{y:c.ll[0],x:c.ll[1]}],kakao.maps.services.Status.OK)}:c.kw?function(cb){ps.keywordSearch(c.kw,cb)}:function(cb){g.addressSearch(c.geocode,cb)})(function(res,st){
       if(st!==kakao.maps.services.Status.OK||!res.length) return;
       var pos=new kakao.maps.LatLng(res[0].y,res[0].x); pts[i]=pos;
       bounds.extend(pos);
-      var el=document.createElement('div'); el.className='pin '+(sizeOf(c)==='L'?'L':'S'); el.innerHTML='<span class="n">'+(i+1)+'</span><span class="t"></span>';
+      var el=document.createElement('div'); el.className='pin '+sizeOf(c); el.innerHTML='<span class="n">'+(i+1)+'</span><span class="t"></span>';
       el.onclick=function(){render(i)};
       var iw=new kakao.maps.CustomOverlay({position:pos,xAnchor:0.5,yAnchor:0.5,content:el,clickable:true,zIndex:1});
       el.onmouseenter=function(){iw.setZIndex(20)}; el.onmouseleave=function(){iw.setZIndex(i===cur?10:1)};
       ovs[i]=iw; els[i]=el;
       iw.setMap(map);
-      map.setBounds(bounds); if(window.__lab)window.__lab();
+      if(!window.__zoomed)map.setBounds(bounds); if(window.__lab)window.__lab(); relax();
     });
   });
 }
