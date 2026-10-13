@@ -412,8 +412,6 @@ function showSummary() {
   });
   h += '<tr class="avg tot"><td colspan="2" class="nm">전체 평균 <span class="cat">호가가 있는 단지</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
   h += "</tbody></table>";
-  h += '<div class="note">' + DATA.summaryNotes.filter(function (n) { return n.indexOf("증감률") < 0; }).map(esc).join("<br>") + "<br>· A=우미린·디이스트(가장 가까운 경쟁 급지) / B / C / D 급지 · 소계·전체 평균 = 현재 호가 평당가가 있는 단지의 평균(층별 곳 수 표기)" + "</div>";
-  h += '<div class="foot">' + esc(DATA.source) + " · " + esc(DATA.unit) + "</div>";
   var body = document.getElementById("sidebody"); body.innerHTML = h; body.scrollTop = 0;
   body.querySelectorAll("tr.row").forEach(function (tr) { tr.onclick = function () { openDetail(tr.dataset.id, true); }; });
 }
