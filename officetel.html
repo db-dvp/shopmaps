@@ -94,7 +94,7 @@ function overview(){
         var st=statOf(c),R=rentOf(c),j=R.j,w=R.w;
         list.push({c:c,i:i,m:st,j:j||null,w:w||null,mv:st?st.avg:null,jv:j?j.ppAvg:null,wv:w?w.ppRent:null,
           ratio:(st&&j&&j.n>=3&&st.n>=3)?j.ppAvg/st.avg*100:null,y:yld(c,w)}); } });
-      if(list.length){ list.sort(function(a,b){if(a.mv==null&&b.mv==null)return a.i-b.i; if(a.mv==null)return 1; if(b.mv==null)return -1; return b.mv-a.mv}); groups.push([sz,list]); }
+      if(list.length){ list.sort(function(a,b){return a.i-b.i}); groups.push([sz,list]); }
     });
     if(!groups.length)return;
     var total=0; groups.forEach(function(g){total+=g[1].length});
