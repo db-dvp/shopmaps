@@ -49,6 +49,8 @@ table.st tr.sel td{background:#fff6d8}
 table.st tr.grp td{border-top:2px solid #b9c1d6}
 table.st tr.avg td{background:#eef1f8;font-weight:700;border-top:2px solid #1f2d5c}
 table.st tr.avg td.nm{color:var(--navy)}
+table.st tr.avg.sub td{background:#f3f5fb;border-top:1px solid #1f2d5c;border-bottom:2px solid #b9c1d6}
+table.st tr.avg.tot td{background:#dfe5f4;border-top:3px double #1f2d5c}
 .no{display:inline-block;min-width:22px;padding:1px 5px;border-radius:11px;color:#fff;font-weight:700;font-size:11px}
 .no.in{background:var(--in)} .no.bld{background:var(--bld)}
 .cat{font-size:10.5px;color:var(--mute)}
@@ -171,6 +173,16 @@ function chgHtml(t) {
 }
 function entries() { return DATA.sites.concat(DATA.complexes); }
 function catOf(c) { return c.cat === "상가건물" ? "bld" : "in"; }
+/* 급지 표기: A(경쟁·인접) / B / C / D — 표시용 번호 (내부 id는 그대로) */
+var DISP = { "12": "A-1", "15": "A-2", "1": "B-1", "2": "B-2", "3": "B-3", "5": "C-1", "4": "C-2", "6": "C-3", "7": "C-4", "8": "C-5", "9": "C-6",
+  "10": "D-1", "11-1": "D-2", "11-2": "D-3", "11-3": "D-4", "11-4": "D-5", "13": "D-6", "16": "D-7", "14-1": "D-8", "14-2": "D-9", "14-3": "D-10", "14-4": "D-11" };
+function disp(id) { return DISP[id] || id; }
+function dispNo(no) {
+  var ms = members(no); if (!ms.length) return String(no);
+  if (ms.length === 1) return disp(ms[0].id);
+  var a = disp(ms[0].id), b = disp(ms[ms.length - 1].id); return a + "~" + b.split("-")[1];
+}
+function lbl(e) { return e.label === "SITE" ? "SITE" : disp(e.id); }
 
 /* ---------- 핀 이미지 (SVG data URI) ---------- */
 function pinImage(label, color, selected) {
@@ -238,9 +250,9 @@ function shapeColor(sh) { var m = members(sh.n)[0]; return m && m.cat === "상�
 function shapeTip(sh) {
   var ms = members(sh.n);
   if (ms.length > 1) {
-    return "<b>" + circ(sh.n) + " 상가건물 " + ms.length + "곳</b>" + ms.map(function (m) { return '<span class="ln">' + esc(m.id) + " " + esc(m.name) + " · " + f1Txt(m) + "</span>"; }).join("");
+    return "<b>" + dispNo(sh.n) + " 상가건물 " + ms.length + "곳</b>" + ms.map(function (m) { return '<span class="ln">' + esc(disp(m.id)) + " " + esc(m.name) + " · " + f1Txt(m) + "</span>"; }).join("");
   }
-  var m = ms[0]; return "<b>" + esc(m.id) + ". " + esc(m.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(m) + "</span>";
+  var m = ms[0]; return "<b>" + esc(disp(m.id)) + ". " + esc(m.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(m) + "</span>";
 }
 function f1Txt(e) {
   var s = DATA.summary.filter(function (x) { return x.id === e.id; })[0], f = s && s.f1 ? s.f1.curTxt : "-";
@@ -251,7 +263,7 @@ function drawShape(sh) {
   if (old) { old.poly.setMap(null); old.lab.setMap(null); }
   var col = shapeColor(sh), c = shapeCenter(sh);
   var poly = new kakao.maps.Polygon({ map: map, path: ellipsePath(sh), strokeWeight: 2, strokeColor: "#3b4a7a", strokeOpacity: 0.9, fillColor: col, fillOpacity: 0.62, zIndex: 2 });
-  var lab = new kakao.maps.CustomOverlay({ map: map, position: new kakao.maps.LatLng(c[0], c[1]), content: '<div class="lab' + (parseInt(sh.n, 10) > 20 ? " sm" : "") + '">' + circ(sh.n) + "</div>", zIndex: 4, clickable: false });
+  var lab = new kakao.maps.CustomOverlay({ map: map, position: new kakao.maps.LatLng(c[0], c[1]), content: '<div class="lab' + (dispNo(sh.n).length > 3 ? " sm" : "") + '">' + dispNo(sh.n) + "</div>", zIndex: 4, clickable: false });
   kakao.maps.event.addListener(poly, "mouseover", function (ev) { tipOv.setContent('<div class="tip">' + shapeTip(sh) + "</div>"); tipOv.setPosition(ev.latLng); tipOv.setMap(map); });
   kakao.maps.event.addListener(poly, "mousemove", function (ev) { tipOv.setPosition(ev.latLng); });
   kakao.maps.event.addListener(poly, "mouseout", function () { tipOv.setMap(null); });
@@ -261,8 +273,8 @@ function drawShape(sh) {
 function drawDot(e) {
   var c = coordOf(e.id) || e.tmp; if (!c) return;
   var old = dotObjs[e.id]; if (old) old.setMap(null);
-  var div = document.createElement("div"); div.className = "dot"; div.textContent = e.id.split("-")[1] || e.id;
-  div.onmouseenter = function () { tipOv.setContent('<div class="tip"><b>' + esc(e.id) + ". " + esc(e.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(e) + "</span></div>"); tipOv.setPosition(new kakao.maps.LatLng(c[0], c[1])); tipOv.setMap(map); };
+  var div = document.createElement("div"); div.className = "dot"; div.textContent = disp(e.id).split("-")[1] || disp(e.id);
+  div.onmouseenter = function () { tipOv.setContent('<div class="tip"><b>' + esc(disp(e.id)) + ". " + esc(e.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(e) + "</span></div>"); tipOv.setPosition(new kakao.maps.LatLng(c[0], c[1])); tipOv.setMap(map); };
   div.onmouseleave = function () { tipOv.setMap(null); };
   div.onclick = function () { openDetail(e.id, false); };
   var ov = new kakao.maps.CustomOverlay({ position: new kakao.maps.LatLng(c[0], c[1]), content: div, zIndex: 6, yAnchor: 0.5, xAnchor: 0.5 });
@@ -289,9 +301,9 @@ function placePin(e) {
   var c = coordOf(e.id) || e.tmp; if (!c) return;
   var pos = new kakao.maps.LatLng(c[0], c[1]), m = SITE_PINS[e.id];
   if (!m) {
-    m = new kakao.maps.Marker({ position: pos, image: pinImage(e.label, colorOf(e), false), draggable: false, clickable: true, zIndex: 3 });
+    m = new kakao.maps.Marker({ position: pos, image: pinImage(lbl(e), colorOf(e), false), draggable: false, clickable: true, zIndex: 3 });
     m.setMap(map); SITE_PINS[e.id] = m; m.__e = e;
-    kakao.maps.event.addListener(m, "mouseover", function () { tipOv.setContent('<div class="tip">' + (e.label === "SITE" ? "<b>SITE</b> · " + esc(e.name) : "<b>" + esc(e.id) + ". " + esc(e.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(e) + "</span>") + "</div>"); tipOv.setPosition(m.getPosition()); tipOv.setMap(map); });
+    kakao.maps.event.addListener(m, "mouseover", function () { tipOv.setContent('<div class="tip">' + (e.label === "SITE" ? "<b>SITE</b> · " + esc(e.name) : "<b>" + esc(disp(e.id)) + ". " + esc(e.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(e) + "</span>") + "</div>"); tipOv.setPosition(m.getPosition()); tipOv.setMap(map); });
     kakao.maps.event.addListener(m, "mouseout", function () { tipOv.setMap(null); });
     kakao.maps.event.addListener(m, "click", function () { if (e.label !== "SITE") openDetail(e.id, false); });
     kakao.maps.event.addListener(m, "dragend", function () { var p = m.getPosition(); LOCAL_FIX[e.id] = [+p.getLat().toFixed(6), +p.getLng().toFixed(6)]; saveFix(); renderFix(); });
@@ -301,7 +313,7 @@ function setSelected(id) {
   selectedId = id;
   var no = null; var c = DATA.complexes.filter(function (x) { return x.id === id; })[0]; if (c) no = String(c.no);
   SHAPES.forEach(function (sh) { var o = shapeObjs[sh.id]; if (o) { var sel = no !== null && sh.n === no; o.poly.setOptions({ strokeWeight: sel ? 4 : 2, strokeColor: sel ? "#111a44" : "#3b4a7a", fillOpacity: sel ? 0.85 : 0.62, zIndex: sel ? 5 : 2 }); } });
-  Object.keys(SITE_PINS).forEach(function (k) { var m = SITE_PINS[k], e = m.__e, sel = k === id; m.setImage(pinImage(e.label, colorOf(e), sel)); m.setZIndex(sel ? 10 : 3); });
+  Object.keys(SITE_PINS).forEach(function (k) { var m = SITE_PINS[k], e = m.__e, sel = k === id; m.setImage(pinImage(lbl(e), colorOf(e), sel)); m.setZIndex(sel ? 10 : 3); });
   Object.keys(dotObjs).forEach(function (k) { var d = dotObjs[k].getContent(); d.style.background = k === id ? "#111a44" : "#0f8f89"; d.style.transform = "translate(-50%,-50%)" + (k === id ? " scale(1.25)" : ""); });
   document.querySelectorAll("tr.row").forEach(function (tr) { tr.classList.toggle("sel", tr.dataset.id === id); });
 }
@@ -364,8 +376,8 @@ function floorCells(f) {
   var base = f.baseTxt === "-" ? '<span class="na">-</span>' : fmt(f.base);
   return "<td>" + base + "</td><td><b>" + cur + "</b></td><td>" + chgHtml(f.chg) + "</td>";
 }
-function avgCells(key) {
-  var rows = DATA.summary.filter(function (s) { var f = s[key]; return f && f.base != null && f.cur != null && /^\d/.test(f.curTxt); });
+function avgCells(key, list) {
+  var rows = (list || DATA.summary).filter(function (s) { var f = s[key]; return f && f.base != null && f.cur != null && /^\d/.test(f.curTxt); });
   if (!rows.length) return '<td class="na">-</td><td class="na">-</td><td class="na">-</td>';
   var b = 0, c = 0; rows.forEach(function (s) { b += s[key].base; c += s[key].cur; });
   b /= rows.length; c /= rows.length;
@@ -378,17 +390,24 @@ function showSummary() {
   var h = '<table class="st"><colgroup><col style="width:44px"><col style="width:100px"><col style="width:60px">' + '<col>'.repeat(9) + '</colgroup><thead><tr><th rowspan="2">번호</th><th rowspan="2">단지 · 건물</th><th rowspan="2">기준가<br>종류</th><th colspan="3">1층</th><th colspan="3">2층</th><th colspan="3">3층 이상</th></tr><tr>';
   for (var i = 0; i < 3; i++) h += "<th>기준가</th><th>현재<br>호가</th><th>증감률</th>";
   h += "</tr></thead><tbody>";
-  var prev = null;
-  DATA.summary.forEach(function (s) {
-    var e = DATA.complexes.filter(function (c) { return c.id === s.id; })[0];
-    var grp = prev !== null && String(e.no) !== prev ? " grp" : ""; prev = String(e.no);
-    h += '<tr class="row' + grp + '" data-id="' + esc(s.id) + '"><td><span class="no ' + catOf(s) + '">' + esc(s.id) + '</span></td>' +
-      '<td class="nm">' + esc(s.name) + '<br><span class="cat">' + esc(s.cat) + "</span></td><td class='bs'>" + esc(s.basis) + "</td>" +
-      floorCells(s.f1) + floorCells(s.f2) + floorCells(s.f3) + "</tr>";
+  var order = DATA.summary.slice().sort(function (a, b) {
+    var x = disp(a.id).split("-"), y = disp(b.id).split("-");
+    return x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : (+x[1] || 0) - (+y[1] || 0);
   });
-  h += '<tr class="avg"><td colspan="3" class="nm">평균<br><span class="cat">기준가·호가가 모두 있는 단지</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
+  var tiers = [];
+  order.forEach(function (s) { var t = disp(s.id).charAt(0); var g = tiers[tiers.length - 1]; if (!g || g.t !== t) { g = { t: t, rows: [] }; tiers.push(g); } g.rows.push(s); });
+  tiers.forEach(function (g, gi) {
+    g.rows.forEach(function (s, ri) {
+      var grp = gi > 0 && ri === 0 ? " grp" : "";
+      h += '<tr class="row' + grp + '" data-id="' + esc(s.id) + '"><td><span class="no ' + catOf(s) + '">' + esc(disp(s.id)) + '</span></td>' +
+        '<td class="nm">' + esc(s.name) + '<br><span class="cat">' + esc(s.cat) + "</span></td><td class='bs'>" + esc(s.basis) + "</td>" +
+        floorCells(s.f1) + floorCells(s.f2) + floorCells(s.f3) + "</tr>";
+    });
+    h += '<tr class="avg sub"><td colspan="3" class="nm">' + g.t + ' 소계<br><span class="cat">' + g.rows.length + '곳 단순평균</span></td>' + avgCells("f1", g.rows) + avgCells("f2", g.rows) + avgCells("f3", g.rows) + "</tr>";
+  });
+  h += '<tr class="avg tot"><td colspan="3" class="nm">전체 평균<br><span class="cat">기준가·호가가 모두 있는 단지</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
   h += "</tbody></table>";
-  h += '<div class="note">' + DATA.summaryNotes.map(esc).join("<br>") + "<br>· 평균 = 기준가와 현재 호가가 모두 있는 단지의 단순평균(층별 곳 수 표기), 증감률 = 평균 호가 ÷ 평균 기준가 − 1" + "</div>";
+  h += '<div class="note">' + DATA.summaryNotes.map(esc).join("<br>") + "<br>· A=우미린·디이스트(가장 가까운 경쟁 급지) / B / C / D 급지 · 소계·전체 평균 = 기준가와 현재 호가가 모두 있는 단지의 단순평균(층별 곳 수 표기), 증감률 = 평균 호가 ÷ 평균 기준가 − 1" + "</div>";
   h += '<div class="foot">' + esc(DATA.source) + " · " + esc(DATA.unit) + "</div>";
   var body = document.getElementById("sidebody"); body.innerHTML = h; body.scrollTop = 0;
   body.querySelectorAll("tr.row").forEach(function (tr) { tr.onclick = function () { openDetail(tr.dataset.id, true); }; });
@@ -412,10 +431,10 @@ function openDetail(id, pan) {
   setSelected(id);
   if (pan) focusComplex(id);
   document.getElementById("sidehead").innerHTML = '<button class="back" id="backBtn">← 층별 요약 표로</button>' +
-    '<div class="dh"><span class="no ' + catOf(c) + '">' + esc(c.id) + "</span><h2>" + esc(c.name) + '</h2><span class="unit" style="margin-left:auto">단위: 만원<br>평당가는 전용면적 3.3㎡당</span></div>';
+    '<div class="dh"><span class="no ' + catOf(c) + '">' + esc(disp(c.id)) + "</span><h2>" + esc(c.name) + '</h2><span class="unit" style="margin-left:auto">단위: 만원<br>평당가는 전용면적 3.3㎡당</span></div>';
   var base = c.basis === "(기준 없음)" ? "기준가" : c.basis;
   var h = "", ms = members(c.no);
-  if (ms.length > 1) h += '<div class="tabs">' + ms.map(function (m) { return '<button data-id="' + esc(m.id) + '" class="' + (m.id === c.id ? "on" : "") + '">' + esc(m.id) + " " + esc(m.name) + "</button>"; }).join("") + "</div>";
+  if (ms.length > 1) h += '<div class="tabs">' + ms.map(function (m) { return '<button data-id="' + esc(m.id) + '" class="' + (m.id === c.id ? "on" : "") + '">' + esc(disp(m.id)) + " " + esc(m.name) + "</button>"; }).join("") + "</div>";
   h += '<div class="meta">' + esc(c.meta) + "</div>";
   h += '<div style="overflow-x:auto"><table class="dt" style="min-width:480px"><thead><tr><th rowspan="2">면적</th><th colspan="2">' + esc(base) + '</th><th colspan="2">현재 호가 (네이버)</th><th rowspan="2">변동<br><small>' + esc(base) + ' 대비</small></th><th rowspan="2">실거래<br><small>국토부 · 참고</small></th></tr><tr><th>' + esc(base) + "</th><th>전용 평당가</th><th>호가</th><th>전용 평당가</th></tr></thead><tbody>";
   c.rows.forEach(function (r) {
