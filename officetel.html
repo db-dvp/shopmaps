@@ -37,6 +37,8 @@ table.st td.v{font-weight:700}table.st td.c{color:var(--mut);font-size:11px}tabl
 table.st td.nm{text-align:left;white-space:normal;line-height:1.25;word-break:keep-all;padding-left:5px}
 table.st td.nm .cat{display:block;font-size:11px;color:var(--mut)}
 table.st td.bs{white-space:normal;line-height:1.2;font-size:11px;word-break:keep-all;padding:2px 1px}
+table.st tr.rg td{background:var(--navy);color:#fff;font-weight:700;text-align:left;padding:8px 9px;border:0;font-size:13.5px;letter-spacing:-.2px}table.st tr.rg td small{display:inline;font-weight:400;opacity:.75;font-size:11px;margin-left:6px}
+table.st td.m{font-size:15.5px;font-weight:700;color:var(--navy)}table.st td.o{font-size:12.5px;color:#39425a}table.st td small{display:block;font-size:10.5px;font-weight:400;color:var(--mut);margin-top:1px}table.st td.na small,table.st td.na{color:#b4bac8}
 table.st tr.gh td{background:#e3e8f3;color:var(--navy);font-weight:700;text-align:left;padding:5px 7px;border-top:2px solid #b9c1d6;font-size:11.5px}
 table.st tr.avg td{background:#eef1f8;font-weight:700;border-top:2px solid #1f2d5c}table.st tr.avg td.nm{color:var(--navy)}
 table.st tr.go{cursor:pointer}table.st tr.go:hover td{background:#f6f8fd}
@@ -83,31 +85,35 @@ function wavg(list,f,nf){var tn=0,ta=0;list.forEach(function(o){var v=f(o);if(v!
 function overview(){
   var f0=function(v){return Math.round(v).toLocaleString()}, f1=function(v){return v.toFixed(1)};
   var h='<h2>파주·일산 오피스텔 최근 호가 · 평당가</h2><div class="sub">단위: 만원/평 · 전용면적 3.3㎡당 · 대형 = 전용 60㎡ 이상, 소형 = 60㎡ 미만 · 전세가율 = 전세÷매매 평당 · 수익률 = 월세×12 ÷ (매매 평당 − 보증금 평당) · 행을 누르면 단지 상세</div>';
-  h+='<table class="st"><colgroup><col style="width:36px"><col><col style="width:64px"><col style="width:52px"><col style="width:32px"><col style="width:52px"><col style="width:32px"><col style="width:42px"><col style="width:48px"><col style="width:32px"><col style="width:50px"></colgroup>';
-  h+='<tr><th rowspan="2">번호</th><th rowspan="2">단지</th><th rowspan="2">입주</th><th colspan="2">매매 호가</th><th colspan="3">전세 호가</th><th colspan="3">월세 호가</th></tr><tr><th>평당</th><th>건수</th><th>평당</th><th>건수</th><th>가율</th><th>평당</th><th>건수</th><th>수익률</th></tr>';
-  var cell=function(v,n,fmt){return v==null?'<td class="na">-</td>':'<td class="'+(n<3?'na':'v')+'">'+fmt(v)+'</td>'};
-  var cnt=function(n){return n?'<td class="c'+(n<3?' na':'')+'">'+n+'</td>':'<td class="c na">-</td>'};
+  h+='<table class="st"><colgroup><col style="width:36px"><col><col style="width:84px"><col style="width:68px"><col style="width:58px"><col style="width:62px"><col style="width:56px"></colgroup>';
+  h+='<tr><th>번호</th><th>단지</th><th>매매 평당</th><th>전세 평당</th><th>전세가율</th><th>월세 평당</th><th>수익률</th></tr>';
+  var cell=function(cls,v,n,fmt){return v==null?'<td class="na">-</td>':'<td class="'+cls+(n<3?' na':'')+'">'+fmt(v)+'<small>'+n+'건</small></td>'};
   REGIONS.forEach(function(rg){
-    [['L','대형 (전용 60㎡ 이상)'],['S','소형 (전용 60㎡ 미만)'],['H','생활숙박시설 (오피스텔과 별도)']].forEach(function(sz){
+    var groups=[]; [['L','대형 (전용 60㎡ 이상)'],['S','소형 (전용 60㎡ 미만)'],['H','생활숙박시설 (오피스텔과 별도)']].forEach(function(sz){
       var list=[]; D.forEach(function(c,i){ if((c.region||'운정')===rg && sizeOf(c)===sz[0]){
         var st=statOf(c),R=rentOf(c),j=R.j,w=R.w;
         list.push({c:c,i:i,m:st,j:j||null,w:w||null,mv:st?st.avg:null,jv:j?j.ppAvg:null,wv:w?w.ppRent:null,
           ratio:(st&&j&&j.n>=3&&st.n>=3)?j.ppAvg/st.avg*100:null,y:yld(c,w)}); } });
-      if(!list.length)return;
-      list.sort(function(a,b){if(a.mv==null&&b.mv==null)return a.i-b.i; if(a.mv==null)return 1; if(b.mv==null)return -1; return b.mv-a.mv});
-      h+='<tr class="gh"><td colspan="11">'+rg+' · '+sz[1]+'</td></tr>';
-      list.forEach(function(o){var c=o.c;
-        h+='<tr class="go" data-i="'+o.i+'"><td><span class="no '+sz[0]+'">'+(o.i+1)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+(c.households?c.households.toLocaleString()+'세대':'세대수 미확인')+'</span></td><td class="bs">'+(c.approval&&c.approval!=='-'?c.approval:'-')+'</td>'+
-          cell(o.mv,o.m?o.m.n:0,f0)+cnt(o.m?o.m.n:0)+cell(o.jv,o.j?o.j.n:0,f0)+cnt(o.j?o.j.n:0)+
-          (o.ratio!=null?'<td class="v">'+o.ratio.toFixed(0)+'%</td>':'<td class="na">-</td>')+
-          cell(o.wv,o.w?o.w.n:0,f1)+cnt(o.w?o.w.n:0)+(o.y!=null?'<td class="v">'+o.y.toFixed(1)+'%</td>':'<td class="na">-</td>')+'</tr>'; });
+      if(list.length){ list.sort(function(a,b){if(a.mv==null&&b.mv==null)return a.i-b.i; if(a.mv==null)return 1; if(b.mv==null)return -1; return b.mv-a.mv}); groups.push([sz,list]); }
+    });
+    if(!groups.length)return;
+    var total=0; groups.forEach(function(g){total+=g[1].length});
+    h+='<tr class="rg"><td colspan="7">'+rg+'<small>'+total+'개 단지</small></td></tr>';
+    groups.forEach(function(g){ var sz=g[0], list=g[1];
+      h+='<tr class="gh"><td colspan="7">'+sz[1]+'</td></tr>';
+      list.forEach(function(o){var c=o.c, ap=(c.approval&&c.approval!=='-')?c.approval:'';
+        h+='<tr class="go" data-i="'+o.i+'"><td><span class="no '+sz[0]+'">'+(o.i+1)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+(c.households?c.households.toLocaleString()+'세대':'')+(c.households&&ap?' · ':'')+(ap?'입주 '+ap:'')+'</span></td>'+
+          cell('m',o.mv,o.m?o.m.n:0,f0)+cell('o',o.jv,o.j?o.j.n:0,f0)+
+          (o.ratio!=null?'<td class="o">'+o.ratio.toFixed(0)+'%</td>':'<td class="na">-</td>')+
+          cell('o',o.wv,o.w?o.w.n:0,f1)+(o.y!=null?'<td class="o">'+o.y.toFixed(1)+'%</td>':'<td class="na">-</td>')+'</tr>'; });
       if(list.length>1){
         var am=wavg(list,function(o){return o.mv},function(o){return o.m.n}),aj=wavg(list,function(o){return o.jv},function(o){return o.j.n}),aw=wavg(list,function(o){return o.wv},function(o){return o.w.n});
-        h+='<tr class="avg"><td></td><td class="nm">건수 가중 평균</td><td></td>'+(am?'<td>'+f0(am.v)+'</td><td>'+am.n+'</td>':'<td>-</td><td>-</td>')+(aj?'<td>'+f0(aj.v)+'</td><td>'+aj.n+'</td>':'<td>-</td><td>-</td>')+'<td></td>'+(aw?'<td>'+f1(aw.v)+'</td><td>'+aw.n+'</td>':'<td>-</td><td>-</td>')+'<td></td></tr>';
+        var ac=function(a,fmt,cls){return a?'<td class="'+cls+'">'+fmt(a.v)+'<small>'+a.n+'건</small></td>':'<td>-</td>'};
+        h+='<tr class="avg"><td></td><td class="nm">건수 가중 평균</td>'+ac(am,f0,'o')+ac(aj,f0,'o')+'<td></td>'+ac(aw,f1,'o')+'<td></td></tr>';
       }
     });
   });
-  h+='</table><div class="note">출처: 네이버부동산·KB부동산 매물 호가(2026.10 조회, 같은 매물 합침). 회색 숫자는 표본 3건 미만이라 참고용입니다. 오피스텔은 전세보다 월세 매물이 많아 전세가 비어 있는 단지가 많습니다. 호가는 실제 거래가보다 높을 수 있습니다. 보증금·월세 단위는 만원.</div>';
+  h+='</table><div class="note">출처: 네이버부동산·KB부동산 매물 호가(2026.10 조회, 같은 매물 합침). 숫자 밑의 작은 글씨는 호가 건수이고, 회색 숫자는 표본 3건 미만이라 참고용입니다. 오피스텔은 전세보다 월세 매물이 많아 전세가 비어 있는 단지가 많습니다. 호가는 실제 거래가보다 높을 수 있습니다. 보증금·월세 단위는 만원.</div>';
   $('panel').innerHTML=h; wire(); if(window.__lab)window.__lab();
 }
 function wire(){
