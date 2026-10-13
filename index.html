@@ -468,7 +468,7 @@ function openDetail(id, pan) {
 /* ---------- 시작 ---------- */
 /* 층별 합계 변환: 면적·타입별 행 → 1층 / 2층 / 3층 이상 (평당가 = 금액 합계 ÷ 전용면적 합계) */
 function floorize(D) {
-  var FL = ["1층", "2층", "3층 이상"], sm = {}, EXC = { "5": ["1층 · 25㎡"] };
+  var FL = ["1층", "2층", "3층 이상"], sm = {}, EXC = {};
   D.summary.forEach(function (x) { sm[x.id] = x; });
   function sq(r) { var m = r.area.match(/(\d+)㎡/); return m ? +m[1] : null; }
   function grp(r) { var n = +r.area.match(/^(\d+)층/)[1]; return n === 1 ? 0 : n === 2 ? 1 : 2; }
