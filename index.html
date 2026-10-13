@@ -468,11 +468,11 @@ function openDetail(id, pan) {
 /* ---------- 시작 ---------- */
 /* 층별 합계 변환: 면적·타입별 행 → 1층 / 2층 / 3층 이상 (평당가 = 금액 합계 ÷ 전용면적 합계) */
 function floorize(D) {
-  var FL = ["1층", "2층", "3층 이상"], sm = {};
+  var FL = ["1층", "2층", "3층 이상"], sm = {}, EXC = { "5": ["1층 · 25㎡"] };
   D.summary.forEach(function (x) { sm[x.id] = x; });
   function sq(r) { var m = r.area.match(/(\d+)㎡/); return m ? +m[1] : null; }
   function grp(r) { var n = +r.area.match(/^(\d+)층/)[1]; return n === 1 ? 0 : n === 2 ? 1 : 2; }
-  function large(r, g) { var q = sq(r); return q != null && (g === 0 ? q >= 90 : q >= 100); }
+  function large(r, g, c) { if (c && (EXC[c.id] || []).indexOf(r.area) >= 0) return true; var q = sq(r); return q != null && (g === 0 ? q >= 90 : q >= 100); }
   function nn(r) { return +String(r.askN).match(/^(\d+)/)[1]; }
   function cg(b, a) { if (!b || !a) return [null, "-"]; var v = Math.round((a / b - 1) * 1000) / 10; return [v, v === 0 ? "0.0%" : v > 0 ? "▲ " + v.toFixed(1) + "%" : "▼ " + Math.abs(v).toFixed(1) + "%"]; }
   var newSum = [];
@@ -481,8 +481,8 @@ function floorize(D) {
     var miss = all.filter(function (r) { return r.basePP == null && r.base != null; });
     for (var g = 0; g < 3; g++) {
       var src = all.filter(function (r) { return grp(r) === g; });
-      var B = src.filter(function (r) { return r.base && r.basePP && !large(r, g); });
-      var A = src.filter(function (r) { return r.ask && r.askPP && !large(r, g); });
+      var B = src.filter(function (r) { return r.base && r.basePP && !large(r, g, c); });
+      var A = src.filter(function (r) { return r.ask && r.askPP && !large(r, g, c); });
       var bp = 0, ba = 0, ap = 0, aa = 0, an = 0;
       B.forEach(function (r) { bp += r.base; ba += r.base / r.basePP; });
       A.forEach(function (r) { var n = nn(r); ap += r.ask * n; aa += r.ask / r.askPP * n; an += n; });
@@ -505,6 +505,7 @@ function floorize(D) {
     }
     c.rows = rows;
     c.notes = (c.notes || []).filter(function (n) { return n.indexOf("층·면적별로 가격이 달라") < 0 && n.indexOf("같은 층·비슷한 면적끼리 평균") < 0; });
+    if (EXC[c.id]) c.notes.push("※ 평당가 산출에서 제외: " + EXC[c.id].map(function (a) { return a.replace(" · ", " "); }).join(", ") + " (낙찰가 3.4억, 소형 호실 입찰 과열로 튀는 값)");
     if (miss.length) c.notes.push("※ 면적 미확인 호실은 평당가 계산에서 제외: " + miss.map(function (r) { return r.area.replace(" · ", " ") + (r.areaSub.indexOf("평") < 0 ? " " + r.areaSub : ""); }).join(", "));
     newSum.push({ no: o.no, name: o.name, cat: o.cat, basis: o.basis, f1: summ.f1, f2: summ.f2, f3: summ.f3, id: o.id });
   });
