@@ -38,9 +38,10 @@ body{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,
 h2{font-size:14px;margin:0 0 2px}
 .sub{color:var(--mute);font-size:11.5px}
 table.st{border-collapse:collapse;width:100%;margin-top:8px;font-size:11px;table-layout:fixed}
-table.st th,table.st td{border:1px solid var(--line);padding:4px 2px;text-align:center;white-space:nowrap;overflow:hidden}
+table.st th,table.st td{border:1px solid var(--line);padding:3px 2px;text-align:center;white-space:nowrap;overflow:hidden}
 table.st th{background:var(--head);font-weight:600;color:var(--navy)}
-table.st td.nm{text-align:left;white-space:normal;line-height:1.25;word-break:keep-all;padding-left:5px}
+table.st td.nm{text-align:left;white-space:nowrap;line-height:1.2;padding-left:6px}
+table.st td{height:30px}
 table.st td.bs{white-space:normal;line-height:1.2;font-size:10px;word-break:keep-all;padding:2px 1px}
 table.st td .chg{font-size:10.5px;letter-spacing:-.3px}
 table.st tr.row{cursor:pointer}
@@ -177,7 +178,7 @@ function entries() { return DATA.sites.concat(DATA.complexes); }
 function catOf(c) { return c.cat === "상가건물" ? "bld" : "in"; }
 /* 급지 표기: A(경쟁·인접) / B / C / D — 표시용 번호 (내부 id는 그대로) */
 var DISP = { "12": "A-1", "15": "A-2", "1": "B-1", "2": "B-2", "3": "B-3", "5": "C-1", "4": "C-2", "6": "C-3", "7": "C-4", "8": "C-5", "9": "C-6",
-  "10": "D-1", "11-1": "D-2", "11-2": "D-3", "11-3": "D-4", "11-4": "D-5", "13": "D-6", "16": "D-7", "14-1": "D-8", "14-2": "D-9", "14-3": "D-10", "14-4": "D-11" };
+  "10": "D-1", "11-1": "D-2", "11-2": "D-3", "11-3": "D-4", "11-4": "D-5", "13": "D-6", "16": "D-11", "14-1": "D-7", "14-2": "D-8", "14-3": "D-9", "14-4": "D-10" };
 function disp(id) { return DISP[id] || id; }
 function dispNo(no) {
   var ms = members(no); if (!ms.length) return String(no);
@@ -268,7 +269,7 @@ function drawShape(sh) {
   if (old) { old.poly.setMap(null); old.lab.setMap(null); }
   var col = shapeColor(sh), c = shapeCenter(sh);
   var poly = new kakao.maps.Polygon({ map: map, path: ellipsePath(sh), strokeWeight: 1.5, strokeColor: shapeTier(sh).t, strokeOpacity: 0.85, fillColor: col, fillOpacity: 0.32, zIndex: 2 });
-  var el = document.createElement("div"); el.className = "lab" + (dispNo(sh.n).length > 3 ? " sm" : ""); el.textContent = dispNo(sh.n); var tc = shapeTier(sh).t; el.style.color = "#fff"; el.style.textShadow = "1px 0 " + tc + ",-1px 0 " + tc + ",0 1px " + tc + ",0 -1px " + tc + ",1px 1px " + tc + ",-1px -1px " + tc + ",1px -1px " + tc + ",-1px 1px " + tc + ",0 0 3px " + tc;
+  var el = document.createElement("div"); el.className = "lab"; el.textContent = dispNo(sh.n); var tc = shapeTier(sh).t; el.style.color = "#fff"; el.style.textShadow = "1px 0 " + tc + ",-1px 0 " + tc + ",0 1px " + tc + ",0 -1px " + tc + ",1px 1px " + tc + ",-1px -1px " + tc + ",1px -1px " + tc + ",-1px 1px " + tc + ",0 0 3px " + tc;
   el.onclick = function () { var ms = members(sh.n); if (ms.length) openDetail(ms[0].id, false); };
   el.onmouseenter = function () { tipOv.setContent('<div class="tip">' + shapeTip(sh) + "</div>"); tipOv.setPosition(new kakao.maps.LatLng(c[0], c[1])); tipOv.setMap(map); };
   el.onmouseleave = function () { tipOv.setMap(null); };
@@ -393,7 +394,7 @@ function avgCells(key, list) {
 function showSummary() {
   selectedId = null; setSelected(null);
   document.getElementById("sidehead").innerHTML = '<h2>운정중앙역 상가 층별 현재 호가 평당가</h2><div class="sub">단위: 만원/평 · 전용면적 3.3㎡당 · 현재 네이버 호가 기준(호가가 없는 층은 기준가 적용) · 행을 누르면 단지 상세</div>';
-  var h = '<table class="st"><colgroup><col style="width:44px"><col style="width:150px">' + '<col>'.repeat(3) + '</colgroup><thead><tr><th>번호</th><th>단지 · 건물</th><th>1층</th><th>2층</th><th>3층 이상</th></tr></thead><tbody>';
+  var h = '<table class="st"><colgroup><col style="width:40px"><col style="width:300px">' + '<col>'.repeat(3) + '</colgroup><thead><tr><th>번호</th><th>단지 · 건물</th><th>1층</th><th>2층</th><th>3층 이상</th></tr></thead><tbody>';
   var order = DATA.summary.slice().sort(function (a, b) {
     var x = disp(a.id).split("-"), y = disp(b.id).split("-");
     return x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : (+x[1] || 0) - (+y[1] || 0);
@@ -404,14 +405,14 @@ function showSummary() {
     g.rows.forEach(function (s, ri) {
       var grp = gi > 0 && ri === 0 ? " grp" : "";
       h += '<tr class="row' + grp + '" data-id="' + esc(s.id) + '"><td><span class="no ' + catOf(s) + '" style="' + pillStyle(s) + '">' + esc(disp(s.id)) + '</span></td>' +
-        '<td class="nm">' + esc(s.name) + '<br><span class="cat">' + esc(s.cat) + "</span></td>" +
+        '<td class="nm">' + esc(s.name) + ' <span class="cat">' + esc(s.cat) + "</span></td>" +
         floorCells(s.f1) + floorCells(s.f2) + floorCells(s.f3) + "</tr>";
     });
-    h += '<tr class="avg sub"><td colspan="2" class="nm">' + g.t + ' 소계<br><span class="cat">' + g.rows.length + '곳 단순평균</span></td>' + avgCells("f1", g.rows) + avgCells("f2", g.rows) + avgCells("f3", g.rows) + "</tr>";
+    h += '<tr class="avg sub"><td colspan="2" class="nm">' + g.t + ' 소계 <span class="cat">' + g.rows.length + '곳</span></td>' + avgCells("f1", g.rows) + avgCells("f2", g.rows) + avgCells("f3", g.rows) + "</tr>";
   });
-  h += '<tr class="avg tot"><td colspan="2" class="nm">전체 평균<br><span class="cat">호가가 있는 단지 단순평균</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
+  h += '<tr class="avg tot"><td colspan="2" class="nm">전체 평균 <span class="cat">호가가 있는 단지</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
   h += "</tbody></table>";
-  h += '<div class="note">' + DATA.summaryNotes.filter(function (n) { return n.indexOf("증감률") < 0; }).map(esc).join("<br>") + "<br>· A=우미린·디이스트(가장 가까운 경쟁 급지) / B / C / D 급지 · 소계·전체 평균 = 현재 호가 평당가가 있는 단지의 단순평균(층별 곳 수 표기)" + "</div>";
+  h += '<div class="note">' + DATA.summaryNotes.filter(function (n) { return n.indexOf("증감률") < 0; }).map(esc).join("<br>") + "<br>· A=우미린·디이스트(가장 가까운 경쟁 급지) / B / C / D 급지 · 소계·전체 평균 = 현재 호가 평당가가 있는 단지의 평균(층별 곳 수 표기)" + "</div>";
   h += '<div class="foot">' + esc(DATA.source) + " · " + esc(DATA.unit) + "</div>";
   var body = document.getElementById("sidebody"); body.innerHTML = h; body.scrollTop = 0;
   body.querySelectorAll("tr.row").forEach(function (tr) { tr.onclick = function () { openDetail(tr.dataset.id, true); }; });
