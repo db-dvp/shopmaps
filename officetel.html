@@ -37,7 +37,7 @@ table.st td.v{font-weight:700}table.st td.c{color:var(--mut);font-size:11px}tabl
 table.st td.nm{text-align:left;white-space:normal;line-height:1.25;word-break:keep-all;padding-left:5px}
 table.st td.nm .cat{display:block;font-size:11px;color:var(--mut)}
 table.st td.bs{white-space:normal;line-height:1.2;font-size:11px;word-break:keep-all;padding:2px 1px}
-table.st tr.rg td{background:var(--navy);color:#fff;font-weight:700;text-align:left;padding:8px 9px;border:0;font-size:13.5px;letter-spacing:-.2px}table.st tr.rg td small{display:inline;font-weight:400;opacity:.75;font-size:11px;margin-left:6px}
+table.st tr.rg td{background:var(--navy);color:#fff;font-weight:700;text-align:left;padding:8px 9px;border:0;font-size:13.5px;letter-spacing:-.2px}table.st tr.rg td small{display:inline;font-weight:600;color:#fff;background:#ffffff2e;padding:2px 9px;border-radius:10px;font-size:11.5px;margin-left:9px;vertical-align:1px}
 table.st td.m{font-size:15.5px;font-weight:700;color:var(--navy)}table.st td.o{font-size:12.5px;color:#39425a}table.st td small{display:block;font-size:10.5px;font-weight:400;color:var(--mut);margin-top:1px}table.st td.na small,table.st td.na{color:#b4bac8}
 table.st tr.gh td{background:#e3e8f3;color:var(--navy);font-weight:700;text-align:left;padding:5px 7px;border-top:2px solid #b9c1d6;font-size:11.5px}
 table.st tr.avg td{background:#eef1f8;font-weight:700;border-top:2px solid #1f2d5c}table.st tr.avg td.nm{color:var(--navy)}
@@ -85,8 +85,8 @@ function wavg(list,f,nf){var tn=0,ta=0;list.forEach(function(o){var v=f(o);if(v!
 function overview(){
   var f0=function(v){return Math.round(v).toLocaleString()}, f1=function(v){return v.toFixed(1)};
   var h='<h2>파주·일산 오피스텔 최근 호가 · 평당가</h2><div class="sub">단위: 만원/평 · 전용면적 3.3㎡당 · 대형 = 전용 60㎡ 이상, 소형 = 60㎡ 미만 · 전세가율 = 전세÷매매 평당 · 수익률 = 월세×12 ÷ (매매 평당 − 보증금 평당) · 행을 누르면 단지 상세</div>';
-  h+='<table class="st"><colgroup><col style="width:36px"><col><col style="width:84px"><col style="width:68px"><col style="width:58px"><col style="width:62px"><col style="width:56px"></colgroup>';
-  h+='<tr><th>번호</th><th>단지</th><th>매매 평당</th><th>전세 평당</th><th>전세가율</th><th>월세 평당</th><th>수익률</th></tr>';
+  h+='<table class="st"><colgroup><col style="width:40px"><col><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"></colgroup>';
+  var hd='<tr><th>번호</th><th>단지</th><th>매매 평당</th><th>전세 평당</th><th>전세가율</th><th>월세 평당</th><th>수익률</th></tr>';
   var cell=function(cls,v,n,fmt){return v==null?'<td class="na">-</td>':'<td class="'+cls+(n<3?' na':'')+'">'+fmt(v)+'<small>'+n+'건</small></td>'};
   REGIONS.forEach(function(rg){
     var groups=[]; [['L','대형 (전용 60㎡ 이상)'],['S','소형 (전용 60㎡ 미만)'],['H','생활숙박시설 (오피스텔과 별도)']].forEach(function(sz){
@@ -98,7 +98,7 @@ function overview(){
     });
     if(!groups.length)return;
     var total=0; groups.forEach(function(g){total+=g[1].length});
-    h+='<tr class="rg"><td colspan="7">'+rg+'<small>'+total+'개 단지</small></td></tr>';
+    h+='<tr class="rg"><td colspan="7">'+rg+'<small>'+total+'개 단지</small></td></tr>'+hd;
     groups.forEach(function(g){ var sz=g[0], list=g[1];
       h+='<tr class="gh"><td colspan="7">'+sz[1]+'</td></tr>';
       list.forEach(function(o){var c=o.c, ap=(c.approval&&c.approval!=='-')?c.approval:'';
