@@ -468,7 +468,7 @@ function openDetail(id, pan) {
 /* ---------- 시작 ---------- */
 /* 층별 합계 변환: 면적·타입별 행 → 1층 / 2층 / 3층 이상 (평당가 = 금액 합계 ÷ 전용면적 합계) */
 function floorize(D) {
-  var FL = ["1층", "2층", "3층 이상"], sm = {}, EXC = {}, ASKB = { "15": 1 };
+  var FL = ["1층", "2층", "3층 이상"], sm = {}, EXC = {};
   D.summary.forEach(function (x) { sm[x.id] = x; });
   function sq(r) { var m = r.area.match(/(\d+)㎡/); return m ? +m[1] : null; }
   function grp(r) { var n = +r.area.match(/^(\d+)층/)[1]; return n === 1 ? 0 : n === 2 ? 1 : 2; }
@@ -477,7 +477,7 @@ function floorize(D) {
   function cg(b, a) { if (!b || !a) return [null, "-"]; var v = Math.round((a / b - 1) * 1000) / 10; return [v, v === 0 ? "0.0%" : v > 0 ? "▲ " + v.toFixed(1) + "%" : "▼ " + Math.abs(v).toFixed(1) + "%"]; }
   var newSum = [];
   D.complexes.forEach(function (c) {
-    var o = sm[c.id], rows = [], summ = {}, all = c.rows;
+    var o = sm[c.id], rows = [], summ = {}, all = c.rows, filled = [];
     var miss = all.filter(function (r) { return r.basePP == null && r.base != null; });
     for (var g = 0; g < 3; g++) {
       var src = all.filter(function (r) { return grp(r) === g; });
@@ -486,10 +486,12 @@ function floorize(D) {
       var bp = 0, ba = 0, ap = 0, aa = 0, an = 0;
       B.forEach(function (r) { bp += r.base; ba += r.base / r.basePP; });
       A.forEach(function (r) { var n = nn(r); ap += r.ask * n; aa += r.ask / r.askPP * n; an += n; });
-      if (ASKB[c.id] && !A.length && B.length) { A = B.slice(); ap = bp; aa = ba; an = B.length; }
+      var fillB = false;
+      if (!A.length && B.length && !o["f" + (g + 1)].cur) { A = B.slice(); ap = bp; aa = ba; an = B.length; filled.push(FL[g]); }
       var fb = o["f" + (g + 1)], bpp = ba ? Math.round(bp / ba) : null, app = aa ? Math.round(ap / aa) : null, fbB = false, fbA = false;
       if (bpp == null && fb.base) { bpp = Math.round(fb.base); fbB = true; }
       if (app == null && fb.cur) { app = Math.round(fb.cur); fbA = true; }
+      if (app == null && bpp) { app = bpp; fillB = true; filled.push(FL[g]); }
       if (bpp == null && app == null && !B.length && !A.length) { summ["f" + (g + 1)] = { base: null, cur: null, chg: "-", curTxt: "-", baseTxt: "-" }; continue; }
       var cc = cg(bpp, app), v = cc[0], t = cc[1];
       var same = B.length === A.length && B.every(function (r) { return A.indexOf(r) >= 0; });
@@ -501,13 +503,13 @@ function floorize(D) {
         area: FL[g], areaSub: fbA || fbB ? "층 평균(상세 면적 없음)" : "", floor: FL[g],
         base: B.length ? Math.round(bp / B.length) : null, baseNote: null,
         basePP: bpp, ask: A.length ? Math.round(ap / an) : null, askN: fbA ? "층 평균" : null,
-        askNote: A.length ? null : fbA ? "층 평균 (상세 없음)" : "호가 없음", askPP: app, chg: v, chgTxt: t, chgNote: null, trade: tr || ["-"]
+        askNote: A.length ? null : fbA ? "층 평균 (상세 없음)" : fillB ? "기준가 적용" : "호가 없음", askPP: app, chg: v, chgTxt: t, chgNote: null, trade: tr || ["-"]
       });
     }
     c.rows = rows;
     c.notes = (c.notes || []).filter(function (n) { return n.indexOf("층·면적별로 가격이 달라") < 0 && n.indexOf("같은 층·비슷한 면적끼리 평균") < 0; });
     if (EXC[c.id]) c.notes.push("※ 평당가 산출에서 제외: " + EXC[c.id].map(function (a) { return a.replace(" · ", " "); }).join(", ") + " (낙찰가 3.4억, 소형 호실 입찰 과열로 튀는 값)");
-    if (ASKB[c.id]) { c.notes = c.notes.filter(function (n) { return n.indexOf("호가 비교 불가능") < 0; }); c.notes.push("※ 내정가 공고가 기준 · 현재 네이버 매물이 없어 현재 호가를 내정가와 동일하게 적용"); }
+    if (filled.length) { c.notes = c.notes.filter(function (n) { return n.indexOf("호가 비교 불가능") < 0; }); c.notes.push("※ 호가가 없는 층(" + filled.join(", ") + ")은 기준가를 현재 호가로 적용 (변동 0.0%)"); }
     if (c.id === "12") c.notes = c.notes.filter(function (n) { return n.indexOf("108호") < 0; });
     if (false && miss.length) c.notes.push("※ 면적 미확인 호실은 평당가 계산에서 제외: " + miss.map(function (r) { return r.area.replace(" · ", " ") + (r.areaSub.indexOf("평") < 0 ? " " + r.areaSub : ""); }).join(", "));
     newSum.push({ no: o.no, name: o.name, cat: o.cat, basis: o.basis, f1: summ.f1, f2: summ.f2, f3: summ.f3, id: o.id });
@@ -516,7 +518,7 @@ function floorize(D) {
   D.summaryNotes = ["※ 층별 평당가 = 층별 금액 합계 ÷ 전용면적 합계 (호실별 평당가의 평균이 아님) · 가격 칸은 호실(매물)당 평균 금액 · 기준가는 호실당 1건, 호가는 매물 건수만큼 반영",
     "※ 증감률 = 현재 호가 평당가 ÷ 기준가 평당가 − 1 (전용 기준) / * = 기준가와 호가의 호실 구성이 달라 층 단위로 비교한 참고값",
     "· 우미린: 호가 = 내정가 / 해링턴: 소형 호실 입찰 과열로 참고용",
-    "· 대형 매물(1층 전용 90㎡ 이상 · 2층 이상 100㎡ 이상)과 중복 매물 제외 / 이지더원·정석프라자: 기준가 자료 없음 / 3층 이상 = 3·4층 합산"];
+    "· 현재 호가가 없는 층은 기준가를 현재 호가와 동일하게 적용(변동 0.0%) / 대형 매물(1층 전용 90㎡ 이상 · 2층 이상 100㎡ 이상)과 중복 매물 제외 / 이지더원·정석프라자: 기준가 자료 없음 / 3층 이상 = 3·4층 합산"];
 }
 
 async function main() {
