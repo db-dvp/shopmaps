@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>파주 오피스텔 호가 평당가</title>
+<title>파주·일산 오피스텔 호가 평당가</title>
 <style>
 :root{--navy:#1b2a56;--navy2:#2c3f7a;--line:#dfe2ea;--up:#d6453d;--down:#2f6fd6;--in:#2f6fd6;--bld:#12a39c;--mut:#6b7488;--bg:#eef1f7;--page:#f3f1ec;--ink:#1d2433}
 *{box-sizing:border-box}
@@ -39,10 +39,11 @@ td.l{text-align:left}
 <script src="data-officetel-kb.js"></script>
 <script src="data-officetel-rent.js"></script>
 <script src="data-officetel-yadang.js"></script>
+<script src="data-officetel-tanhyeon.js"></script>
 <script>
 (function(){
-var D=(window.OFFICETEL_DATA||[]).concat(window.OFFICETEL_DATA2||[]).concat(window.OFFICETEL_DATA3||[]), $=function(i){return document.getElementById(i)};
-$('title').textContent='파주 오피스텔 최근 호가 · 평당가'; $('src').textContent='호가: 네이버·KB부동산 26.10 / 같은 매물 합침';
+var D=(window.OFFICETEL_DATA||[]).concat(window.OFFICETEL_DATA2||[]).concat(window.OFFICETEL_DATA3||[]).concat(window.OFFICETEL_DATA4||[]), $=function(i){return document.getElementById(i)};
+$('title').textContent='파주·일산 오피스텔 최근 호가 · 평당가'; $('src').textContent='호가: 네이버·KB부동산 26.10 / 같은 매물 합침';
 function eok(v){return (v/10000).toFixed(2)+'억'}
 function chg(cur,base){
   var p=(cur/base-1)*100; var c=p>0.05?'up':(p<-0.05?'dn':'');
@@ -63,7 +64,7 @@ function statOf(c){ if(c.byType) return c.overall.n?{n:c.overall.n,avg:c.overall
 var REGIONS=['운정','야당','대화','탄현'];
 function yld(c,w){ var st=statOf(c); if(!st||!w||w.n<3||st.n<3) return null; var base=st.avg-w.ppDep; return base>0?(w.ppRent*12/base*100):null; }
 function overview(){
-  var h=tabs()+'<h2>파주 오피스텔 '+MN[mode]+' 호가 평당가</h2><div class="sub">'+(mode==='m'?'전용 평당 매매 호가':mode==='j'?'전용 평당 전세 호가 · 전세가율 = 전세 평당 ÷ 매매 호가 평당':'전용 평당 월세(만원/평/월) · 수익률 = 월세×12 ÷ (매매 평당 − 보증금 평당)')+' · 대형 = 전용 60㎡ 이상, 소형 = 전용 60㎡ 미만 · 단지를 누르면 상세가 열립니다</div>';
+  var h=tabs()+'<h2>파주·일산 오피스텔 '+MN[mode]+' 호가 평당가</h2><div class="sub">'+(mode==='m'?'전용 평당 매매 호가':mode==='j'?'전용 평당 전세 호가 · 전세가율 = 전세 평당 ÷ 매매 호가 평당':'전용 평당 월세(만원/평/월) · 수익률 = 월세×12 ÷ (매매 평당 − 보증금 평당)')+' · 대형 = 전용 60㎡ 이상, 소형 = 전용 60㎡ 미만 · 단지를 누르면 상세가 열립니다</div>';
   REGIONS.forEach(function(rg){
     h+='<h3 class="rg">'+rg+'</h3>';
     [['L','대형 (전용 60㎡ 이상)'],['S','소형 (전용 60㎡ 미만)'],['H','생활숙박시설 (오피스텔과 별도)']].forEach(function(sz){
@@ -201,7 +202,7 @@ function initMap(){
     ids.forEach(function(i){ els[i].style.left=Math.round(P[i].ox)+'px'; els[i].style.top=Math.round(P[i].oy)+'px'; }); }catch(e){} }
   kakao.maps.event.addListener(map,'idle',relax);
   window.__zoom=function(rg){ var b=new kakao.maps.LatLngBounds(),n=0; D.forEach(function(c,i){ if(pts[i]&&(!rg||(c.region||'운정')===rg)){b.extend(pts[i]);n++} }); if(n){window.__zoomed=true;map.setBounds(b);} };
-  (function(){ var z=$('zb'); if(!z)return; z.innerHTML='<button data-r="">전체</button><button data-r="운정">운정</button><button data-r="야당">야당</button>'; [].forEach.call(z.querySelectorAll('button'),function(b){b.onclick=function(){window.__zoom(b.getAttribute('data-r'))}}); })();
+  (function(){ var z=$('zb'); if(!z)return; z.innerHTML='<button data-r="">전체</button><button data-r="운정">운정</button><button data-r="야당">야당</button><button data-r="탄현">탄현</button>'; [].forEach.call(z.querySelectorAll('button'),function(b){b.onclick=function(){window.__zoom(b.getAttribute('data-r'))}}); })();
   D.forEach(function(c,i){
     (c.ll?function(cb){cb([{y:c.ll[0],x:c.ll[1]}],kakao.maps.services.Status.OK)}:c.kw?function(cb){ps.keywordSearch(c.kw,cb)}:function(cb){g.addressSearch(c.geocode,cb)})(function(res,st){
       if(st!==kakao.maps.services.Status.OK||!res.length) return;
