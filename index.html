@@ -380,25 +380,20 @@ function setFixMode(on) {
 
 /* ---------- 우측 패널: 층별 요약 (기본) ---------- */
 function floorCells(f) {
-  if (!f) return '<td class="na">-</td><td class="na">-</td><td class="na">-</td>';
+  if (!f) return '<td class="na">-</td>';
   var cur = /^\d/.test(f.curTxt) ? fmt(f.cur) : '<span class="na">' + (f.curTxt === "-" ? "-" : esc(f.curTxt)) + "</span>";
-  var base = f.baseTxt === "-" ? '<span class="na">-</span>' : fmt(f.base);
-  return "<td>" + base + "</td><td><b>" + cur + "</b></td><td>" + chgHtml(f.chg) + "</td>";
+  return "<td><b>" + cur + "</b></td>";
 }
 function avgCells(key, list) {
-  var rows = (list || DATA.summary).filter(function (s) { var f = s[key]; return f && f.base != null && f.cur != null && /^\d/.test(f.curTxt); });
-  if (!rows.length) return '<td class="na">-</td><td class="na">-</td><td class="na">-</td>';
-  var b = 0, c = 0; rows.forEach(function (s) { b += s[key].base; c += s[key].cur; });
-  b /= rows.length; c /= rows.length;
-  var ch = (c / b - 1) * 100, t = (ch > 0 ? "▲ " : ch < 0 ? "▼ " : "") + Math.abs(ch).toFixed(1) + "%";
-  return "<td>" + fmt(Math.round(b)) + "</td><td>" + fmt(Math.round(c)) + "</td><td>" + chgHtml(t) + '<br><span class="na" style="font-size:9.5px">' + rows.length + "곳</span></td>";
+  var rows = (list || DATA.summary).filter(function (s) { var f = s[key]; return f && f.cur != null && /^\d/.test(f.curTxt); });
+  if (!rows.length) return '<td class="na">-</td>';
+  var c = 0; rows.forEach(function (s) { c += s[key].cur; }); c /= rows.length;
+  return "<td>" + fmt(Math.round(c)) + '<br><span class="na" style="font-size:9.5px">' + rows.length + "곳</span></td>";
 }
 function showSummary() {
   selectedId = null; setSelected(null);
-  document.getElementById("sidehead").innerHTML = '<h2>운정중앙역 상가 층별 기준가 대비 현재 호가</h2><div class="sub">단위: 만원/평 · 전용면적 3.3㎡당 · 기준가(분양가·낙찰가·내정가·기존 조사가) 대비 현재 네이버 호가의 전용 평당가 변화 · 행을 누르면 단지 상세</div>';
-  var h = '<table class="st"><colgroup><col style="width:44px"><col style="width:100px"><col style="width:60px">' + '<col>'.repeat(9) + '</colgroup><thead><tr><th rowspan="2">번호</th><th rowspan="2">단지 · 건물</th><th rowspan="2">기준가<br>종류</th><th colspan="3">1층</th><th colspan="3">2층</th><th colspan="3">3층 이상</th></tr><tr>';
-  for (var i = 0; i < 3; i++) h += "<th>기준가</th><th>현재<br>호가</th><th>증감률</th>";
-  h += "</tr></thead><tbody>";
+  document.getElementById("sidehead").innerHTML = '<h2>운정중앙역 상가 층별 현재 호가 평당가</h2><div class="sub">단위: 만원/평 · 전용면적 3.3㎡당 · 현재 네이버 호가 기준(호가가 없는 층은 기준가 적용) · 행을 누르면 단지 상세</div>';
+  var h = '<table class="st"><colgroup><col style="width:44px"><col style="width:150px">' + '<col>'.repeat(3) + '</colgroup><thead><tr><th>번호</th><th>단지 · 건물</th><th>1층</th><th>2층</th><th>3층 이상</th></tr></thead><tbody>';
   var order = DATA.summary.slice().sort(function (a, b) {
     var x = disp(a.id).split("-"), y = disp(b.id).split("-");
     return x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : (+x[1] || 0) - (+y[1] || 0);
@@ -409,14 +404,14 @@ function showSummary() {
     g.rows.forEach(function (s, ri) {
       var grp = gi > 0 && ri === 0 ? " grp" : "";
       h += '<tr class="row' + grp + '" data-id="' + esc(s.id) + '"><td><span class="no ' + catOf(s) + '" style="' + pillStyle(s) + '">' + esc(disp(s.id)) + '</span></td>' +
-        '<td class="nm">' + esc(s.name) + '<br><span class="cat">' + esc(s.cat) + "</span></td><td class='bs'>" + esc(s.basis) + "</td>" +
+        '<td class="nm">' + esc(s.name) + '<br><span class="cat">' + esc(s.cat) + "</span></td>" +
         floorCells(s.f1) + floorCells(s.f2) + floorCells(s.f3) + "</tr>";
     });
-    h += '<tr class="avg sub"><td colspan="3" class="nm">' + g.t + ' 소계<br><span class="cat">' + g.rows.length + '곳 단순평균</span></td>' + avgCells("f1", g.rows) + avgCells("f2", g.rows) + avgCells("f3", g.rows) + "</tr>";
+    h += '<tr class="avg sub"><td colspan="2" class="nm">' + g.t + ' 소계<br><span class="cat">' + g.rows.length + '곳 단순평균</span></td>' + avgCells("f1", g.rows) + avgCells("f2", g.rows) + avgCells("f3", g.rows) + "</tr>";
   });
-  h += '<tr class="avg tot"><td colspan="3" class="nm">전체 평균<br><span class="cat">기준가·호가가 모두 있는 단지</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
+  h += '<tr class="avg tot"><td colspan="2" class="nm">전체 평균<br><span class="cat">호가가 있는 단지 단순평균</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
   h += "</tbody></table>";
-  h += '<div class="note">' + DATA.summaryNotes.map(esc).join("<br>") + "<br>· A=우미린·디이스트(가장 가까운 경쟁 급지) / B / C / D 급지 · 소계·전체 평균 = 기준가와 현재 호가가 모두 있는 단지의 단순평균(층별 곳 수 표기), 증감률 = 평균 호가 ÷ 평균 기준가 − 1" + "</div>";
+  h += '<div class="note">' + DATA.summaryNotes.filter(function (n) { return n.indexOf("증감률") < 0; }).map(esc).join("<br>") + "<br>· A=우미린·디이스트(가장 가까운 경쟁 급지) / B / C / D 급지 · 소계·전체 평균 = 현재 호가 평당가가 있는 단지의 단순평균(층별 곳 수 표기)" + "</div>";
   h += '<div class="foot">' + esc(DATA.source) + " · " + esc(DATA.unit) + "</div>";
   var body = document.getElementById("sidebody"); body.innerHTML = h; body.scrollTop = 0;
   body.querySelectorAll("tr.row").forEach(function (tr) { tr.onclick = function () { openDetail(tr.dataset.id, true); }; });
