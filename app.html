@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>운정 상업시설·오피스텔 검토</title>
+<style>
+:root{--navy:#1b2a56;--navy2:#2c3f7a;--line:#dfe2ea;--bg:#f3f1ec}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden}
+body{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;background:var(--bg);font-size:13px}
+#top{height:46px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:14px;padding:0 16px}
+#top h1{font-size:15px;margin:0;font-weight:700;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top .src{margin-left:auto;font-size:11.5px;opacity:.85;white-space:nowrap}
+.seg{display:flex;background:#ffffff24;border-radius:8px;padding:3px;gap:2px;flex:none}
+.seg button{border:0;background:transparent;color:#dfe6ff;font:inherit;font-size:13px;font-weight:700;padding:5px 16px;border-radius:6px;cursor:pointer}
+.seg button.on{background:#fff;color:var(--navy)}
+#stage{position:relative;height:calc(100% - 46px);overflow:hidden}
+/* 안쪽 페이지의 자체 상단바(46px)는 위로 밀어 가린다 */
+iframe{position:absolute;left:0;top:-46px;width:100%;height:calc(100% + 46px);border:0;background:var(--bg)}
+iframe.off{visibility:hidden;pointer-events:none}
+@media(max-width:700px){#top .src{display:none}#top{gap:8px;padding:0 10px}.seg button{padding:5px 10px}}
+</style>
+</head>
+<body>
+<div id="top"><div class="seg"><button data-t="shop">상업시설</button><button data-t="office">오피스텔</button></div><h1 id="ttl"></h1><span class="src" id="src"></span></div>
+<div id="stage"><iframe id="f-shop" title="상업시설" src="index.html"></iframe><iframe id="f-office" class="off" title="오피스텔"></iframe></div>
+<script>
+(function(){
+var T={shop:{t:'파주운정3 5,6BL 상업시설 분양가 검토',s:'호가: 네이버 26.9~10월 / 실거래: 국토부 신고',u:'index.html'},
+        office:{t:'운정역 오피스텔 최근 호가 · 평당가',s:'호가: 네이버·KB부동산 26.10 / 같은 매물 합침',u:'officetel.html'}};
+function show(k,push){
+  if(!T[k])k='shop';
+  ['shop','office'].forEach(function(n){
+    var f=document.getElementById('f-'+n);
+    if(n===k){ if(!f.getAttribute('src'))f.setAttribute('src',T[n].u); f.classList.remove('off'); } else f.classList.add('off');
+  });
+  [].forEach.call(document.querySelectorAll('.seg button'),function(b){b.classList.toggle('on',b.getAttribute('data-t')===k)});
+  document.getElementById('ttl').textContent=T[k].t; document.getElementById('src').textContent=T[k].s; document.title=T[k].t;
+  if(push) try{history.replaceState(null,'','#'+k)}catch(e){}
+}
+[].forEach.call(document.querySelectorAll('.seg button'),function(b){b.onclick=function(){show(b.getAttribute('data-t'),true)}});
+show((location.hash||'').replace('#','')||'shop',false);
+})();
+</script>
+</body>
+</html>
