@@ -91,7 +91,7 @@ table.dt td b{font-weight:700}
 .foot{margin-top:12px;padding-top:8px;border-top:1px dashed var(--line);font-size:11px;color:var(--mute);line-height:1.5}
 .cmp{font-weight:700}
 #sidebody{overflow-x:auto}
-.lab{font-weight:700;color:#12206b;font-size:11.5px;line-height:1;text-align:center;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff;pointer-events:auto;cursor:pointer;white-space:nowrap;padding:4px 6px}
+.lab{font-weight:700;color:#12206b;font-size:11.5px;line-height:1;text-align:center;background:#ffffffeb;border-radius:9px;box-shadow:0 0 0 1px #0000001a;pointer-events:auto;cursor:pointer;white-space:nowrap;padding:3px 6px}
 .lab.sm{font-size:10px}
 .dot{width:20px;height:20px;border-radius:50%;background:#0f8f89;color:#fff;font-weight:700;font-size:10px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px #0006;cursor:pointer;transform:translate(-50%,-50%);font-family:inherit}
 .legend i.lg-el{display:inline-block;width:18px;height:10px;border-radius:50%;transform:none;margin-right:7px;vertical-align:-1px;border:1px solid #fff9}
@@ -113,8 +113,11 @@ table.dt td b{font-weight:700}
   <div id="mapbox">
     <div id="map"></div>
     <div class="legend">
-      <span><i class="lg-el" style="background:#6f86c4"></i>단지내 상가</span>
-      <span><i class="lg-el" style="background:#4fb0a8"></i>상가건물</span>
+      <span><i class="lg-el" style="background:#ef5b7b"></i>A 급지 (인접·경쟁)</span>
+      <span><i class="lg-el" style="background:#4f8ee8"></i>B 급지</span>
+      <span><i class="lg-el" style="background:#3fb184"></i>C 급지</span>
+      <span><i class="lg-el" style="background:#e3a42c"></i>D 급지</span>
+      <span><i class="lg-el" style="background:#fff;border:1.5px dashed #555"></i>점선 = 상가건물</span>
       <span><i style="background:var(--site)"></i>SITE (사업지)</span>
     </div>
     <div class="tools">
@@ -246,7 +249,10 @@ function ellipsePath(sh) {
   }
   return pts;
 }
-function shapeColor(sh) { var m = members(sh.n)[0]; return m && m.cat === "상가건물" ? "#4fb0a8" : "#6f86c4"; }
+var TIER = { A: { f: "#ef5b7b", t: "#b3173f" }, B: { f: "#4f8ee8", t: "#1f58b8" }, C: { f: "#3fb184", t: "#177a55" }, D: { f: "#e3a42c", t: "#9a6a05" } };
+function shapeTier(sh) { var m = members(sh.n)[0]; return TIER[m ? disp(m.id).charAt(0) : "D"] || TIER.D; }
+function shapeDash(sh) { var m = members(sh.n)[0]; return m && m.cat === "상가건물" ? "dash" : "solid"; }
+function shapeColor(sh) { return shapeTier(sh).f; }
 function shapeTip(sh) {
   var ms = members(sh.n);
   if (ms.length > 1) {
@@ -262,8 +268,8 @@ function drawShape(sh) {
   var old = shapeObjs[sh.id];
   if (old) { old.poly.setMap(null); old.lab.setMap(null); }
   var col = shapeColor(sh), c = shapeCenter(sh);
-  var poly = new kakao.maps.Polygon({ map: map, path: ellipsePath(sh), strokeWeight: 2, strokeColor: "#3b4a7a", strokeOpacity: 0.9, fillColor: col, fillOpacity: 0.62, zIndex: 2 });
-  var el = document.createElement("div"); el.className = "lab" + (dispNo(sh.n).length > 3 ? " sm" : ""); el.textContent = dispNo(sh.n);
+  var poly = new kakao.maps.Polygon({ map: map, path: ellipsePath(sh), strokeWeight: 1.5, strokeColor: shapeTier(sh).t, strokeOpacity: 0.85, strokeStyle: shapeDash(sh), fillColor: col, fillOpacity: 0.5, zIndex: 2 });
+  var el = document.createElement("div"); el.className = "lab" + (dispNo(sh.n).length > 3 ? " sm" : ""); el.textContent = dispNo(sh.n); el.style.color = shapeTier(sh).t;
   el.onclick = function () { var ms = members(sh.n); if (ms.length) openDetail(ms[0].id, false); };
   el.onmouseenter = function () { tipOv.setContent('<div class="tip">' + shapeTip(sh) + "</div>"); tipOv.setPosition(new kakao.maps.LatLng(c[0], c[1])); tipOv.setMap(map); };
   el.onmouseleave = function () { tipOv.setMap(null); };
@@ -316,7 +322,7 @@ function placePin(e) {
 function setSelected(id) {
   selectedId = id;
   var no = null; var c = DATA.complexes.filter(function (x) { return x.id === id; })[0]; if (c) no = String(c.no);
-  SHAPES.forEach(function (sh) { var o = shapeObjs[sh.id]; if (o) { var sel = no !== null && sh.n === no; o.poly.setOptions({ strokeWeight: sel ? 4 : 2, strokeColor: sel ? "#111a44" : "#3b4a7a", fillOpacity: sel ? 0.85 : 0.62, zIndex: sel ? 5 : 2 }); } });
+  SHAPES.forEach(function (sh) { var o = shapeObjs[sh.id]; if (o) { var sel = no !== null && sh.n === no; o.poly.setOptions({ strokeWeight: sel ? 2.5 : 1.5, strokeColor: shapeTier(sh).t, fillOpacity: sel ? 0.68 : 0.5, zIndex: sel ? 5 : 2 }); } });
   Object.keys(SITE_PINS).forEach(function (k) { var m = SITE_PINS[k], e = m.__e, sel = k === id; m.setImage(pinImage(lbl(e), colorOf(e), sel)); m.setZIndex(sel ? 10 : 3); });
   Object.keys(dotObjs).forEach(function (k) { var d = dotObjs[k].getContent(); d.style.background = k === id ? "#111a44" : "#0f8f89"; d.style.transform = "translate(-50%,-50%)" + (k === id ? " scale(1.25)" : ""); });
   document.querySelectorAll("tr.row").forEach(function (tr) { tr.classList.toggle("sel", tr.dataset.id === id); });
