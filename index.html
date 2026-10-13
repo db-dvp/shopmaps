@@ -113,11 +113,10 @@ table.dt td b{font-weight:700}
   <div id="mapbox">
     <div id="map"></div>
     <div class="legend">
-      <span><i class="lg-el" style="background:#ef5b7b"></i>A 급지 (인접·경쟁)</span>
-      <span><i class="lg-el" style="background:#4f8ee8"></i>B 급지</span>
-      <span><i class="lg-el" style="background:#3fb184"></i>C 급지</span>
-      <span><i class="lg-el" style="background:#e3a42c"></i>D 급지</span>
-      <span><i class="lg-el" style="background:#fff;border:1.5px dashed #555"></i>점선 = 상가건물</span>
+      <span><i class="lg-el" style="background:#ef4f6f"></i>A 급지 (인접·경쟁)</span>
+      <span><i class="lg-el" style="background:#3f7be0"></i>B 급지</span>
+      <span><i class="lg-el" style="background:#14a39a"></i>C 급지</span>
+      <span><i class="lg-el" style="background:#8b5cf6"></i>D 급지</span>
       <span><i style="background:var(--site)"></i>SITE (사업지)</span>
     </div>
     <div class="tools">
@@ -249,10 +248,9 @@ function ellipsePath(sh) {
   }
   return pts;
 }
-var TIER = { A: { f: "#ef5b7b", t: "#b3173f" }, B: { f: "#4f8ee8", t: "#1f58b8" }, C: { f: "#3fb184", t: "#177a55" }, D: { f: "#e3a42c", t: "#9a6a05" } };
+var TIER = { A: { f: "#ef4f6f", t: "#a8123a" }, B: { f: "#3f7be0", t: "#1b4fb0" }, C: { f: "#14a39a", t: "#0b6e68" }, D: { f: "#8b5cf6", t: "#5b34b8" } };
 function shapeTier(sh) { var m = members(sh.n)[0]; return TIER[m ? disp(m.id).charAt(0) : "D"] || TIER.D; }
-function shapeDash(sh) { var m = members(sh.n)[0]; return m && m.cat === "상가건물" ? "dash" : "solid"; }
-function pillStyle(e) { var t = TIER[disp(e.id).charAt(0)] || TIER.D; return "background:" + t.t + (e.cat === "상가건물" ? ";outline:1.5px dashed " + t.t + ";outline-offset:2px" : ""); }
+function pillStyle(e) { var t = TIER[disp(e.id).charAt(0)] || TIER.D; return "background:" + t.t; }
 function shapeColor(sh) { return shapeTier(sh).f; }
 function shapeTip(sh) {
   var ms = members(sh.n);
@@ -269,8 +267,8 @@ function drawShape(sh) {
   var old = shapeObjs[sh.id];
   if (old) { old.poly.setMap(null); old.lab.setMap(null); }
   var col = shapeColor(sh), c = shapeCenter(sh);
-  var poly = new kakao.maps.Polygon({ map: map, path: ellipsePath(sh), strokeWeight: 1.5, strokeColor: shapeTier(sh).t, strokeOpacity: 0.85, strokeStyle: shapeDash(sh), fillColor: col, fillOpacity: 0.5, zIndex: 2 });
-  var el = document.createElement("div"); el.className = "lab" + (dispNo(sh.n).length > 3 ? " sm" : ""); el.textContent = dispNo(sh.n); el.style.color = "#1d2433";
+  var poly = new kakao.maps.Polygon({ map: map, path: ellipsePath(sh), strokeWeight: 1.5, strokeColor: shapeTier(sh).t, strokeOpacity: 0.85, fillColor: col, fillOpacity: 0.32, zIndex: 2 });
+  var el = document.createElement("div"); el.className = "lab" + (dispNo(sh.n).length > 3 ? " sm" : ""); el.textContent = dispNo(sh.n); var tc = shapeTier(sh).t; el.style.color = "#fff"; el.style.textShadow = "1px 0 " + tc + ",-1px 0 " + tc + ",0 1px " + tc + ",0 -1px " + tc + ",1px 1px " + tc + ",-1px -1px " + tc + ",1px -1px " + tc + ",-1px 1px " + tc + ",0 0 3px " + tc;
   el.onclick = function () { var ms = members(sh.n); if (ms.length) openDetail(ms[0].id, false); };
   el.onmouseenter = function () { tipOv.setContent('<div class="tip">' + shapeTip(sh) + "</div>"); tipOv.setPosition(new kakao.maps.LatLng(c[0], c[1])); tipOv.setMap(map); };
   el.onmouseleave = function () { tipOv.setMap(null); };
@@ -323,7 +321,7 @@ function placePin(e) {
 function setSelected(id) {
   selectedId = id;
   var no = null; var c = DATA.complexes.filter(function (x) { return x.id === id; })[0]; if (c) no = String(c.no);
-  SHAPES.forEach(function (sh) { var o = shapeObjs[sh.id]; if (o) { var sel = no !== null && sh.n === no; o.poly.setOptions({ strokeWeight: sel ? 2.5 : 1.5, strokeColor: shapeTier(sh).t, fillOpacity: sel ? 0.68 : 0.5, zIndex: sel ? 5 : 2 }); } });
+  SHAPES.forEach(function (sh) { var o = shapeObjs[sh.id]; if (o) { var sel = no !== null && sh.n === no; o.poly.setOptions({ strokeWeight: sel ? 2.5 : 1.5, strokeColor: shapeTier(sh).t, fillOpacity: sel ? 0.5 : 0.32, zIndex: sel ? 5 : 2 }); } });
   Object.keys(SITE_PINS).forEach(function (k) { var m = SITE_PINS[k], e = m.__e, sel = k === id; m.setImage(pinImage(lbl(e), colorOf(e), sel)); m.setZIndex(sel ? 10 : 3); });
   Object.keys(dotObjs).forEach(function (k) { var d = dotObjs[k].getContent(); d.style.background = k === id ? "#111a44" : "#0f8f89"; d.style.transform = "translate(-50%,-50%)" + (k === id ? " scale(1.25)" : ""); });
   document.querySelectorAll("tr.row").forEach(function (tr) { tr.classList.toggle("sel", tr.dataset.id === id); });
