@@ -412,7 +412,7 @@ function showSummary() {
   });
   h += '<tr class="avg tot"><td colspan="2" class="nm">전체 평균 <span class="cat">호가가 있는 단지</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
   h += "</tbody></table>";
-  h += '<div class="foot">' + esc(DATA.source) + "</div>";
+  h += '<div class="foot">' + esc(DATA.source.split(" / ")[0]) + " · " + esc(DATA.unit) + "</div>";
   var body = document.getElementById("sidebody"); body.innerHTML = h; body.scrollTop = 0;
   body.querySelectorAll("tr.row").forEach(function (tr) { tr.onclick = function () { openDetail(tr.dataset.id, true); }; });
 }
