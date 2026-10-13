@@ -129,7 +129,7 @@ table.dt td b{font-weight:700}
           <button class="btn" id="resetBtn">보정 초기화</button>
         </div>
       </div>
-      <button class="btn" id="fixBtn">좌표 보정 모드</button>
+      <button class="btn" id="fixBtn" style="display:none">좌표 보정 모드</button>
     </div>
   </div>
   <aside id="side">
@@ -412,6 +412,7 @@ function showSummary() {
   });
   h += '<tr class="avg tot"><td colspan="2" class="nm">전체 평균 <span class="cat">호가가 있는 단지</span></td>' + avgCells("f1") + avgCells("f2") + avgCells("f3") + "</tr>";
   h += "</tbody></table>";
+  h += '<div class="foot">' + esc(DATA.source) + "</div>";
   var body = document.getElementById("sidebody"); body.innerHTML = h; body.scrollTop = 0;
   body.querySelectorAll("tr.row").forEach(function (tr) { tr.onclick = function () { openDetail(tr.dataset.id, true); }; });
 }
@@ -548,6 +549,7 @@ async function main() {
   kakao.maps.event.addListener(map, "zoom_changed", updateDots);
   updateDots();
   fitAll();
+  if (/[?&]fix=1/.test(location.search)) document.getElementById("fixBtn").style.display = "";
   document.getElementById("fixBtn").onclick = function () { setFixMode(!fixMode); };
   document.getElementById("copyBtn").onclick = function () {
     var t = document.getElementById("fixout"); t.select();
