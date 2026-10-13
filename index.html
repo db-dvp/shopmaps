@@ -270,7 +270,7 @@ function drawShape(sh) {
   if (old) { old.poly.setMap(null); old.lab.setMap(null); }
   var col = shapeColor(sh), c = shapeCenter(sh);
   var poly = new kakao.maps.Polygon({ map: map, path: ellipsePath(sh), strokeWeight: 1.5, strokeColor: shapeTier(sh).t, strokeOpacity: 0.85, strokeStyle: shapeDash(sh), fillColor: col, fillOpacity: 0.5, zIndex: 2 });
-  var el = document.createElement("div"); el.className = "lab" + (dispNo(sh.n).length > 3 ? " sm" : ""); el.textContent = dispNo(sh.n); el.style.color = shapeTier(sh).t;
+  var el = document.createElement("div"); el.className = "lab" + (dispNo(sh.n).length > 3 ? " sm" : ""); el.textContent = dispNo(sh.n); el.style.color = "#1d2433";
   el.onclick = function () { var ms = members(sh.n); if (ms.length) openDetail(ms[0].id, false); };
   el.onmouseenter = function () { tipOv.setContent('<div class="tip">' + shapeTip(sh) + "</div>"); tipOv.setPosition(new kakao.maps.LatLng(c[0], c[1])); tipOv.setMap(map); };
   el.onmouseleave = function () { tipOv.setMap(null); };
