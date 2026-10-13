@@ -84,9 +84,9 @@ function yld(c,w){ var st=statOf(c); if(!st||!w||w.n<3||st.n<3) return null; var
 function wavg(list,f,nf){var tn=0,ta=0;list.forEach(function(o){var v=f(o);if(v!=null){tn+=nf(o);ta+=v*nf(o)}});return tn?{v:ta/tn,n:tn}:null}
 function overview(){
   var f0=function(v){return Math.round(v).toLocaleString()}, f1=function(v){return v.toFixed(1)};
-  var h='<h2>파주·일산 오피스텔 최근 호가 · 평당가</h2><div class="sub">단위: 만원/평 · 전용면적 3.3㎡당 · 대형 = 전용 60㎡ 이상, 소형 = 60㎡ 미만 · 전세가율 = 전세÷매매 평당 · 수익률 = 월세×12 ÷ (매매 평당 − 보증금 평당) · 행을 누르면 단지 상세</div>';
-  h+='<table class="st"><colgroup><col style="width:40px"><col><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"></colgroup>';
-  var hd='<tr><th>번호</th><th>단지</th><th>매매 평당</th><th>전세 평당</th><th>전세가율</th><th>월세 평당</th><th>수익률</th></tr>';
+  var h='<h2>파주·일산 오피스텔 최근 호가 · 평당가</h2><div class="sub">단위: 만원/평 · 전용면적 3.3㎡당 · 대형 = 전용 60㎡ 이상, 소형 = 60㎡ 미만 · 행을 누르면 단지 상세</div>';
+  h+='<table class="st"><colgroup><col style="width:40px"><col><col style="width:84px"><col style="width:84px"><col style="width:84px"></colgroup>';
+  var hd='<tr><th>번호</th><th>단지</th><th>매매 평당</th><th>전세 평당</th><th>월세 평당</th></tr>';
   var cell=function(cls,v,n,fmt){return v==null?'<td class="na">-</td>':'<td class="'+cls+(n<3?' na':'')+'">'+fmt(v)+'<small>'+n+'건</small></td>'};
   REGIONS.forEach(function(rg){
     var groups=[]; [['L','대형 (전용 60㎡ 이상)'],['S','소형 (전용 60㎡ 미만)'],['H','생활숙박시설 (오피스텔과 별도)']].forEach(function(sz){
@@ -98,18 +98,17 @@ function overview(){
     });
     if(!groups.length)return;
     var total=0; groups.forEach(function(g){total+=g[1].length});
-    h+='<tr class="rg"><td colspan="7">'+rg+'<small>'+total+'개 단지</small></td></tr>'+hd;
+    h+='<tr class="rg"><td colspan="5">'+rg+'<small>'+total+'개 단지</small></td></tr>'+hd;
     groups.forEach(function(g){ var sz=g[0], list=g[1];
-      h+='<tr class="gh"><td colspan="7">'+sz[1]+'</td></tr>';
+      h+='<tr class="gh"><td colspan="5">'+sz[1]+'</td></tr>';
       list.forEach(function(o){var c=o.c, ap=(c.approval&&c.approval!=='-')?c.approval:'';
         h+='<tr class="go" data-i="'+o.i+'"><td><span class="no '+sz[0]+'">'+(o.i+1)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+(c.households?c.households.toLocaleString()+'세대':'')+(c.households&&ap?' · ':'')+(ap?'입주 '+ap:'')+'</span></td>'+
           cell('m',o.mv,o.m?o.m.n:0,f0)+cell('o',o.jv,o.j?o.j.n:0,f0)+
-          (o.ratio!=null?'<td class="o">'+o.ratio.toFixed(0)+'%</td>':'<td class="na">-</td>')+
-          cell('o',o.wv,o.w?o.w.n:0,f1)+(o.y!=null?'<td class="o">'+o.y.toFixed(1)+'%</td>':'<td class="na">-</td>')+'</tr>'; });
+          cell('o',o.wv,o.w?o.w.n:0,f1)+'</tr>'; });
       if(list.length>1){
         var am=wavg(list,function(o){return o.mv},function(o){return o.m.n}),aj=wavg(list,function(o){return o.jv},function(o){return o.j.n}),aw=wavg(list,function(o){return o.wv},function(o){return o.w.n});
         var ac=function(a,fmt,cls){return a?'<td class="'+cls+'">'+fmt(a.v)+'<small>'+a.n+'건</small></td>':'<td>-</td>'};
-        h+='<tr class="avg"><td></td><td class="nm">건수 가중 평균</td>'+ac(am,f0,'o')+ac(aj,f0,'o')+'<td></td>'+ac(aw,f1,'o')+'<td></td></tr>';
+        h+='<tr class="avg"><td></td><td class="nm">건수 가중 평균</td>'+ac(am,f0,'o')+ac(aj,f0,'o')+ac(aw,f1,'o')+'</tr>';
       }
     });
   });
