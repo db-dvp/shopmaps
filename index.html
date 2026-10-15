@@ -106,7 +106,7 @@ table.dt td b{font-weight:700}
   #side{width:100%;flex:1;border-left:0;border-top:1px solid var(--line)}
   #top .src{display:none}
 }
-</style>
+.fillr{color:#d93025}</style>
 </head>
 <body>
 <div id="top"><h1 id="ttl">상가 분양가 지도</h1><span class="src" id="srcline"></span></div>
@@ -177,7 +177,7 @@ function chgHtml(t) {
 function entries() { return DATA.sites.concat(DATA.complexes); }
 function catOf(c) { return c.cat === "상가건물" ? "bld" : "in"; }
 /* 급지 표기: A(경쟁·인접) / B / C / D — 표시용 번호 (내부 id는 그대로) */
-var DISP = { "12": "A-1", "15": "A-2", "1": "B-1", "2": "B-2", "3": "B-3", "5": "C-1", "4": "C-2", "6": "C-3", "7": "C-4", "8": "C-5", "9": "C-6",
+var DISP = { "12": "A-1", "15": "A-2", "1": "B-1", "2": "B-2", "3": "B-3", "4": "C-1", "6": "C-2", "7": "C-3", "8": "C-4", "9": "C-5",
   "10": "D-1", "11-1": "D-2", "11-2": "D-3", "11-3": "D-4", "11-4": "D-5", "13": "D-6", "16": "D-11", "14-1": "D-7", "14-2": "D-8", "14-3": "D-9", "14-4": "D-10" };
 function disp(id) { return DISP[id] || id; }
 function dispNo(no) {
@@ -383,7 +383,7 @@ function setFixMode(on) {
 function floorCells(f) {
   if (!f) return '<td class="na">-</td>';
   var cur = /^\d/.test(f.curTxt) ? fmt(f.cur) : '<span class="na">' + (f.curTxt === "-" ? "-" : esc(f.curTxt)) + "</span>";
-  return "<td><b>" + cur + "</b></td>";
+  return "<td><b" + (f.fill ? ' class="fillr"' : "") + ">" + cur + "</b></td>";
 }
 function avgCells(key, list) {
   var rows = (list || DATA.summary).filter(function (s) { var f = s[key]; return f && f.cur != null && /^\d/.test(f.curTxt); });
@@ -481,17 +481,17 @@ function floorize(D) {
       var bp = 0, ba = 0, ap = 0, aa = 0, an = 0;
       B.forEach(function (r) { bp += r.base; ba += r.base / r.basePP; });
       A.forEach(function (r) { var n = nn(r); ap += r.ask * n; aa += r.ask / r.askPP * n; an += n; });
-      var fillB = false;
-      if (!A.length && B.length && !o["f" + (g + 1)].cur) { A = B.slice(); ap = bp; aa = ba; an = B.length; filled.push(FL[g]); }
+      var fillB = false, isFill = false;
+      if (!A.length && B.length && !o["f" + (g + 1)].cur) { A = B.slice(); ap = bp; aa = ba; an = B.length; filled.push(FL[g]); isFill = true; }
       var fb = o["f" + (g + 1)], bpp = ba ? Math.round(bp / ba) : null, app = aa ? Math.round(ap / aa) : null, fbB = false, fbA = false;
       if (bpp == null && fb.base) { bpp = Math.round(fb.base); fbB = true; }
       if (app == null && fb.cur) { app = Math.round(fb.cur); fbA = true; }
-      if (app == null && bpp) { app = bpp; fillB = true; filled.push(FL[g]); }
+      if (app == null && bpp) { app = bpp; fillB = true; filled.push(FL[g]); isFill = true; }
       if (bpp == null && app == null && !B.length && !A.length) { summ["f" + (g + 1)] = { base: null, cur: null, chg: "-", curTxt: "-", baseTxt: "-" }; continue; }
       var cc = cg(bpp, app), v = cc[0], t = cc[1];
       var same = B.length === A.length && B.every(function (r) { return A.indexOf(r) >= 0; });
       var star = v != null && !fbA && !fbB && !same;
-      summ["f" + (g + 1)] = { base: bpp, cur: app, chg: t + (star ? " *" : ""), curTxt: app ? app.toLocaleString("en-US") : bpp ? "호가 없음" : "-", baseTxt: bpp ? bpp.toLocaleString("en-US") : "-" };
+      summ["f" + (g + 1)] = { fill: isFill, base: bpp, cur: app, chg: t + (star ? " *" : ""), curTxt: app ? app.toLocaleString("en-US") : bpp ? "호가 없음" : "-", baseTxt: bpp ? bpp.toLocaleString("en-US") : "-" };
       var trs = src.filter(function (r) { return r.trade && /\d/.test(r.trade[0] || ""); }), tr = trs.length ? trs[0].trade.slice() : null;
       if (trs.length > 1) tr = [tr[0], (tr[1] || "") + " 외"];
       rows.push({
@@ -520,9 +520,9 @@ async function main() {
   try {
     await loadScript("data-" + REGION + ".js");
     DATA = window.SHOP_REGIONS[REGION];
-    if (REGION === "unjeong" && !DATA.floorized) { floorize(DATA); DATA.floorized = true; }
+    if (REGION === "unjeong" && !DATA.floorized) { floorize(DATA); DATA.floorized = true; window.RMNO = DATA.complexes.filter(function (c) { return String(c.id) === "5"; }).map(function (c) { return String(c.no); }); DATA.complexes = DATA.complexes.filter(function (c) { return String(c.id) !== "5"; }); DATA.summary = DATA.summary.filter(function (s) { return String(s.id) !== "5"; }); }
     try { await loadScript("data-" + REGION + "-coords.js"); COORDS = (window.SHOP_COORDS || {})[REGION] || {}; } catch (e) { }
-    try { await loadScript("data-" + REGION + "-shapes.js"); SHAPES = (window.SHOP_SHAPES || {})[REGION] || []; } catch (e) { SHAPES = []; }
+    try { await loadScript("data-" + REGION + "-shapes.js"); SHAPES = ((window.SHOP_SHAPES || {})[REGION] || []).filter(function (sh) { return (window.RMNO || []).indexOf(String(sh.n)) < 0; }); } catch (e) { SHAPES = []; }
   } catch (e) { document.getElementById("sidebody").textContent = "지역 데이터를 불러오지 못했습니다: " + REGION; return; }
   document.title = DATA.title; document.getElementById("ttl").textContent = DATA.title;
   document.getElementById("srcline").textContent = DATA.source;
