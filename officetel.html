@@ -238,7 +238,7 @@ function initMap(){
       el.onmouseenter=function(){iw.setZIndex(20)}; el.onmouseleave=function(){iw.setZIndex(i===cur?10:1)};
       ovs[i]=iw; els[i]=el;
       iw.setMap(map);
-      if(!window.__zoomed)map.setBounds(bounds); if(window.__lab)window.__lab(); relax();
+      if(!window.__zoomed)map.setBounds(bounds,110,40,40,40); if(window.__lab)window.__lab(); relax();
     });
   });
 }
