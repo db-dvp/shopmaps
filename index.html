@@ -189,13 +189,13 @@ function lbl(e) { return e.label === "SITE" ? "SITE" : disp(e.id); }
 
 /* ---------- 핀 이미지 (SVG data URI) ---------- */
 function sitePinImage(selected) {
-  var w = selected ? 116 : 104, h = selected ? 34 : 30, fs = selected ? 10 : 9, ph = selected ? 22 : 19;
+  var w = selected ? 126 : 114, h = selected ? 38 : 34, fs = selected ? 11 : 10, ph = selected ? 25 : 22;
   var st = selected ? "#1d2433" : "#fff", sw = selected ? 2.5 : 2, m = w / 2;
   var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + " " + h + '">' +
-    '<path d="M' + (m - 6) + " " + (ph - 1) + " L" + m + " " + (h - 2) + " L" + (m + 6) + " " + (ph - 1) + 'Z" fill="#c0392b" stroke="' + st + '" stroke-width="' + sw + '" stroke-linejoin="round"/>' +
+    '<defs><filter id="s" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity=".4"/></filter></defs><g filter="url(#s)"><path d="M' + (m - 6) + " " + (ph - 1) + " L" + m + " " + (h - 2) + " L" + (m + 6) + " " + (ph - 1) + 'Z" fill="#c0392b" stroke="' + st + '" stroke-width="' + sw + '" stroke-linejoin="round"/>' +
     '<rect x="1.5" y="1.5" width="' + (w - 3) + '" height="' + ph + '" rx="' + ph / 2 + '" fill="#c0392b" stroke="' + st + '" stroke-width="' + sw + '"/>' +
     '<rect x="' + (m - 5) + '" y="' + (ph - 2) + '" width="10" height="4" fill="#c0392b"/>' +
-    '<text x="' + m + '" y="' + (ph / 2 + fs * 0.36 + 1.5) + '" text-anchor="middle" font-family="Malgun Gothic,Arial,sans-serif" font-weight="800" font-size="' + fs + '" fill="#fff">파주운정3지구 5,6BL</text></svg>';
+    '</g><text x="' + m + '" y="' + (ph / 2 + fs * 0.36 + 1.5) + '" text-anchor="middle" font-family="Malgun Gothic,Arial,sans-serif" font-weight="800" font-size="' + fs + '" fill="#fff">파주운정3지구 5,6BL</text></svg>';
   return new kakao.maps.MarkerImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg), new kakao.maps.Size(w, h), { offset: new kakao.maps.Point(m, h - 1) });
 }
 function pinImage(label, color, selected) {
@@ -325,7 +325,7 @@ function placePin(e) {
   if (!m) {
     m = new kakao.maps.Marker({ position: pos, image: pinImage(lbl(e), colorOf(e), false), draggable: false, clickable: true, zIndex: 3 });
     m.setMap(map); SITE_PINS[e.id] = m; m.__e = e;
-    kakao.maps.event.addListener(m, "mouseover", function () { tipOv.setContent('<div class="tip">' + (e.label === "SITE" ? "<b>SITE</b> · " + esc(e.name) : "<b>" + esc(disp(e.id)) + ". " + esc(e.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(e) + "</span>") + "</div>"); tipOv.setPosition(m.getPosition()); tipOv.setMap(map); });
+    kakao.maps.event.addListener(m, "mouseover", function () { if (e.label === "SITE") return; tipOv.setContent('<div class="tip">' + (e.label === "SITE" ? "<b>SITE</b> · " + esc(e.name) : "<b>" + esc(disp(e.id)) + ". " + esc(e.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(e) + "</span>") + "</div>"); tipOv.setPosition(m.getPosition()); tipOv.setMap(map); });
     kakao.maps.event.addListener(m, "mouseout", function () { tipOv.setMap(null); });
     kakao.maps.event.addListener(m, "click", function () { if (e.label !== "SITE") openDetail(e.id, false); else openSite(e.id); });
     kakao.maps.event.addListener(m, "dragend", function () { var p = m.getPosition(); LOCAL_FIX[e.id] = [+p.getLat().toFixed(6), +p.getLng().toFixed(6)]; saveFix(); renderFix(); });
