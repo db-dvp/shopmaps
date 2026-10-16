@@ -22,6 +22,7 @@ h3{font-size:13px;margin:12px 0 5px;color:var(--navy)}
 .row .ev{flex:1;font-size:11px;color:var(--mute);line-height:1.35}
 .inp{width:60px;text-align:right;border:1px solid #cfd6e4;border-radius:6px;padding:4px 6px;font:inherit}
 .inp.w{width:110px}
+.grp{margin:10px 0 2px;padding:4px 8px;background:var(--head);color:var(--navy);font-weight:700;font-size:12px;border-radius:5px}
 select.inp{width:100%;text-align:left}
 .pct{display:flex;align-items:center;gap:3px;flex:none}
 .tag{display:inline-block;font-size:11px;background:var(--head);color:var(--navy);border-radius:10px;padding:1px 8px;margin-left:4px}
@@ -117,19 +118,14 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
   var BANDS = [
     { k: "low", n: "저층 (2~4층)", lo: 2, hi: 4 },
     { k: "mid", n: "중층 (5~8층)", lo: 5, hi: 8 },
-    { k: "high", n: "고층 (9층~최상층 아래)", lo: 9, hi: 99 },
-    { k: "top", n: "최상층", lo: 0, hi: 0 }
+    { k: "high", n: "고층 (9층~)", lo: 9, hi: 99 }
   ];
   var ITEMS = [
     { g: "층", k: "low", n: "저층 (2~4층)", ev: "아파트 참고: 중층 대비 약 -6~-7%" },
     { g: "층", k: "mid", n: "중층 (5~8층)", ev: "기준 층 (0% 유지)" },
-    { g: "층", k: "high", n: "고층 (9층~)", ev: "아파트 참고: 중층 대비 +0.4~1.4%" },
-    { g: "층", k: "topf", n: "최상층", ev: "아파트 참고: 중층과 비슷 ~ +2.9%" },
+    { g: "층", k: "high", n: "고층 (9층~)", ev: "최상층 포함 · 아파트 참고: 중층 대비 +0.4~1.4%" },
     { g: "타입", k: "t36", n: "36OA (소형)", ev: "소형이 평당가 높은 경향 · 이타워2 43㎡ 1,307 > 44㎡ 1,290" },
-    { g: "타입", k: "t51", n: "51OA (중소형)", ev: "기준 타입 (0%)" },
-    { g: "입지", k: "stn", n: "역세권 (운정중앙역)", ev: "역 약 200m · 동탄·킨텍스에서 200~400m 거리 가산 없음, 역 인접만 +4~5% → 0%" },
-    { g: "입지", k: "vw", n: "조망·향", ev: "향 정보 없음 · 확정 후 입력" },
-    { g: "기타", k: "etc", n: "기타 가산", ev: "신축·상품·시장 분위기 등" }
+    { g: "타입", k: "t51", n: "51OA (중소형)", ev: "기준 타입 (0%)" }
   ];
   var KEY = "shopmaps:price:v1";
   var st = { preset: "etower2", base: 1294, pct: {} };
@@ -158,7 +154,7 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
 
   var html = "", lastG = "";
   ITEMS.forEach(function (it) {
-    if (it.g !== lastG) { html += '<div style="margin:7px 0 0;font-weight:700;color:var(--navy);font-size:12px">' + it.g + "</div>"; lastG = it.g; }
+    if (it.g !== lastG) { html += '<div class="grp">' + it.g + " 가산</div>"; lastG = it.g; }
     html += '<div class="row"><span class="nm">' + it.n + '</span><span class="pct"><input class="inp" type="number" step="0.5" data-k="' + it.k + '" value="' + st.pct[it.k] + '">%</span><span class="ev">' + it.ev + "</span></div>";
   });
   $("items").innerHTML = html;
@@ -173,15 +169,14 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
 
   /* ---------- 계산 ---------- */
   function bandOf(f, top) {
-    if (f === top) return "top";
     if (f <= 4) return "low";
     if (f <= 8) return "mid";
     return "high";
   }
-  var BANDPCT = { low: "low", mid: "mid", high: "high", top: "topf" };
+  var BANDPCT = { low: "low", mid: "mid", high: "high" };
   function pctFor(band, type) {
     var p = st.pct;
-    return (p[BANDPCT[band]] || 0) + (type === "36OA" ? p.t36 : p.t51) + (p.stn || 0) + (p.vw || 0) + (p.etc || 0);
+    return (p[BANDPCT[band]] || 0) + (type === "36OA" ? p.t36 : p.t51);
   }
   function floorsIn(bl, band) {
     var n = 0;
@@ -199,7 +194,7 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
       BANDS.forEach(function (b) {
         var nf = floorsIn(bl, b.k);
         if (!nf) return;
-        var label = b.k === "top" ? bl.top + "층 (최상층)" : (b.k === "high" ? "고층 (9~" + (bl.top - 1) + "층)" : b.n);
+        var label = b.k === "high" ? "고층 (9~" + bl.top + "층)" : b.n;
         out += '<tr><td class="l">' + label + '</td><td>' + nf + '</td>';
         ["36OA", "51OA"].forEach(function (t) {
           var pc = pctFor(b.k, t), pp = base * (1 + pc / 100), per = pp * TYPES[t].py;
