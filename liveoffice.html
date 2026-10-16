@@ -12,7 +12,7 @@ body{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,
 #top{height:46px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 16px}
 #top h1{font-size:15px;margin:0;font-weight:700}
 #wrap{height:calc(100% - 46px);display:flex;gap:0}
-#left{width:440px;flex:none;background:#fff;border-right:1px solid var(--line);overflow:auto;padding:12px 14px 18px}
+#left{width:var(--lw,440px);min-width:280px;flex:none;background:#fff;border-right:1px solid var(--line);overflow:auto;padding:12px 14px 18px}
 #right{flex:1;min-width:0;overflow:auto;padding:12px 16px 20px;background:#fff}
 h2{font-size:15px;margin:0 0 2px;color:var(--navy)}
 h3{font-size:13px;margin:12px 0 5px;color:var(--navy)}
@@ -22,6 +22,11 @@ h3{font-size:13px;margin:12px 0 5px;color:var(--navy)}
 .row .ev{flex:1;font-size:11px;color:var(--mute);line-height:1.35}
 .inp{width:60px;text-align:right;border:1px solid #cfd6e4;border-radius:6px;padding:4px 6px;font:inherit}
 .inp.w{width:110px}
+#split{flex:none;width:8px;cursor:col-resize;background:var(--line);touch-action:none;position:relative}
+#split:before{content:"";position:absolute;left:2px;top:50%;width:4px;height:36px;margin-top:-18px;border-radius:2px;background:#aab2c5}
+#split:hover,#split.on{background:#c9d1e6}#split:hover:before,#split.on:before{background:var(--navy)}
+.two{display:flex;flex-wrap:wrap;gap:12px}.two>.blk{flex:1 1 430px;min-width:0}
+.cmp td small{display:block;margin:0;line-height:1.2}
 .grp{margin:10px 0 2px;padding:4px 8px;background:var(--head);color:var(--navy);font-weight:700;font-size:12px;border-radius:5px}
 select.inp{width:100%;text-align:left}
 .pct{display:flex;align-items:center;gap:3px;flex:none}
@@ -42,7 +47,7 @@ table.dt{border-collapse:collapse;width:100%;font-size:12.5px;table-layout:fixed
 .sum b{display:inline;font-size:15px;color:var(--navy);margin-right:5px}
 .sum span{font-size:11px;color:var(--mute)}.sum .t{display:block}
 button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-weight:700;font-size:12px;padding:5px 10px;border-radius:7px;cursor:pointer}
-@media(max-width:900px){#wrap{flex-direction:column;overflow:auto}#left{width:100%;border-right:0;border-bottom:1px solid var(--line);overflow:visible}#right{overflow:visible}}
+@media(max-width:900px){#split{display:none}#wrap{flex-direction:column;overflow:auto}#left{width:100%;border-right:0;border-bottom:1px solid var(--line);overflow:visible}#right{overflow:visible}}
 details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;padding:0 10px}details.ev>summary{cursor:pointer;padding:7px 0;font-weight:700;color:var(--navy);font-size:12.5px}details.ev>summary small{font-weight:400;color:var(--mute);margin-left:6px;font-size:11px}details.ev[open]>summary{border-bottom:1px dashed var(--line);margin-bottom:6px}
 .dt td.l small{display:inline}
 </style>
@@ -61,12 +66,37 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
 
   <h3>② 가산율 (%, 마이너스 = 할인)</h3>
   <div id="items"></div>
-  <div style="margin-top:8px"><button class="rs" id="reset">가산율 모두 0으로</button></div>
+  <div style="margin-top:8px"><button class="rs" id="reset">근거값으로 되돌리기</button> <button class="rs" id="zero">모두 0으로</button></div>
 </div>
+<div id="split" title="드래그해서 폭 조절 · 더블클릭 = 원래대로"></div>
 <div id="right">
   <h2>호실 타입별 분양가 <span class="tag" id="baseTag"></span></h2>
   <div class="sum" id="sum"></div>
-  <div id="tables"></div>
+  <div id="tables" class="two"></div>
+  <details class="ev"><summary>층·타입 가산 근거 · 오피스텔 실거래<small>저층 -2% · 고층 +1% · 36OA -7% (펼치기)</small></summary>
+    <div class="note" style="margin-top:0">동탄·킨텍스(대화동·장항동) 오피스텔 매매 실거래 1,492건 · 2024.10~2026.10 · 해제 제외 · 같은 단지끼리 비교 · 시장 하락 추세(연 -5~6%) 보정</div>
+    <table class="dt" style="margin-top:6px"><colgroup><col style="width:36%"><col style="width:26%"><col style="width:38%"></colgroup>
+      <thead><tr><th colspan="3">타입: 51.95㎡ 평당가 ÷ 36.72㎡ 평당가 (1 초과 = 큰 면적이 비쌈)</th></tr><tr><th>구분</th><th>표본</th><th>비율 (95% 구간)</th></tr></thead>
+      <tbody>
+        <tr><td class="l">30~60㎡</td><td>528건 · 32단지</td><td><b>1.12</b><small>1.09~1.15</small></td></tr>
+        <tr><td class="l">25~75㎡</td><td>735건 · 40단지</td><td><b>1.08</b><small>1.06~1.09</small></td></tr>
+        <tr><td class="l">18~100㎡</td><td>1,178건 · 56단지</td><td><b>1.05</b><small>1.04~1.06</small></td></tr>
+        <tr><td class="l">지역별 (18~100㎡)</td><td>동탄 · 대화동 · 장항동</td><td><b>1.02 · 0.94 · 1.06</b></td></tr>
+        <tr><td class="l">같은 단지 직접 비교 (30~45㎡ vs 45~65㎡)</td><td>10단지</td><td><b>중앙 1.17</b><small>0.96~1.28</small></td></tr>
+        <tr><td class="l">운정 KB 호가 (같은 단지, 면적 작은 쪽 → 큰 쪽)</td><td>4단지</td><td><b>엠버418 +7% · 클래스원 +13%</b><small>디에이블 -2% · HB하우스토리 -2%</small></td></tr>
+        <tr class="tot"><td class="l" colspan="3">큰 면적이 평당가 +5~12% (중심 +8%) → 36OA = 51OA 대비 약 -7% 적용 · '소형이 평당가 높다'는 근거 없음</td></tr>
+      </tbody></table>
+    <table class="dt" style="margin-top:8px"><colgroup><col style="width:36%"><col style="width:26%"><col style="width:19%"><col style="width:19%"></colgroup>
+      <thead><tr><th colspan="4">층: 중층(5~8층) 대비 · 같은 단지·같은 면적 · 최고 25층 이하 단지</th></tr><tr><th>구분</th><th>표본</th><th>저층 2~4층</th><th>고층 9층~</th></tr></thead>
+      <tbody>
+        <tr><td class="l">전체</td><td>943건</td><td><b>-2.0%</b></td><td><b>+1.7%</b></td></tr>
+        <tr><td class="l">25~75㎡</td><td>667건</td><td><b>-1.7%</b></td><td><b>+1.7%</b></td></tr>
+        <tr><td class="l">대화동·장항동</td><td>743건</td><td><b>-2.2%</b></td><td><b>+1.9%</b></td></tr>
+        <tr><td class="l">고층을 9~12층으로 한정</td><td>943건</td><td><b>-2.7%</b></td><td><b>+0.4%</b></td></tr>
+        <tr><td class="l">모든 건물 포함</td><td>1,310건</td><td><b>-2.4%</b></td><td><b>+1.8%</b></td></tr>
+        <tr class="tot"><td class="l" colspan="4">저층 -2% · 고층 +1% 적용 (5·6BL은 최고 11~13층이라 9~12층 한정값 반영) · 오차 ±2%p, 아파트(-6~-7%)보다 효과 훨씬 작음</td></tr>
+      </tbody></table>
+  </details>
   <details class="ev"><summary>역세권 가산 근거 · 동탄역·킨텍스역 실거래<small>200~400m 가산 없음, 역 인접만 +4~5% (펼치기)</small></summary>
     <div class="note" style="margin-top:0">국토부 오피스텔(매매) 실거래 · 2024.10~2026.10 · 해제 제외 · 전용 평당가(만원) · 거리는 지도상 개략값</div>
     <table class="dt" style="margin-top:6px"><colgroup><col style="width:34%"><col style="width:14%"><col style="width:10%"><col style="width:10%"><col style="width:14%"><col style="width:18%"></colgroup>
@@ -82,7 +112,7 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
       <thead><tr><th colspan="6">킨텍스역 (대화동·장항동)</th></tr><tr><th>단지</th><th>거리</th><th>준공</th><th>거래</th><th>면적</th><th>평당가</th></tr></thead>
       <tbody>
         <tr><td class="l">힐스테이트일산</td><td>역 인접</td><td>2019</td><td>67건</td><td>84㎡</td><td><b>2,405</b></td></tr>
-        <tr><td class="l">킨텍스꿈에그린<small>(포레나킨텍스 추정)</small></td><td>역 인접</td><td>2019</td><td>46건</td><td>84~85㎡</td><td><b>2,602</b></td></tr>
+        <tr><td class="l">포레나킨텍스</td><td>역 인접</td><td>2019</td><td>46건</td><td>84~85㎡</td><td><b>2,602</b></td></tr>
         <tr><td class="l">킨텍스원시티</td><td>역 인접</td><td>2019</td><td>9건</td><td>84.9㎡</td><td><b>2,637</b></td></tr>
         <tr class="tot"><td class="l"><b>역 인접 평균</b></td><td></td><td></td><td>122건</td><td></td><td><b>2,496</b><small>+4.5%</small></td></tr>
         <tr><td class="l">일산더샵그라비스타</td><td>약 200m</td><td>2019</td><td>57건</td><td>84~85㎡</td><td><b>2,357</b></td></tr>
@@ -121,16 +151,16 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
     { k: "high", n: "고층 (9층~)", lo: 9, hi: 99 }
   ];
   var ITEMS = [
-    { g: "층", k: "low", n: "저층 (2~4층)", ev: "아파트 참고: 중층 대비 약 -6~-7%" },
-    { g: "층", k: "mid", n: "중층 (5~8층)", ev: "기준 층 (0% 유지)" },
-    { g: "층", k: "high", n: "고층 (9층~)", ev: "최상층 포함 · 아파트 참고: 중층 대비 +0.4~1.4%" },
-    { g: "타입", k: "t36", n: "36OA (소형)", ev: "소형이 평당가 높은 경향 · 이타워2 43㎡ 1,307 > 44㎡ 1,290" },
-    { g: "타입", k: "t51", n: "51OA (중소형)", ev: "기준 타입 (0%)" }
+    { g: "층", k: "low", n: "저층 (2~4층)", d: -2, ev: "오피스텔 실거래: 중층 대비 -2% (-1.7~-2.7%)" },
+    { g: "층", k: "mid", n: "중층 (5~8층)", d: 0, ev: "기준 층" },
+    { g: "층", k: "high", n: "고층 (9층~)", d: 1, ev: "오피스텔 실거래: 중층 대비 +1% (+0.4~+1.9%) · 최상층 포함" },
+    { g: "타입", k: "t36", n: "36OA (소형)", d: -7, ev: "오피스텔 실거래: 51OA 대비 -7% (-5~-11%) · 큰 면적이 평당가 높음" },
+    { g: "타입", k: "t51", n: "51OA (중소형)", d: 0, ev: "기준 타입" }
   ];
-  var KEY = "shopmaps:price:v1";
+  var KEY = "shopmaps:price:v2";
   var st = { preset: "etower2", base: 1294, pct: {} };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) { st = sv; } } catch (e) {}
-  ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = 0; });
+  ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = it.d || 0; });
 
   function $(id) { return document.getElementById(id); }
   function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
@@ -161,11 +191,13 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
   [].forEach.call(document.querySelectorAll("#items input"), function (el) {
     el.oninput = function () { st.pct[el.getAttribute("data-k")] = +el.value || 0; save(); calc(); };
   });
-  $("reset").onclick = function () {
-    ITEMS.forEach(function (it) { st.pct[it.k] = 0; });
-    [].forEach.call(document.querySelectorAll("#items input"), function (el) { el.value = 0; });
+  function setAll(useDef) {
+    ITEMS.forEach(function (it) { st.pct[it.k] = useDef ? (it.d || 0) : 0; });
+    [].forEach.call(document.querySelectorAll("#items input"), function (el) { el.value = st.pct[el.getAttribute("data-k")]; });
     save(); calc();
-  };
+  }
+  $("reset").onclick = function () { setAll(true); };
+  $("zero").onclick = function () { setAll(false); };
 
   /* ---------- 계산 ---------- */
   function bandOf(f, top) {
@@ -188,14 +220,14 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
     var cards = [];
     BLS.forEach(function (bl) {
       var nFloors = bl.top - 1;
-      out += '<h3>' + bl.id + ' · 2~' + bl.top + '층 · ' + (bl.units["36OA"] + bl.units["51OA"]) + '실</h3>';
-      out += '<table class="dt"><colgroup><col style="width:19%"><col style="width:7%"><col style="width:20%"><col style="width:20%"><col style="width:17%"><col style="width:17%"></colgroup><thead><tr><th rowspan="2">층 구간</th><th rowspan="2">층수</th><th colspan="2">36OA (전용 ' + TYPES["36OA"].py + '평)</th><th colspan="2">51OA (전용 ' + TYPES["51OA"].py + '평)</th></tr><tr><th>평당가 (가산율)</th><th>호당 분양가</th><th>평당가 (가산율)</th><th>호당 분양가</th></tr></thead><tbody>';
+      out += '<div class="blk"><h3>' + bl.id + ' · 2~' + bl.top + '층 · ' + (bl.units["36OA"] + bl.units["51OA"]) + '실</h3>';
+      out += '<table class="dt cmp"><colgroup><col style="width:22%"><col style="width:19%"><col style="width:20%"><col style="width:19%"><col style="width:20%"></colgroup><thead><tr><th rowspan="2">층 구간</th><th colspan="2">36OA (전용 ' + TYPES["36OA"].py + '평)</th><th colspan="2">51OA (전용 ' + TYPES["51OA"].py + '평)</th></tr><tr><th>평당가</th><th>호당 분양가</th><th>평당가</th><th>호당 분양가</th></tr></thead><tbody>';
       var avg = { "36OA": 0, "51OA": 0 };
       BANDS.forEach(function (b) {
         var nf = floorsIn(bl, b.k);
         if (!nf) return;
         var label = b.k === "high" ? "고층 (9~" + bl.top + "층)" : b.n;
-        out += '<tr><td class="l">' + label + '</td><td>' + nf + '</td>';
+        out += '<tr><td class="l">' + label + '</td>';
         ["36OA", "51OA"].forEach(function (t) {
           var pc = pctFor(b.k, t), pp = base * (1 + pc / 100), per = pp * TYPES[t].py;
           avg[t] += per * nf / nFloors;
@@ -205,11 +237,11 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
       });
       var tot = 0, tu = 0, ta = 0;
       ["36OA", "51OA"].forEach(function (t) { var u = bl.units[t]; tot += avg[t] * u; tu += u; ta += u * TYPES[t].py; });
-      out += '<tr class="tot"><td class="l"><b>평균</b></td><td>' + nFloors + '</td>';
+      out += '<tr class="tot"><td class="l"><b>평균</b><small>' + nFloors + '개층</small></td>';
       ["36OA", "51OA"].forEach(function (t) {
         out += '<td><b>' + fmt(avg[t] / TYPES[t].py) + '</b><small>' + bl.units[t] + '실</small></td><td><b>' + fmt(avg[t]) + '</b><small>' + eok(avg[t]) + '</small></td>';
       });
-      out += '</tr></tbody></table>';
+      out += '</tr></tbody></table></div>';
       cards.push({ id: bl.id, tot: tot, tu: tu, ta: ta });
       grand += tot; grandUnits += tu; grandArea += ta;
     });
@@ -221,8 +253,23 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
     $("baseTag").textContent = "기준 " + fmt(base) + "만원/평";
     $("foot").innerHTML = '· 단위: 평당가·호당가 만원, 작은 글씨는 억 환산<br>' +
       '· 호실수·면적: 분양면적표 (5BL 36OA 10·51OA 63 / 6BL 36OA 11·51OA 70, 전용 11.11평·15.71평)<br>' +
-      '· 층 평균은 층별 호실 균등 가정 · 기준가는 호가라 실거래보다 높을 수 있음 · 가산율은 입력값';
+      '· 층 평균은 층별 호실 균등 가정 · 기준가는 호가라 실거래보다 높을 수 있음 · 가산율 기본값은 오피스텔 실거래 근거(위 표), 수정 가능';
   }
+  (function () {
+    var sp = $("split"), left = $("left"), wrap = $("wrap"), LK = "shopmaps:price:lw", drag = false;
+    function setW(w) {
+      var max = wrap.clientWidth - 420;
+      w = Math.max(280, Math.min(w, Math.max(280, max)));
+      wrap.style.setProperty("--lw", w + "px");
+    }
+    try { var lw = +localStorage.getItem(LK); if (lw) setW(lw); } catch (e) {}
+    sp.addEventListener("pointerdown", function (e) { drag = true; try { sp.setPointerCapture(e.pointerId); } catch (x) {} sp.classList.add("on"); e.preventDefault(); });
+    sp.addEventListener("pointermove", function (e) { if (drag) setW(e.clientX - wrap.getBoundingClientRect().left); });
+    function end() { if (!drag) return; drag = false; sp.classList.remove("on"); try { localStorage.setItem(LK, String(Math.round(left.getBoundingClientRect().width))); } catch (x) {} }
+    sp.addEventListener("pointerup", end);
+    sp.addEventListener("pointercancel", end);
+    sp.addEventListener("dblclick", function () { wrap.style.removeProperty("--lw"); try { localStorage.removeItem(LK); } catch (x) {} });
+  })();
   calc();
 })();
 </script>
