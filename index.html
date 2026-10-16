@@ -188,7 +188,18 @@ function dispNo(no) {
 function lbl(e) { return e.label === "SITE" ? "SITE" : disp(e.id); }
 
 /* ---------- 핀 이미지 (SVG data URI) ---------- */
+function sitePinImage(selected) {
+  var w = selected ? 142 : 128, h = selected ? 44 : 38, fs = selected ? 12 : 11, ph = selected ? 28 : 24;
+  var st = selected ? "#1d2433" : "#fff", sw = selected ? 2.5 : 2, m = w / 2;
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + " " + h + '">' +
+    '<path d="M' + (m - 6) + " " + (ph - 1) + " L" + m + " " + (h - 2) + " L" + (m + 6) + " " + (ph - 1) + 'Z" fill="#c0392b" stroke="' + st + '" stroke-width="' + sw + '" stroke-linejoin="round"/>' +
+    '<rect x="1.5" y="1.5" width="' + (w - 3) + '" height="' + ph + '" rx="' + ph / 2 + '" fill="#c0392b" stroke="' + st + '" stroke-width="' + sw + '"/>' +
+    '<rect x="' + (m - 5) + '" y="' + (ph - 2) + '" width="10" height="4" fill="#c0392b"/>' +
+    '<text x="' + m + '" y="' + (ph / 2 + fs * 0.36 + 1.5) + '" text-anchor="middle" font-family="Malgun Gothic,Arial,sans-serif" font-weight="800" font-size="' + fs + '" fill="#fff">파주운정3지구 5,6BL</text></svg>';
+  return new kakao.maps.MarkerImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg), new kakao.maps.Size(w, h), { offset: new kakao.maps.Point(m, h - 1) });
+}
 function pinImage(label, color, selected) {
+  if (label === "SITE") return sitePinImage(selected);
   var w = selected ? 40 : 32, h = selected ? 52 : 42;
   var fs = label.length > 3 ? (selected ? 12 : 10) : (selected ? 16 : 13);
   var r = w / 2 - 2;
@@ -295,6 +306,7 @@ function updateDots() {
   Object.keys(dotObjs).forEach(function (k) { dotObjs[k].setMap(show ? map : null); });
 }
 function pinImage(label, color, selected) {
+  if (label === "SITE") return sitePinImage(selected);
   var w = selected ? 40 : 32, h = selected ? 52 : 42, fs = label.length > 3 ? (selected ? 12 : 10) : (selected ? 16 : 13), r = w / 2 - 2;
   var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + " " + h + '">' +
     '<path d="M' + w / 2 + " " + (h - 1) + " C" + (w / 2 - 3) + " " + (h - 9) + " 2 " + (w * 0.62) + " 2 " + w / 2 + " A" + r + " " + r + " 0 1 1 " + (w - 2) + " " + w / 2 +
@@ -560,7 +572,7 @@ async function main() {
   try {
     await loadScript("data-" + REGION + ".js");
     DATA = window.SHOP_REGIONS[REGION];
-    if (REGION === "unjeong" && !DATA.floorized) { floorize(DATA); DATA.floorized = true; window.RMNO = DATA.complexes.filter(function (c) { return String(c.id) === "5"; }).map(function (c) { return String(c.no); }); DATA.complexes = DATA.complexes.filter(function (c) { return String(c.id) !== "5"; }); DATA.summary = DATA.summary.filter(function (s) { return String(s.id) !== "5"; }); DATA.sites = DATA.sites.filter(function (s) { return s.id !== "S1"; }); }
+    if (REGION === "unjeong" && !DATA.floorized) { floorize(DATA); DATA.floorized = true; window.RMNO = DATA.complexes.filter(function (c) { return String(c.id) === "5"; }).map(function (c) { return String(c.no); }); DATA.complexes = DATA.complexes.filter(function (c) { return String(c.id) !== "5"; }); DATA.summary = DATA.summary.filter(function (s) { return String(s.id) !== "5"; }); DATA.sites = DATA.sites.filter(function (s) { return s.id !== "S1"; }); DATA.sites.forEach(function (s) { s.name = "파주운정3지구 5,6BL"; }); }
     try { await loadScript("data-" + REGION + "-coords.js"); COORDS = (window.SHOP_COORDS || {})[REGION] || {}; } catch (e) { }
     try { await loadScript("data-" + REGION + "-shapes.js"); SHAPES = ((window.SHOP_SHAPES || {})[REGION] || []).filter(function (sh) { return (window.RMNO || []).indexOf(String(sh.n)) < 0; }); } catch (e) { SHAPES = []; }
   } catch (e) { document.getElementById("sidebody").textContent = "지역 데이터를 불러오지 못했습니다: " + REGION; return; }
