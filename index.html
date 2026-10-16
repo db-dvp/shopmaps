@@ -437,14 +437,17 @@ function openSite(id) {
   document.getElementById("sidehead").innerHTML = '<button class="back" id="backBtn">← 층별 요약 표로</button>' +
     '<div class="dh"><span class="no" style="background:#c0392b;color:#fff;font-weight:700">SITE</span><h2>' + esc(s.name) + ' 개요</h2><span class="unit" style="margin-left:auto">면적: ㎡ (평)<br>분양면적표 기준 · 예정</span></div>';
   function A(m, p) { return m + "<small>" + p + "평</small>"; }
+  var CG = '<colgroup><col style="width:13%"><col style="width:13%"><col style="width:11%"><col style="width:17%"><col style="width:17%"><col style="width:17%"><col style="width:12%"></colgroup>';
+  var TB = '<div style="overflow-x:auto"><table class="dt" style="table-layout:fixed">' + CG;
+  var H3 = '<h3 style="font-size:13px;margin:14px 0 6px;color:var(--navy)">';
   var h = '<div class="meta">파주운정3 5·6BL · 1층 근린생활시설(상가) / 2층 이상 업무시설(라이브오피스) 예정</div>';
-  h += '<div style="overflow-x:auto"><table class="dt"><thead><tr><th>구분</th><th>5BL</th><th>6BL</th></tr></thead><tbody>' +
-    '<tr><td class="l">상가 (근린생활시설)</td><td>1층</td><td>1층</td></tr>' +
-    '<tr><td class="l">라이브오피스 (업무시설)</td><td>2~11층</td><td>2~13층</td></tr>' +
-    '<tr><td class="l">라이브오피스 호실</td><td><b>73실</b><small>36OA 10 · 51OA 63</small></td><td><b>81실</b><small>36OA 11 · 51OA 70</small></td></tr>' +
+  h += TB + '<thead><tr><th colspan="3">구분</th><th colspan="2">5BL</th><th colspan="2">6BL</th></tr></thead><tbody>' +
+    '<tr><td class="l" colspan="3">상가 (근린생활시설)</td><td colspan="2">1층</td><td colspan="2">1층</td></tr>' +
+    '<tr><td class="l" colspan="3">라이브오피스 (업무시설)</td><td colspan="2">2~11층</td><td colspan="2">2~13층</td></tr>' +
+    '<tr><td class="l" colspan="3">라이브오피스 호실</td><td colspan="2"><b>73실</b><small>36OA 10 · 51OA 63</small></td><td colspan="2"><b>81실</b><small>36OA 11 · 51OA 70</small></td></tr>' +
     '</tbody></table></div>';
-  h += '<h3 style="font-size:13px;margin:14px 0 6px;color:var(--navy)">라이브오피스 (업무시설) 분양면적</h3>';
-  h += '<div style="overflow-x:auto"><table class="dt" style="min-width:480px"><thead><tr><th>구분</th><th>타입</th><th>호실</th><th>전용</th><th>공급</th><th>계약</th><th>전용률</th></tr></thead><tbody>';
+  h += H3 + '라이브오피스 (업무시설) 분양면적</h3>';
+  h += TB + '<thead><tr><th>구분</th><th>타입</th><th>호실</th><th>전용</th><th>공급</th><th>계약</th><th>전용률</th></tr></thead><tbody>';
   [
     ["5BL", "36OA", "10", ["36.72", "11.11"], ["51.26", "15.51"], ["95.78", "28.97"], "38.34%"],
     ["5BL", "51OA", "63", ["51.95", "15.71"], ["72.52", "21.94"], ["135.50", "40.99"], "38.34%"],
@@ -457,12 +460,11 @@ function openSite(id) {
     h += "<tr" + (tot ? ' style="background:var(--head)"' : "") + "><td>" + r[0] + "</td><td>" + (tot ? "<b>" + r[1] + "</b>" : r[1]) + "</td><td>" + r[2] + "</td><td>" + A(r[3][0], r[3][1]) + "</td><td>" + A(r[4][0], r[4][1]) + "</td><td>" + A(r[5][0], r[5][1]) + "</td><td>" + (r[6] || '<span class="na">-</span>') + "</td></tr>";
   });
   h += "</tbody></table></div>";
-  h += '<h3 style="font-size:13px;margin:14px 0 6px;color:var(--navy)">상가 (근린생활시설) 1층 분양면적</h3>';
-  h += '<div style="overflow-x:auto"><table class="dt" style="min-width:480px"><thead><tr><th>구분</th><th>층</th><th>전용</th><th>공급</th><th>계약</th><th>전용률</th></tr></thead><tbody>' +
-    "<tr><td>5BL</td><td>1층</td><td>" + A("370.48", "112.07") + "</td><td>" + A("605.86", "183.27") + "</td><td>" + A("1,442.79", "436.44") + "</td><td>25.68%</td></tr>" +
-    "<tr><td>6BL</td><td>1층</td><td>" + A("370.48", "112.07") + "</td><td>" + A("605.86", "183.27") + "</td><td>" + A("1,506.67", "455.77") + "</td><td>24.59%</td></tr>" +
+  h += H3 + '상가 (근린생활시설) 분양면적</h3>';
+  h += TB + '<thead><tr><th>구분</th><th>타입</th><th>호실</th><th>전용</th><th>공급</th><th>계약</th><th>전용률</th></tr></thead><tbody>' +
+    '<tr><td>5BL</td><td>1층</td><td><span class="na">-</span></td><td>' + A("370.48", "112.07") + "</td><td>" + A("605.86", "183.27") + "</td><td>" + A("1,442.79", "436.44") + "</td><td>25.68%</td></tr>" +
+    '<tr><td>6BL</td><td>1층</td><td><span class="na">-</span></td><td>' + A("370.48", "112.07") + "</td><td>" + A("605.86", "183.27") + "</td><td>" + A("1,506.67", "455.77") + "</td><td>24.59%</td></tr>" +
     "</tbody></table></div>";
-  h += '<div class="foot">출처: 5·6BL 분양면적표 · 라이브오피스 총 154실(5BL 73 + 6BL 81) · 전용률 = 전용면적 ÷ 공급면적(업무시설은 계약면적 기준 아님)</div>';
   var body = document.getElementById("sidebody");
   body.innerHTML = h;
   body.scrollTop = 0;
