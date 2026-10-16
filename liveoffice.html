@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>라이브오피스 분양가 산정</title>
+<title>라이브오피스 분양가 시뮬레이터</title>
 <style>
 :root{--navy:#1b2a56;--line:#dfe2ea;--bg:#f3f1ec;--head:#eef1f7;--mute:#6b7280;--ink:#1d2433;--hot:#d93025}
 *{box-sizing:border-box}
@@ -54,7 +54,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
 </style>
 </head>
 <body>
-<div id="top"><h1>파주운정3지구 5,6BL 라이브오피스 분양가 산정</h1></div>
+<div id="top"><h1>파주운정3지구 5,6BL 라이브오피스 분양가 시뮬레이터</h1></div>
 <div id="wrap">
 <div id="left">
   <h2>기준가와 가산율</h2>
@@ -86,11 +86,11 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
 (function () {
   /* ---------- 자료 ---------- */
   var PRESETS = [
+    { k: "custom", n: "직접 입력", v: null, ev: "직접 입력 · 위 목록에서 비교 기준값 선택 가능" },
     { k: "etower2", n: "이타워2 호가 평균", v: 1294, ev: "근거: 네이버 26.10 · 이타워2(라이브오피스, 운정) 4건 · 전용 43·44㎡" },
     { k: "etower2m", n: "이타워2 호가 중위값", v: 1311, ev: "근거: 네이버 26.10 · 이타워2 4건 중위값" },
     { k: "small", n: "운정 소형 오피스텔 호가 평균", v: 2106, ev: "근거: 네이버·KB 26.10 · 전용 60㎡ 미만 건수 가중 평균 · 연식·상품 달라 참고용" },
-    { k: "large", n: "운정 대형 오피스텔 호가 평균", v: 2670, ev: "근거: 네이버·KB 26.10 · 전용 60㎡ 이상 건수 가중 평균 · 타입 달라 참고용" },
-    { k: "custom", n: "직접 입력", v: null, ev: "" }
+    { k: "large", n: "운정 대형 오피스텔 호가 평균", v: 2670, ev: "근거: 네이버·KB 26.10 · 전용 60㎡ 이상 건수 가중 평균 · 타입 달라 참고용" }
   ];
   var BLS = [
     { id: "5BL", top: 11, units: { "36OA": 10, "51OA": 63 } },
@@ -109,8 +109,8 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     { g: "타입", k: "t36", n: "36OA (소형)", d: -7, ev: "오피스텔 실거래: 51OA 대비 -7% (-5~-11%) · 큰 면적이 평당가 높음" },
     { g: "타입", k: "t51", n: "51OA (중소형)", d: 0, ev: "기준 타입" }
   ];
-  var KEY = "shopmaps:price:v2";
-  var st = { preset: "etower2", base: 1294, pct: {} };
+  var KEY = "shopmaps:price:v3";
+  var st = { preset: "custom", base: 1294, pct: {} };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) { st = sv; } } catch (e) {}
   ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = it.d || 0; });
 
@@ -199,7 +199,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     });
     $("tables").innerHTML = out;
     var s = "";
-    cards.forEach(function (c) { s += '<div><span class="t">' + c.id + ' 예상 분양수입 (' + c.tu + '실)</span><b>' + eok(c.tot) + '</b><span>호당 평균 ' + eok(c.tot / c.tu) + '</span></div>'; });
+    cards.forEach(function (c) { s += '<div><span class="t">' + c.id + ' 예상 분양매출 (' + c.tu + '실)</span><b>' + eok(c.tot) + '</b><span>호당 평균 ' + eok(c.tot / c.tu) + '</span></div>'; });
     s += '<div><span class="t">합계 (' + grandUnits + '실)</span><b>' + eok(grand) + '</b><span>전용 평당 평균 ' + fmt(grand / grandArea) + '</span></div>';
     $("sum").innerHTML = s;
     $("baseTag").textContent = "기준 " + fmt(base) + "만원/평";
