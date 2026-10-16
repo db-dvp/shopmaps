@@ -315,7 +315,7 @@ function placePin(e) {
     m.setMap(map); SITE_PINS[e.id] = m; m.__e = e;
     kakao.maps.event.addListener(m, "mouseover", function () { tipOv.setContent('<div class="tip">' + (e.label === "SITE" ? "<b>SITE</b> · " + esc(e.name) : "<b>" + esc(disp(e.id)) + ". " + esc(e.name) + "</b><span class='ln'>1층 평당 호가 " + f1Txt(e) + "</span>") + "</div>"); tipOv.setPosition(m.getPosition()); tipOv.setMap(map); });
     kakao.maps.event.addListener(m, "mouseout", function () { tipOv.setMap(null); });
-    kakao.maps.event.addListener(m, "click", function () { if (e.label !== "SITE") openDetail(e.id, false); });
+    kakao.maps.event.addListener(m, "click", function () { if (e.label !== "SITE") openDetail(e.id, false); else openSite(e.id); });
     kakao.maps.event.addListener(m, "dragend", function () { var p = m.getPosition(); LOCAL_FIX[e.id] = [+p.getLat().toFixed(6), +p.getLng().toFixed(6)]; saveFix(); renderFix(); });
   } else m.setPosition(pos);
 }
@@ -430,6 +430,44 @@ function barRow(r) {
   }
   return '<div class="brow">' + lab + '<div class="btrack">' + t + "</div></div>";
 }
+function openSite(id) {
+  var s = DATA.sites.filter(function (x) { return x.id === id; })[0];
+  if (!s) return;
+  setSelected(id);
+  document.getElementById("sidehead").innerHTML = '<button class="back" id="backBtn">← 층별 요약 표로</button>' +
+    '<div class="dh"><span class="no" style="background:#c0392b;color:#fff;font-weight:700">SITE</span><h2>' + esc(s.name) + ' 개요</h2><span class="unit" style="margin-left:auto">면적: ㎡ (평)<br>분양면적표 기준 · 예정</span></div>';
+  function A(m, p) { return m + "<small>" + p + "평</small>"; }
+  var h = '<div class="meta">파주운정3 5·6BL · 1층 근린생활시설(상가) / 2층 이상 업무시설(라이브오피스) 예정</div>';
+  h += '<div style="overflow-x:auto"><table class="dt"><thead><tr><th>구분</th><th>5BL</th><th>6BL</th></tr></thead><tbody>' +
+    '<tr><td class="l">상가 (근린생활시설)</td><td>1층</td><td>1층</td></tr>' +
+    '<tr><td class="l">라이브오피스 (업무시설)</td><td>2~11층</td><td>2~13층</td></tr>' +
+    '<tr><td class="l">라이브오피스 호실</td><td><b>73실</b><small>36OA 10 · 51OA 63</small></td><td><b>81실</b><small>36OA 11 · 51OA 70</small></td></tr>' +
+    '</tbody></table></div>';
+  h += '<h3 style="font-size:13px;margin:14px 0 6px;color:var(--navy)">라이브오피스 (업무시설) 분양면적</h3>';
+  h += '<div style="overflow-x:auto"><table class="dt" style="min-width:480px"><thead><tr><th>구분</th><th>타입</th><th>호실</th><th>전용</th><th>공급</th><th>계약</th><th>전용률</th></tr></thead><tbody>';
+  [
+    ["5BL", "36OA", "10", ["36.72", "11.11"], ["51.26", "15.51"], ["95.78", "28.97"], "38.34%"],
+    ["5BL", "51OA", "63", ["51.95", "15.71"], ["72.52", "21.94"], ["135.50", "40.99"], "38.34%"],
+    ["5BL", "합계", "73", ["3,639.81", "1,101.04"], ["5,081.09", "1,537.03"], ["9,494.27", "2,872.02"], ""],
+    ["6BL", "36OA", "11", ["36.72", "11.11"], ["51.43", "15.56"], ["92.54", "27.99"], "39.68%"],
+    ["6BL", "51OA", "70", ["51.95", "15.71"], ["72.76", "22.01"], ["130.92", "39.60"], "39.68%"],
+    ["6BL", "합계", "81", ["4,040.15", "1,222.14"], ["5,659.07", "1,711.87"], ["10,182.61", "3,080.24"], ""]
+  ].forEach(function (r) {
+    var tot = r[1] === "합계";
+    h += "<tr" + (tot ? ' style="background:var(--head)"' : "") + "><td>" + r[0] + "</td><td>" + (tot ? "<b>" + r[1] + "</b>" : r[1]) + "</td><td>" + r[2] + "</td><td>" + A(r[3][0], r[3][1]) + "</td><td>" + A(r[4][0], r[4][1]) + "</td><td>" + A(r[5][0], r[5][1]) + "</td><td>" + (r[6] || '<span class="na">-</span>') + "</td></tr>";
+  });
+  h += "</tbody></table></div>";
+  h += '<h3 style="font-size:13px;margin:14px 0 6px;color:var(--navy)">상가 (근린생활시설) 1층 분양면적</h3>';
+  h += '<div style="overflow-x:auto"><table class="dt" style="min-width:480px"><thead><tr><th>구분</th><th>층</th><th>전용</th><th>공급</th><th>계약</th><th>전용률</th></tr></thead><tbody>' +
+    "<tr><td>5BL</td><td>1층</td><td>" + A("370.48", "112.07") + "</td><td>" + A("605.86", "183.27") + "</td><td>" + A("1,442.79", "436.44") + "</td><td>25.68%</td></tr>" +
+    "<tr><td>6BL</td><td>1층</td><td>" + A("370.48", "112.07") + "</td><td>" + A("605.86", "183.27") + "</td><td>" + A("1,506.67", "455.77") + "</td><td>24.59%</td></tr>" +
+    "</tbody></table></div>";
+  h += '<div class="foot">출처: 5·6BL 분양면적표 · 라이브오피스 총 154실(5BL 73 + 6BL 81) · 전용률 = 전용면적 ÷ 공급면적(업무시설은 계약면적 기준 아님)</div>';
+  var body = document.getElementById("sidebody");
+  body.innerHTML = h;
+  body.scrollTop = 0;
+  document.getElementById("backBtn").onclick = showSummary;
+}
 function openDetail(id, pan) {
   var c = DATA.complexes.filter(function (x) { return x.id === id; })[0]; if (!c) return;
   setSelected(id);
@@ -520,7 +558,7 @@ async function main() {
   try {
     await loadScript("data-" + REGION + ".js");
     DATA = window.SHOP_REGIONS[REGION];
-    if (REGION === "unjeong" && !DATA.floorized) { floorize(DATA); DATA.floorized = true; window.RMNO = DATA.complexes.filter(function (c) { return String(c.id) === "5"; }).map(function (c) { return String(c.no); }); DATA.complexes = DATA.complexes.filter(function (c) { return String(c.id) !== "5"; }); DATA.summary = DATA.summary.filter(function (s) { return String(s.id) !== "5"; }); }
+    if (REGION === "unjeong" && !DATA.floorized) { floorize(DATA); DATA.floorized = true; window.RMNO = DATA.complexes.filter(function (c) { return String(c.id) === "5"; }).map(function (c) { return String(c.no); }); DATA.complexes = DATA.complexes.filter(function (c) { return String(c.id) !== "5"; }); DATA.summary = DATA.summary.filter(function (s) { return String(s.id) !== "5"; }); DATA.sites = DATA.sites.filter(function (s) { return s.id !== "S1"; }); }
     try { await loadScript("data-" + REGION + "-coords.js"); COORDS = (window.SHOP_COORDS || {})[REGION] || {}; } catch (e) { }
     try { await loadScript("data-" + REGION + "-shapes.js"); SHAPES = ((window.SHOP_SHAPES || {})[REGION] || []).filter(function (sh) { return (window.RMNO || []).indexOf(String(sh.n)) < 0; }); } catch (e) { SHAPES = []; }
   } catch (e) { document.getElementById("sidebody").textContent = "지역 데이터를 불러오지 못했습니다: " + REGION; return; }
