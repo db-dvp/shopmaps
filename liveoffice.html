@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>라이브오피스 분양가 산정</title>
+<style>
+:root{--navy:#1b2a56;--line:#dfe2ea;--bg:#f3f1ec;--head:#eef1f7;--mute:#6b7280;--ink:#1d2433;--hot:#d93025}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:13px}
+#top{height:46px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 16px}
+#top h1{font-size:15px;margin:0;font-weight:700}
+#wrap{height:calc(100% - 46px);display:flex;gap:0}
+#left{width:420px;flex:none;background:#fff;border-right:1px solid var(--line);overflow:auto;padding:14px 16px 24px}
+#right{flex:1;min-width:0;overflow:auto;padding:14px 18px 28px;background:#fff}
+h2{font-size:15px;margin:0 0 2px;color:var(--navy)}
+h3{font-size:13px;margin:16px 0 6px;color:var(--navy)}
+.sub{font-size:12px;color:var(--mute);line-height:1.5;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.row .nm{flex:none;width:120px;font-weight:700}
+.row .ev{flex:1;font-size:11px;color:var(--mute);line-height:1.4}
+.inp{width:68px;text-align:right;border:1px solid #cfd6e4;border-radius:6px;padding:5px 6px;font:inherit}
+.inp.w{width:110px}
+select.inp{width:100%;text-align:left}
+.pct{display:flex;align-items:center;gap:3px;flex:none}
+.tag{display:inline-block;font-size:11px;background:var(--head);color:var(--navy);border-radius:10px;padding:1px 8px;margin-left:4px}
+table.dt{border-collapse:collapse;width:100%;font-size:12px;table-layout:fixed}
+.dt th,.dt td{border:1px solid var(--line);padding:6px 4px;text-align:center}
+.dt th{background:var(--head);color:var(--navy);font-weight:600;line-height:1.25}
+.dt td small{display:block;color:var(--mute);font-size:10.5px}
+.dt td b{font-weight:700}
+.dt td.l{text-align:left;padding-left:8px}
+.dt tr.tot td{background:var(--head)}
+.na{color:#9aa1ad}
+.neg{color:#2a67c7}.pos{color:var(--hot)}
+.note{font-size:11px;color:var(--mute);line-height:1.6;margin-top:10px}
+.foot{margin-top:14px;padding-top:8px;border-top:1px dashed var(--line);font-size:11px;color:var(--mute);line-height:1.6}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
+.sum div{flex:1;min-width:150px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fafbfd}
+.sum b{display:block;font-size:17px;color:var(--navy);margin-top:2px}
+.sum span{font-size:11px;color:var(--mute)}
+button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-weight:700;font-size:12px;padding:5px 10px;border-radius:7px;cursor:pointer}
+@media(max-width:900px){#wrap{flex-direction:column;overflow:auto}#left{width:100%;border-right:0;border-bottom:1px solid var(--line);overflow:visible}#right{overflow:visible}}
+</style>
+</head>
+<body>
+<div id="top"><h1>파주운정3지구 5,6BL 라이브오피스 분양가 산정</h1></div>
+<div id="wrap">
+<div id="left">
+  <h2>기준가와 가산율</h2>
+  <div class="sub">기준 전용 평당가에 항목별 가산율(%)을 더해 호실별 분양가를 계산합니다. 값을 바꾸면 오른쪽 표가 바로 다시 계산됩니다.</div>
+
+  <h3>① 기준가 (전용 평당가, 만원)</h3>
+  <select id="preset" class="inp"></select>
+  <div class="row" style="margin-top:6px"><span class="nm">기준 평당가</span><input id="base" class="inp w" type="number" step="1"><span style="color:var(--mute);font-size:11px">만원/평(전용)</span></div>
+  <div id="presetEv" class="note" style="margin-top:4px"></div>
+
+  <h3>② 가산율 (%, 마이너스 = 할인)</h3>
+  <div class="sub" style="margin-bottom:4px">같은 칸의 값은 모두 더합니다. 근거 칸은 지금까지 조사한 참고자료이며 자동으로 적용되지 않습니다.</div>
+  <div id="items"></div>
+  <div style="margin-top:10px"><button class="rs" id="reset">가산율 모두 0으로</button></div>
+</div>
+<div id="right">
+  <h2>호실 타입별 분양가 <span class="tag" id="baseTag"></span></h2>
+  <div class="sub">전용면적 × 기준 평당가 × (1 + 가산율 합). 호당 가격 단위는 만원이며 괄호는 억 환산입니다.</div>
+  <div class="sum" id="sum"></div>
+  <div id="tables"></div>
+  <div class="foot" id="foot"></div>
+</div>
+</div>
+<script>
+(function () {
+  /* ---------- 자료 ---------- */
+  var PRESETS = [
+    { k: "etower2", n: "이타워2 라이브오피스 매매 호가 평균 (4건)", v: 1294, ev: "네이버 26.10 · 같은 유형(라이브오피스, 운정) 단지 · 전용 43·44㎡ · 평균 1,294 / 중위 1,311" },
+    { k: "etower2m", n: "이타워2 라이브오피스 매매 호가 중위값", v: 1311, ev: "네이버 26.10 · 표본 4건이라 평균과 함께 참고" },
+    { k: "small", n: "운정 소형 오피스텔 매매 호가 가중평균 (전용 60㎡ 미만)", v: 2106, ev: "네이버·KB 26.10 · 운정 소형 오피스텔 건수 가중 평균 · 입주 연식·상품이 달라 참고용" },
+    { k: "large", n: "운정 대형 오피스텔 매매 호가 가중평균 (전용 60㎡ 이상)", v: 2670, ev: "네이버·KB 26.10 · 운정 대형 오피스텔 건수 가중 평균 · 타입이 달라 참고용" },
+    { k: "custom", n: "직접 입력", v: null, ev: "" }
+  ];
+  var BLS = [
+    { id: "5BL", top: 11, units: { "36OA": 10, "51OA": 63 } },
+    { id: "6BL", top: 13, units: { "36OA": 11, "51OA": 70 } }
+  ];
+  var TYPES = { "36OA": { py: 11.11, sup: { "5BL": 15.51, "6BL": 15.56 } }, "51OA": { py: 15.71, sup: { "5BL": 21.94, "6BL": 22.01 } } };
+  var BANDS = [
+    { k: "low", n: "저층 (2~4층)", lo: 2, hi: 4 },
+    { k: "mid", n: "중층 (5~8층)", lo: 5, hi: 8 },
+    { k: "high", n: "고층 (9층~최상층 아래)", lo: 9, hi: 99 },
+    { k: "top", n: "최상층", lo: 0, hi: 0 }
+  ];
+  var ITEMS = [
+    { g: "층", k: "low", n: "저층 (2~4층)", ev: "참고(아파트): 계양 분양권 전매 5개 단지 모두 저층 < 중층 < 고층, 저층 피 -1,338~+1,387만원. 부산·인천 실거래 기준 저층 약 -6~-7%(중층 대비)." },
+    { g: "층", k: "mid", n: "중층 (5~8층)", ev: "기준 층으로 두려면 0% 유지. 참고: 중층 평균 피 +507~+3,423만원." },
+    { g: "층", k: "high", n: "고층 (9층~)", ev: "참고(아파트): 중층 대비 고층 약 +0.4~+1.4%, 고층 평균 피 +1,561~+5,079만원." },
+    { g: "층", k: "topf", n: "최상층", ev: "참고: 인천 계양 최상층은 중층과 거의 동률(2024), 부산 최상층 약 +2.9%." },
+    { g: "타입", k: "t36", n: "36OA (소형 호실)", ev: "작은 면적일수록 평당가가 높게 형성되는 경향(오피스텔 조사: 소형 평당가 > 대형은 아님, 운정 소형 2,106 / 대형 2,670). 이타워2는 43㎡(1,307) > 44㎡(1,290)." },
+    { g: "타입", k: "t51", n: "51OA (중소형 호실)", ev: "기준 타입으로 두려면 0%." },
+    { g: "입지", k: "stn", n: "역세권 (운정중앙역)", ev: "이타워2(해올1길)는 역에서 먼 편. 5·6BL은 운정중앙역 인접(사업지 마커 위치 기준)이라 가산 근거로 쓸 수 있음. 비슷한 역 가산비를 구하면 입력." },
+    { g: "입지", k: "vw", n: "조망·향", ev: "분양면적표에 향 정보 없음. 확정 후 입력." },
+    { g: "기타", k: "etc", n: "기타 가산", ev: "신축·상품 차이, 1층 상가 연계, 시장 분위기 등." }
+  ];
+  var KEY = "shopmaps:price:v1";
+  var st = { preset: "etower2", base: 1294, pct: {} };
+  try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) { st = sv; } } catch (e) {}
+  ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = 0; });
+
+  function $(id) { return document.getElementById(id); }
+  function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
+  function eok(n) { return (n / 10000).toFixed(2) + "억"; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+
+  /* ---------- 입력 화면 ---------- */
+  var sel = $("preset");
+  sel.innerHTML = PRESETS.map(function (p) { return '<option value="' + p.k + '">' + p.n + (p.v ? " — " + fmt(p.v) : "") + "</option>"; }).join("");
+  sel.value = st.preset;
+  $("base").value = st.base;
+  function presetNote() { var p = PRESETS.filter(function (x) { return x.k === st.preset; })[0]; $("presetEv").textContent = p && p.ev ? "근거: " + p.ev : ""; }
+  presetNote();
+  sel.onchange = function () {
+    st.preset = sel.value;
+    var p = PRESETS.filter(function (x) { return x.k === st.preset; })[0];
+    if (p && p.v) { st.base = p.v; $("base").value = p.v; }
+    presetNote(); save(); calc();
+  };
+  $("base").oninput = function () { st.base = +this.value || 0; st.preset = "custom"; sel.value = "custom"; presetNote(); save(); calc(); };
+
+  var html = "", lastG = "";
+  ITEMS.forEach(function (it) {
+    if (it.g !== lastG) { html += '<div style="margin:10px 0 2px;font-weight:700;color:var(--navy);font-size:12px">' + it.g + "</div>"; lastG = it.g; }
+    html += '<div class="row"><span class="nm">' + it.n + '</span><span class="pct"><input class="inp" type="number" step="0.5" data-k="' + it.k + '" value="' + st.pct[it.k] + '">%</span><span class="ev">' + it.ev + "</span></div>";
+  });
+  $("items").innerHTML = html;
+  [].forEach.call(document.querySelectorAll("#items input"), function (el) {
+    el.oninput = function () { st.pct[el.getAttribute("data-k")] = +el.value || 0; save(); calc(); };
+  });
+  $("reset").onclick = function () {
+    ITEMS.forEach(function (it) { st.pct[it.k] = 0; });
+    [].forEach.call(document.querySelectorAll("#items input"), function (el) { el.value = 0; });
+    save(); calc();
+  };
+
+  /* ---------- 계산 ---------- */
+  function bandOf(f, top) {
+    if (f === top) return "top";
+    if (f <= 4) return "low";
+    if (f <= 8) return "mid";
+    return "high";
+  }
+  var BANDPCT = { low: "low", mid: "mid", high: "high", top: "topf" };
+  function pctFor(band, type) {
+    var p = st.pct;
+    return (p[BANDPCT[band]] || 0) + (type === "36OA" ? p.t36 : p.t51) + (p.stn || 0) + (p.vw || 0) + (p.etc || 0);
+  }
+  function floorsIn(bl, band) {
+    var n = 0;
+    for (var f = 2; f <= bl.top; f++) if (bandOf(f, bl.top) === band) n++;
+    return n;
+  }
+  function calc() {
+    var base = st.base || 0, out = "", grand = 0, grandUnits = 0, grandAreaV = 0, grandArea = 0;
+    var cards = [];
+    BLS.forEach(function (bl) {
+      var nFloors = bl.top - 1, rows = "", blTot = 0, blUnits = 0, blArea = 0;
+      out += '<h3>' + bl.id + ' · 2~' + bl.top + '층 · ' + (bl.units["36OA"] + bl.units["51OA"]) + '실</h3>';
+      out += '<table class="dt"><colgroup><col style="width:22%"><col style="width:7%"><col><col><col><col></colgroup><thead><tr><th rowspan="2">층 구간</th><th rowspan="2">층수</th><th colspan="2">36OA (전용 ' + TYPES["36OA"].py + '평)</th><th colspan="2">51OA (전용 ' + TYPES["51OA"].py + '평)</th></tr><tr><th>가산율 · 평당가</th><th>호당 분양가</th><th>가산율 · 평당가</th><th>호당 분양가</th></tr></thead><tbody>';
+      var avg = { "36OA": 0, "51OA": 0 };
+      BANDS.forEach(function (b) {
+        var nf = floorsIn(bl, b.k);
+        if (!nf) return;
+        var label = b.k === "top" ? bl.top + "층 (최상층)" : (b.k === "high" ? "고층 (9~" + (bl.top - 1) + "층)" : b.n);
+        out += '<tr><td class="l">' + label + '</td><td>' + nf + '</td>';
+        ["36OA", "51OA"].forEach(function (t) {
+          var pc = pctFor(b.k, t), pp = base * (1 + pc / 100), per = pp * TYPES[t].py;
+          avg[t] += per * nf / nFloors;
+          out += '<td><b>' + fmt(pp) + '</b><small class="' + (pc > 0 ? "pos" : pc < 0 ? "neg" : "") + '">' + (pc > 0 ? "+" : "") + pc.toFixed(1) + '%</small></td><td><b>' + fmt(per) + '</b><small>(' + eok(per) + ')</small></td>';
+        });
+        out += '</tr>';
+      });
+      var tot = 0, tu = 0, ta = 0;
+      ["36OA", "51OA"].forEach(function (t) { var u = bl.units[t]; tot += avg[t] * u; tu += u; ta += u * TYPES[t].py; });
+      out += '<tr class="tot"><td class="l"><b>평균 (층 균등 가정)</b></td><td>' + nFloors + '</td>';
+      ["36OA", "51OA"].forEach(function (t) {
+        out += '<td><b>' + fmt(avg[t] / TYPES[t].py) + '</b><small>평당 평균</small></td><td><b>' + fmt(avg[t]) + '</b><small>(' + eok(avg[t]) + ') · ' + bl.units[t] + '실</small></td>';
+      });
+      out += '</tr></tbody></table>';
+      cards.push({ id: bl.id, tot: tot, tu: tu, ta: ta });
+      grand += tot; grandUnits += tu; grandArea += ta;
+    });
+    $("tables").innerHTML = out;
+    var s = "";
+    cards.forEach(function (c) { s += '<div><span>' + c.id + ' 예상 분양수입 (' + c.tu + '실)</span><b>' + fmt(c.tot) + '만원</b><span>(' + eok(c.tot) + ') · 평균 ' + eok(c.tot / c.tu) + '/실</span></div>'; });
+    s += '<div><span>합계 (' + grandUnits + '실)</span><b>' + fmt(grand) + '만원</b><span>(' + eok(grand) + ') · 전용 평당 평균 ' + fmt(grand / grandArea) + '</span></div>';
+    $("sum").innerHTML = s;
+    $("baseTag").textContent = "기준 " + fmt(base) + "만원/평";
+    $("foot").innerHTML = '· 계산식: 호당 분양가 = 전용면적(평) × 기준 전용 평당가 × (1 + 층 가산율 + 타입 가산율 + 입지·기타 가산율)<br>' +
+      '· 호실수·면적: 5·6BL 분양면적표 (5BL 36OA 10·51OA 63, 6BL 36OA 11·51OA 70 / 전용 36.72㎡=11.11평, 51.95㎡=15.71평)<br>' +
+      '· 평균은 층별 호실이 균등하게 분포한다는 가정입니다. 실제 층별 호실 배분이 정해지면 반영이 필요합니다.<br>' +
+      '· 기준가는 호가 기준이라 실제 거래가보다 높을 수 있습니다. 가산율은 입력값이며 조사 근거는 참고용입니다.';
+  }
+  calc();
+})();
+</script>
+</body>
+</html>
