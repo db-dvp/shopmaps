@@ -118,7 +118,7 @@ table.dt td b{font-weight:700}
       <span><i class="lg-el" style="background:#3f7be0"></i>B 급지</span>
       <span><i class="lg-el" style="background:#14a39a"></i>C 급지</span>
       <span><i class="lg-el" style="background:#8b5cf6"></i>D 급지</span>
-      <span><i style="background:var(--site)"></i>SITE (사업지)</span>
+      <span><i class="lg-el" style="background:#c0392b"></i>SITE (사업지)</span>
     </div>
     <div class="tools">
       <div id="fixpanel">
@@ -189,7 +189,7 @@ function lbl(e) { return e.label === "SITE" ? "SITE" : disp(e.id); }
 
 /* ---------- 핀 이미지 (SVG data URI) ---------- */
 function sitePinImage(selected) {
-  var w = selected ? 142 : 128, h = selected ? 44 : 38, fs = selected ? 12 : 11, ph = selected ? 28 : 24;
+  var w = selected ? 116 : 104, h = selected ? 34 : 30, fs = selected ? 10 : 9, ph = selected ? 22 : 19;
   var st = selected ? "#1d2433" : "#fff", sw = selected ? 2.5 : 2, m = w / 2;
   var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + " " + h + '">' +
     '<path d="M' + (m - 6) + " " + (ph - 1) + " L" + m + " " + (h - 2) + " L" + (m + 6) + " " + (ph - 1) + 'Z" fill="#c0392b" stroke="' + st + '" stroke-width="' + sw + '" stroke-linejoin="round"/>' +
