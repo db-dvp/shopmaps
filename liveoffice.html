@@ -48,7 +48,7 @@ table.dt{border-collapse:collapse;width:100%;font-size:12.5px;table-layout:fixed
 .sum span{font-size:11px;color:var(--mute)}.sum .t{display:block}
 button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-weight:700;font-size:12px;padding:5px 10px;border-radius:7px;cursor:pointer}
 @media(max-width:900px){#split{display:none}#wrap{flex-direction:column;overflow:auto}#left{width:100%;border-right:0;border-bottom:1px solid var(--line);overflow:visible}#right{overflow:visible}}
-details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;padding:0 10px}details.ev>summary{cursor:pointer;padding:7px 0;font-weight:700;color:var(--navy);font-size:12.5px}details.ev>summary small{font-weight:400;color:var(--mute);margin-left:6px;font-size:11px}details.ev[open]>summary{border-bottom:1px dashed var(--line);margin-bottom:6px}
+.evs{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;margin-top:10px}.evs>details.ev{flex:1 1 430px;min-width:0;margin-top:0}details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;padding:0 10px}details.ev>summary{cursor:pointer;padding:7px 0;font-weight:700;color:var(--navy);font-size:12.5px}details.ev>summary small{font-weight:400;color:var(--mute);margin-left:6px;font-size:11px}details.ev[open]>summary{border-bottom:1px dashed var(--line);margin-bottom:6px}
 .dt td.l small{display:inline}
 </style>
 </head>
@@ -73,6 +73,7 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
   <h2>호실 타입별 분양가 <span class="tag" id="baseTag"></span></h2>
   <div class="sum" id="sum"></div>
   <div id="tables" class="two"></div>
+  <div class="evs">
   <details class="ev"><summary>층·타입 가산 근거 · 오피스텔 실거래<small>저층 -2% · 고층 +1% · 36OA -7% (펼치기)</small></summary>
     <div class="note" style="margin-top:0">동탄·킨텍스(대화동·장항동) 오피스텔 매매 실거래 1,492건 · 2024.10~2026.10 · 해제 제외 · 같은 단지끼리 비교 · 시장 하락 추세(연 -5~6%) 보정</div>
     <table class="dt" style="margin-top:6px"><colgroup><col style="width:36%"><col style="width:26%"><col style="width:38%"></colgroup>
@@ -127,6 +128,7 @@ details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;paddin
       · 면적대가 달라(동탄 30㎡ 미만, 킨텍스 84㎡ 위주) 평당가 절대값은 비교 제외, 거리별 차이만 사용
     </div>
   </details>
+  </div>
   <div class="foot" id="foot"></div>
 </div>
 </div>
