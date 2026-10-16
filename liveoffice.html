@@ -50,6 +50,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
 @media(max-width:900px){#split{display:none}#wrap{flex-direction:column;overflow:auto}#left{width:100%;border-right:0;border-bottom:1px solid var(--line);overflow:visible}#right{overflow:visible}}
 .evs{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;margin-top:10px}.evs>details.ev{flex:1 1 430px;min-width:0;margin-top:0}details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;padding:0 10px}details.ev>summary{cursor:pointer;padding:7px 0;font-weight:700;color:var(--navy);font-size:12.5px}details.ev>summary small{font-weight:400;color:var(--mute);margin-left:6px;font-size:11px}details.ev[open]>summary{border-bottom:1px dashed var(--line);margin-bottom:6px}
 .dt td.l small{display:inline}
+.evg{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;padding-bottom:8px}.evc{flex:1 1 400px;min-width:0}.evc table{margin-top:6px}.evc .dt th,.evc .dt td{white-space:normal;overflow-wrap:anywhere;font-size:12px;padding:4px 3px;line-height:1.3}.evc .dt td.l{padding-left:6px}.evt{font-weight:700;color:var(--navy);font-size:12px}
 </style>
 </head>
 <body>
@@ -73,62 +74,13 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
   <h2>호실 타입별 분양가 <span class="tag" id="baseTag"></span></h2>
   <div class="sum" id="sum"></div>
   <div id="tables" class="two"></div>
-  <div class="evs">
-  <details class="ev"><summary>층·타입 가산 근거 · 오피스텔 실거래<small>저층 -2% · 고층 +1% · 36OA -7% (펼치기)</small></summary>
-    <div class="note" style="margin-top:0">동탄·킨텍스(대화동·장항동) 오피스텔 매매 실거래 1,492건 · 2024.10~2026.10 · 해제 제외 · 같은 단지끼리 비교 · 시장 하락 추세(연 -5~6%) 보정</div>
-    <table class="dt" style="margin-top:6px"><colgroup><col style="width:36%"><col style="width:26%"><col style="width:38%"></colgroup>
-      <thead><tr><th colspan="3">타입: 51.95㎡ 평당가 ÷ 36.72㎡ 평당가 (1 초과 = 큰 면적이 비쌈)</th></tr><tr><th>구분</th><th>표본</th><th>비율 (95% 구간)</th></tr></thead>
-      <tbody>
-        <tr><td class="l">30~60㎡</td><td>528건 · 32단지</td><td><b>1.12</b><small>1.09~1.15</small></td></tr>
-        <tr><td class="l">25~75㎡</td><td>735건 · 40단지</td><td><b>1.08</b><small>1.06~1.09</small></td></tr>
-        <tr><td class="l">18~100㎡</td><td>1,178건 · 56단지</td><td><b>1.05</b><small>1.04~1.06</small></td></tr>
-        <tr><td class="l">지역별 (18~100㎡)</td><td>동탄 · 대화동 · 장항동</td><td><b>1.02 · 0.94 · 1.06</b></td></tr>
-        <tr><td class="l">같은 단지 직접 비교 (30~45㎡ vs 45~65㎡)</td><td>10단지</td><td><b>중앙 1.17</b><small>0.96~1.28</small></td></tr>
-        <tr><td class="l">운정 KB 호가 (같은 단지, 면적 작은 쪽 → 큰 쪽)</td><td>4단지</td><td><b>엠버418 +7% · 클래스원 +13%</b><small>디에이블 -2% · HB하우스토리 -2%</small></td></tr>
-        <tr class="tot"><td class="l" colspan="3">큰 면적이 평당가 +5~12% (중심 +8%) → 36OA = 51OA 대비 약 -7% 적용 · '소형이 평당가 높다'는 근거 없음</td></tr>
-      </tbody></table>
-    <table class="dt" style="margin-top:8px"><colgroup><col style="width:36%"><col style="width:26%"><col style="width:19%"><col style="width:19%"></colgroup>
-      <thead><tr><th colspan="4">층: 중층(5~8층) 대비 · 같은 단지·같은 면적 · 최고 25층 이하 단지</th></tr><tr><th>구분</th><th>표본</th><th>저층 2~4층</th><th>고층 9층~</th></tr></thead>
-      <tbody>
-        <tr><td class="l">전체</td><td>943건</td><td><b>-2.0%</b></td><td><b>+1.7%</b></td></tr>
-        <tr><td class="l">25~75㎡</td><td>667건</td><td><b>-1.7%</b></td><td><b>+1.7%</b></td></tr>
-        <tr><td class="l">대화동·장항동</td><td>743건</td><td><b>-2.2%</b></td><td><b>+1.9%</b></td></tr>
-        <tr><td class="l">고층을 9~12층으로 한정</td><td>943건</td><td><b>-2.7%</b></td><td><b>+0.4%</b></td></tr>
-        <tr><td class="l">모든 건물 포함</td><td>1,310건</td><td><b>-2.4%</b></td><td><b>+1.8%</b></td></tr>
-        <tr class="tot"><td class="l" colspan="4">저층 -2% · 고층 +1% 적용 (5·6BL은 최고 11~13층이라 9~12층 한정값 반영) · 오차 ±2%p, 아파트(-6~-7%)보다 효과 훨씬 작음</td></tr>
-      </tbody></table>
-  </details>
-  <details class="ev"><summary>역세권 가산 근거 · 동탄역·킨텍스역 실거래<small>200~400m 가산 없음, 역 인접만 +4~5% (펼치기)</small></summary>
-    <div class="note" style="margin-top:0">국토부 오피스텔(매매) 실거래 · 2024.10~2026.10 · 해제 제외 · 전용 평당가(만원) · 거리는 지도상 개략값</div>
-    <table class="dt" style="margin-top:6px"><colgroup><col style="width:34%"><col style="width:14%"><col style="width:10%"><col style="width:10%"><col style="width:14%"><col style="width:18%"></colgroup>
-      <thead><tr><th colspan="6">동탄역 (여울동)</th></tr><tr><th>단지</th><th>거리</th><th>준공</th><th>거래</th><th>면적</th><th>평당가</th></tr></thead>
-      <tbody>
-        <tr class="x"><td class="l">동탄역롯데캐슬<small>(비교 제외·백화점 직결)</small></td><td>역 직결</td><td>2021</td><td>36건</td><td>30㎡ 미만</td><td><b>3,164</b></td></tr>
-        <tr><td class="l">동탄역푸르지오시티</td><td>약 320m</td><td>2019</td><td>18건</td><td>30㎡ 미만</td><td><b>2,136</b></td></tr>
-        <tr><td class="l">동탄역린스트라우스</td><td>약 360m</td><td>2018</td><td>5건</td><td>30㎡ 미만</td><td><b>2,124</b></td></tr>
-        <tr><td class="l">동탄역예미지시그너스</td><td>약 400m</td><td>2021</td><td>17건</td><td>30㎡ 미만</td><td><b>2,199</b></td></tr>
-        <tr class="tot"><td class="l" colspan="6">320~400m 편차 3.5%, 가장 먼 단지가 최고가 → 거리 가산 없음</td></tr>
-      </tbody></table>
-    <table class="dt" style="margin-top:8px"><colgroup><col style="width:34%"><col style="width:14%"><col style="width:10%"><col style="width:10%"><col style="width:14%"><col style="width:18%"></colgroup>
-      <thead><tr><th colspan="6">킨텍스역 (대화동·장항동)</th></tr><tr><th>단지</th><th>거리</th><th>준공</th><th>거래</th><th>면적</th><th>평당가</th></tr></thead>
-      <tbody>
-        <tr><td class="l">힐스테이트일산</td><td>역 인접</td><td>2019</td><td>67건</td><td>84㎡</td><td><b>2,405</b></td></tr>
-        <tr><td class="l">포레나킨텍스</td><td>역 인접</td><td>2019</td><td>46건</td><td>84~85㎡</td><td><b>2,602</b></td></tr>
-        <tr><td class="l">킨텍스원시티</td><td>역 인접</td><td>2019</td><td>9건</td><td>84.9㎡</td><td><b>2,637</b></td></tr>
-        <tr class="tot"><td class="l"><b>역 인접 평균</b></td><td></td><td></td><td>122건</td><td></td><td><b>2,496</b><small>+4.5%</small></td></tr>
-        <tr><td class="l">일산더샵그라비스타</td><td>약 200m</td><td>2019</td><td>57건</td><td>84~85㎡</td><td><b>2,357</b></td></tr>
-        <tr><td class="l">일산한류월드유보라더스마트</td><td>약 200m</td><td>2020</td><td>44건</td><td>24·57㎡</td><td><b>2,491</b></td></tr>
-        <tr class="tot"><td class="l"><b>200m 평균</b></td><td></td><td></td><td>101건</td><td></td><td><b>2,415</b><small>+1.1%</small></td></tr>
-        <tr><td class="l">일산디엠시티스카이뷰</td><td>약 400m</td><td>2020</td><td>34건</td><td>85㎡</td><td><b>2,388</b><small>기준</small></td></tr>
-      </tbody></table>
-    <div class="note">
-      · 200m vs 400m 차이 1% 안팎, 200m 그룹 내 단지 편차(2,357~2,491)가 더 큼<br>
-      · 역 바로 인접 단지만 +4~5%<br>
-      · 5·6BL = 운정중앙역 약 200m → 역세권 가산 0%, 역 코앞 입지 근거 생기면 상한 +4~5%<br>
-      · 면적대가 달라(동탄 30㎡ 미만, 킨텍스 84㎡ 위주) 평당가 절대값은 비교 제외, 거리별 차이만 사용
+  <details class="ev"><summary>가산 근거 · 오피스텔 실거래<small>층·타입(좌) · 역세권(우) (펼치기)</small></summary>
+    <div class="note" style="margin-top:0">국토부 오피스텔 매매 실거래 · 2024.10~2026.10 · 해제 제외 · 평당가=전용 기준(만원) · 거리는 지도상 개략값 · 시장 하락 추세(연 −5~6%) 보정</div>
+    <div class="evg">
+      <div class="evc"><div class="evt">층·타입 (동탄·대화동·장항동 1,492건)</div><table class="dt"><colgroup><col style="width:40%"><col style="width:20%"><col style="width:20%"><col style="width:20%"></colgroup><thead><tr><th colspan="4">타입 · 51.95㎡ 평당가 ÷ 36.72㎡ 평당가</th></tr><tr><th>구분</th><th>표본</th><th>비율</th><th>95% 구간</th></tr></thead><tbody><tr><td class="l">30~60㎡</td><td>528건·32단지</td><td><b>1.12</b></td><td>1.09~1.15</td></tr><tr><td class="l">25~75㎡</td><td>735건·40단지</td><td><b>1.08</b></td><td>1.06~1.09</td></tr><tr><td class="l">18~100㎡</td><td>1,178건·56단지</td><td><b>1.05</b></td><td>1.04~1.06</td></tr><tr><td class="l">같은 단지 직접 비교</td><td>10단지</td><td><b>1.17</b></td><td>0.96~1.28</td></tr><tr><td class="l">운정 KB · 엠버418</td><td>1단지</td><td><b>1.07</b></td><td>-</td></tr><tr><td class="l">운정 KB · 클래스원</td><td>1단지</td><td><b>1.13</b></td><td>-</td></tr><tr><td class="l">운정 KB · 디에이블 외</td><td>2단지</td><td><b>0.98</b></td><td>-</td></tr><tr class="tot"><td class="l" colspan="4"><b>→ 큰 면적 +5~12% → 36OA −7% 적용</b></td></tr></tbody></table><table class="dt"><colgroup><col style="width:40%"><col style="width:20%"><col style="width:20%"><col style="width:20%"></colgroup><thead><tr><th colspan="4">층 · 중층(5~8층) 대비, 같은 단지·같은 면적</th></tr><tr><th>구분</th><th>표본</th><th>저층 2~4층</th><th>고층 9층~</th></tr></thead><tbody><tr><td class="l">전체</td><td>943건</td><td><b>−2.0%</b></td><td><b>+1.7%</b></td></tr><tr><td class="l">25~75㎡</td><td>667건</td><td><b>−1.7%</b></td><td><b>+1.7%</b></td></tr><tr><td class="l">대화동·장항동</td><td>743건</td><td><b>−2.2%</b></td><td><b>+1.9%</b></td></tr><tr><td class="l">고층을 9~12층으로 한정</td><td>943건</td><td><b>−2.7%</b></td><td><b>+0.4%</b></td></tr><tr><td class="l">모든 건물 포함</td><td>1,310건</td><td><b>−2.4%</b></td><td><b>+1.8%</b></td></tr><tr class="tot"><td class="l" colspan="4"><b>→ 저층 −2% · 고층 +1% 적용</b></td></tr></tbody></table></div>
+      <div class="evc"><div class="evt">역세권 (동탄역·킨텍스역)</div><table class="dt"><colgroup><col style="width:40%"><col style="width:20%"><col style="width:20%"><col style="width:20%"></colgroup><thead><tr><th colspan="4">동탄역 (여울동) · 전용 30㎡ 미만</th></tr><tr><th>단지</th><th>거리</th><th>거래</th><th>평당가</th></tr></thead><tbody><tr class="x"><td class="l">동탄역롯데캐슬 (제외)</td><td>역 직결</td><td>36건</td><td><b>3,164</b></td></tr><tr><td class="l">동탄역푸르지오시티</td><td>약 320m</td><td>18건</td><td><b>2,136</b></td></tr><tr><td class="l">동탄역린스트라우스</td><td>약 360m</td><td>5건</td><td><b>2,124</b></td></tr><tr><td class="l">동탄역예미지시그너스</td><td>약 400m</td><td>17건</td><td><b>2,199</b></td></tr><tr class="tot"><td class="l" colspan="4"><b>→ 320~400m 편차 3.5%, 먼 단지가 최고가 → 가산 없음</b></td></tr></tbody></table><table class="dt"><colgroup><col style="width:40%"><col style="width:20%"><col style="width:20%"><col style="width:20%"></colgroup><thead><tr><th colspan="4">킨텍스역 (대화동·장항동) · 전용 84㎡ 위주</th></tr><tr><th>단지</th><th>거리</th><th>거래</th><th>평당가</th></tr></thead><tbody><tr><td class="l">힐스테이트일산</td><td>역 인접</td><td>67건</td><td><b>2,405</b></td></tr><tr><td class="l">포레나킨텍스</td><td>역 인접</td><td>46건</td><td><b>2,602</b></td></tr><tr><td class="l">킨텍스원시티</td><td>역 인접</td><td>9건</td><td><b>2,637</b></td></tr><tr class="tot"><td class="l">역 인접 평균</td><td></td><td>122건</td><td><b>2,496</b><small>+4.5%</small></td></tr><tr><td class="l">일산더샵그라비스타</td><td>약 200m</td><td>57건</td><td><b>2,357</b></td></tr><tr><td class="l">일산한류월드유보라더스마트</td><td>약 200m</td><td>44건</td><td><b>2,491</b></td></tr><tr class="tot"><td class="l">200m 평균</td><td></td><td>101건</td><td><b>2,415</b><small>+1.1%</small></td></tr><tr><td class="l">일산디엠시티스카이뷰</td><td>약 400m</td><td>34건</td><td><b>2,388</b><small>기준</small></td></tr><tr class="tot"><td class="l" colspan="4"><b>→ 200m≈400m(+1%), 역 인접만 +4~5% → 5·6BL(약 200m) 가산 0%</b></td></tr></tbody></table></div>
     </div>
   </details>
-  </div>
   <div class="foot" id="foot"></div>
 </div>
 </div>
