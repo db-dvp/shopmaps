@@ -238,7 +238,7 @@ function initMap(){
       el.onmouseenter=function(){iw.setZIndex(20)}; el.onmouseleave=function(){iw.setZIndex(i===cur?10:1)};
       ovs[i]=iw; els[i]=el;
       iw.setMap(map);
-      if(!window.__zoomed)map.setBounds(bounds,110,40,40,40); if(window.__lab)window.__lab(); relax();
+      if(!window.__zoomed){map.setBounds(bounds,110,40,40,40);try{var L0=map.getLevel(),sw=bounds.getSouthWest(),ne=bounds.getNorthEast();map.setLevel(L0-1,{animate:false});map.setCenter(new kakao.maps.LatLng((sw.getLat()+ne.getLat())/2,(sw.getLng()+ne.getLng())/2));var mb=map.getBounds();if(!(mb.contain(sw)&&mb.contain(ne))){map.setLevel(L0,{animate:false});map.setBounds(bounds,110,40,40,40)}}catch(e){}}; if(window.__lab)window.__lab(); relax();
     });
   });
 }
