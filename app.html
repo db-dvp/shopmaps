@@ -23,15 +23,16 @@ iframe.off{visibility:hidden;pointer-events:none}
 </style>
 </head>
 <body>
-<div id="top"><div class="seg"><button data-t="shop">상업시설</button><button data-t="office">오피스텔</button></div><h1 id="ttl"></h1><span class="src" id="src"></span></div>
-<div id="stage"><iframe id="f-shop" title="상업시설" src="index.html"></iframe><iframe id="f-office" class="off" title="오피스텔"></iframe></div>
+<div id="top"><div class="seg"><button data-t="shop">상업시설</button><button data-t="office">오피스텔</button><button data-t="price">분양가 산정</button></div><h1 id="ttl"></h1><span class="src" id="src"></span></div>
+<div id="stage"><iframe id="f-shop" title="상업시설" src="index.html"></iframe><iframe id="f-office" class="off" title="오피스텔"></iframe><iframe id="f-price" class="off" title="분양가 산정"></iframe></div>
 <script>
 (function(){
 var T={shop:{t:'파주운정3 5,6BL 상업시설 분양가 검토',s:'',u:'index.html'},
-        office:{t:'파주·일산 오피스텔 최근 호가 · 평당가',s:'',u:'officetel.html'}};
+        office:{t:'파주·일산 오피스텔 최근 호가 · 평당가',s:'',u:'officetel.html'},
+        price:{t:'파주운정3지구 5,6BL 라이브오피스 분양가 산정',s:'',u:'liveoffice.html'}};
 function show(k,push){
   if(!T[k])k='shop';
-  ['shop','office'].forEach(function(n){
+  ['shop','office','price'].forEach(function(n){
     var f=document.getElementById('f-'+n);
     if(n===k){ if(!f.getAttribute('src'))f.setAttribute('src',T[n].u); f.classList.remove('off'); } else f.classList.add('off');
   });
