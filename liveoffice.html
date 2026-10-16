@@ -12,36 +12,38 @@ body{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,
 #top{height:46px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 16px}
 #top h1{font-size:15px;margin:0;font-weight:700}
 #wrap{height:calc(100% - 46px);display:flex;gap:0}
-#left{width:420px;flex:none;background:#fff;border-right:1px solid var(--line);overflow:auto;padding:14px 16px 24px}
-#right{flex:1;min-width:0;overflow:auto;padding:14px 18px 28px;background:#fff}
+#left{width:440px;flex:none;background:#fff;border-right:1px solid var(--line);overflow:auto;padding:12px 14px 18px}
+#right{flex:1;min-width:0;overflow:auto;padding:12px 16px 20px;background:#fff}
 h2{font-size:15px;margin:0 0 2px;color:var(--navy)}
-h3{font-size:13px;margin:16px 0 6px;color:var(--navy)}
+h3{font-size:13px;margin:12px 0 5px;color:var(--navy)}
 .sub{font-size:12px;color:var(--mute);line-height:1.5;margin-bottom:10px}
-.row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)}
-.row .nm{flex:none;width:120px;font-weight:700}
-.row .ev{flex:1;font-size:11px;color:var(--mute);line-height:1.4}
-.inp{width:68px;text-align:right;border:1px solid #cfd6e4;border-radius:6px;padding:5px 6px;font:inherit}
+.row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.row .nm{flex:none;width:112px;font-weight:700;font-size:12.5px}
+.row .ev{flex:1;font-size:11px;color:var(--mute);line-height:1.35}
+.inp{width:60px;text-align:right;border:1px solid #cfd6e4;border-radius:6px;padding:4px 6px;font:inherit}
 .inp.w{width:110px}
 select.inp{width:100%;text-align:left}
 .pct{display:flex;align-items:center;gap:3px;flex:none}
 .tag{display:inline-block;font-size:11px;background:var(--head);color:var(--navy);border-radius:10px;padding:1px 8px;margin-left:4px}
-table.dt{border-collapse:collapse;width:100%;font-size:12px;table-layout:fixed}
-.dt th,.dt td{border:1px solid var(--line);padding:6px 4px;text-align:center}
-.dt th{background:var(--head);color:var(--navy);font-weight:600;line-height:1.25}
-.dt td small{display:block;color:var(--mute);font-size:10.5px}
+table.dt{border-collapse:collapse;width:100%;font-size:12.5px;table-layout:fixed}
+.dt th,.dt td{border:1px solid var(--line);padding:5px 4px;text-align:center;white-space:nowrap}
+.dt th{background:var(--head);color:var(--navy);font-weight:600;line-height:1.2}
+.dt td small{color:var(--mute);font-size:10.5px;margin-left:3px}
 .dt td b{font-weight:700}
-.dt td.l{text-align:left;padding-left:8px}
+.dt td.l{text-align:left;padding-left:8px;white-space:normal}
 .dt tr.tot td{background:var(--head)}
 .na{color:#9aa1ad}
 .dt tr.x td{color:#9aa1ad}.neg{color:#2a67c7}.pos{color:var(--hot)}
-.note{font-size:11px;color:var(--mute);line-height:1.6;margin-top:10px}
-.foot{margin-top:14px;padding-top:8px;border-top:1px dashed var(--line);font-size:11px;color:var(--mute);line-height:1.6}
-.sum{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
-.sum div{flex:1;min-width:150px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fafbfd}
-.sum b{display:block;font-size:17px;color:var(--navy);margin-top:2px}
-.sum span{font-size:11px;color:var(--mute)}
+.note{font-size:11px;color:var(--mute);line-height:1.55;margin-top:6px}
+.foot{margin-top:8px;padding-top:6px;border-top:1px dashed var(--line);font-size:11px;color:var(--mute);line-height:1.6}
+.sum{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}
+.sum div{flex:1;min-width:150px;border:1px solid var(--line);border-radius:8px;padding:5px 10px;background:#fafbfd}
+.sum b{display:inline;font-size:15px;color:var(--navy);margin-right:5px}
+.sum span{font-size:11px;color:var(--mute)}.sum .t{display:block}
 button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-weight:700;font-size:12px;padding:5px 10px;border-radius:7px;cursor:pointer}
 @media(max-width:900px){#wrap{flex-direction:column;overflow:auto}#left{width:100%;border-right:0;border-bottom:1px solid var(--line);overflow:visible}#right{overflow:visible}}
+details.ev{margin-top:10px;border:1px solid var(--line);border-radius:8px;padding:0 10px}details.ev>summary{cursor:pointer;padding:7px 0;font-weight:700;color:var(--navy);font-size:12.5px}details.ev>summary small{font-weight:400;color:var(--mute);margin-left:6px;font-size:11px}details.ev[open]>summary{border-bottom:1px dashed var(--line);margin-bottom:6px}
+.dt td.l small{display:inline}
 </style>
 </head>
 <body>
@@ -49,54 +51,51 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
 <div id="wrap">
 <div id="left">
   <h2>기준가와 가산율</h2>
-  <div class="sub">기준 전용 평당가에 항목별 가산율(%)을 더해 호실별 분양가를 계산합니다. 값을 바꾸면 오른쪽 표가 바로 다시 계산됩니다.</div>
+  <div class="sub">분양가 = 전용평 × 기준 평당가 × (1 + 가산율 합) · 값을 바꾸면 바로 계산</div>
 
   <h3>① 기준가 (전용 평당가, 만원)</h3>
   <select id="preset" class="inp"></select>
-  <div class="row" style="margin-top:6px"><span class="nm">기준 평당가</span><input id="base" class="inp w" type="number" step="1"><span style="color:var(--mute);font-size:11px">만원/평(전용)</span></div>
-  <div id="presetEv" class="note" style="margin-top:4px"></div>
+  <div class="row" style="margin-top:5px"><span class="nm">기준 평당가</span><input id="base" class="inp w" type="number" step="1"><span style="color:var(--mute);font-size:11px">만원/평</span></div>
+  <div id="presetEv" class="note" style="margin-top:3px"></div>
 
   <h3>② 가산율 (%, 마이너스 = 할인)</h3>
-  <div class="sub" style="margin-bottom:4px">같은 칸의 값은 모두 더합니다. 근거 칸은 지금까지 조사한 참고자료이며 자동으로 적용되지 않습니다.</div>
   <div id="items"></div>
-  <div style="margin-top:10px"><button class="rs" id="reset">가산율 모두 0으로</button></div>
+  <div style="margin-top:8px"><button class="rs" id="reset">가산율 모두 0으로</button></div>
 </div>
 <div id="right">
   <h2>호실 타입별 분양가 <span class="tag" id="baseTag"></span></h2>
-  <div class="sub">전용면적 × 기준 평당가 × (1 + 가산율 합). 호당 가격 단위는 만원이며 괄호는 억 환산입니다.</div>
   <div class="sum" id="sum"></div>
   <div id="tables"></div>
-  <div id="evid">
-    <h3>역세권(거리) 가산 근거 — 동탄역·킨텍스역 오피스텔 실거래</h3>
-    <div class="sub">GTX-A 정차역 두 곳의 주거용 오피스텔 실거래가를 역과의 거리별로 비교했습니다. 국토부 실거래가 공개시스템 오피스텔(매매), 계약일 2024.10.17~2026.10.16, 해제 거래 제외, 전용면적 기준 평당가(만원)입니다. 거리는 지도에서 잰 개략값입니다.</div>
-    <table class="dt"><colgroup><col style="width:30%"><col style="width:13%"><col style="width:9%"><col style="width:10%"><col style="width:16%"><col style="width:22%"></colgroup>
-      <thead><tr><th colspan="6">동탄역 (여울동)</th></tr><tr><th>단지</th><th>역과의 거리</th><th>준공</th><th>거래</th><th>면적대</th><th>평당가</th></tr></thead>
+  <details class="ev"><summary>역세권 가산 근거 · 동탄역·킨텍스역 실거래<small>200~400m 가산 없음, 역 인접만 +4~5% (펼치기)</small></summary>
+    <div class="note" style="margin-top:0">국토부 오피스텔(매매) 실거래 · 2024.10~2026.10 · 해제 제외 · 전용 평당가(만원) · 거리는 지도상 개략값</div>
+    <table class="dt" style="margin-top:6px"><colgroup><col style="width:34%"><col style="width:14%"><col style="width:10%"><col style="width:10%"><col style="width:14%"><col style="width:18%"></colgroup>
+      <thead><tr><th colspan="6">동탄역 (여울동)</th></tr><tr><th>단지</th><th>거리</th><th>준공</th><th>거래</th><th>면적</th><th>평당가</th></tr></thead>
       <tbody>
-        <tr class="x"><td class="l">동탄역롯데캐슬</td><td>역 직결</td><td>2021</td><td>36건</td><td>30㎡ 미만</td><td><b>3,164</b><small>비교 제외(백화점 직결)</small></td></tr>
+        <tr class="x"><td class="l">동탄역롯데캐슬<small>(비교 제외·백화점 직결)</small></td><td>역 직결</td><td>2021</td><td>36건</td><td>30㎡ 미만</td><td><b>3,164</b></td></tr>
         <tr><td class="l">동탄역푸르지오시티</td><td>약 320m</td><td>2019</td><td>18건</td><td>30㎡ 미만</td><td><b>2,136</b></td></tr>
         <tr><td class="l">동탄역린스트라우스</td><td>약 360m</td><td>2018</td><td>5건</td><td>30㎡ 미만</td><td><b>2,124</b></td></tr>
         <tr><td class="l">동탄역예미지시그너스</td><td>약 400m</td><td>2021</td><td>17건</td><td>30㎡ 미만</td><td><b>2,199</b></td></tr>
-        <tr class="tot"><td class="l" colspan="6">320~400m 세 단지 편차 3.5% (가장 먼 단지가 가장 비쌈) → 거리에 따른 가격 차이 없음</td></tr>
+        <tr class="tot"><td class="l" colspan="6">320~400m 편차 3.5%, 가장 먼 단지가 최고가 → 거리 가산 없음</td></tr>
       </tbody></table>
-    <table class="dt" style="margin-top:10px"><colgroup><col style="width:30%"><col style="width:13%"><col style="width:9%"><col style="width:10%"><col style="width:16%"><col style="width:22%"></colgroup>
-      <thead><tr><th colspan="6">킨텍스역 (대화동·장항동)</th></tr><tr><th>단지</th><th>역과의 거리</th><th>준공</th><th>거래</th><th>면적대</th><th>평당가</th></tr></thead>
+    <table class="dt" style="margin-top:8px"><colgroup><col style="width:34%"><col style="width:14%"><col style="width:10%"><col style="width:10%"><col style="width:14%"><col style="width:18%"></colgroup>
+      <thead><tr><th colspan="6">킨텍스역 (대화동·장항동)</th></tr><tr><th>단지</th><th>거리</th><th>준공</th><th>거래</th><th>면적</th><th>평당가</th></tr></thead>
       <tbody>
         <tr><td class="l">힐스테이트일산</td><td>역 인접</td><td>2019</td><td>67건</td><td>84㎡</td><td><b>2,405</b></td></tr>
-        <tr><td class="l">킨텍스꿈에그린<small style="display:inline;margin-left:3px">(포레나킨텍스 추정)</small></td><td>역 인접</td><td>2019</td><td>46건</td><td>84~85㎡</td><td><b>2,602</b></td></tr>
+        <tr><td class="l">킨텍스꿈에그린<small>(포레나킨텍스 추정)</small></td><td>역 인접</td><td>2019</td><td>46건</td><td>84~85㎡</td><td><b>2,602</b></td></tr>
         <tr><td class="l">킨텍스원시티</td><td>역 인접</td><td>2019</td><td>9건</td><td>84.9㎡</td><td><b>2,637</b></td></tr>
-        <tr class="tot"><td class="l"><b>역 인접 평균</b></td><td></td><td></td><td>122건</td><td></td><td><b>2,496</b><small>400m 대비 +4.5%</small></td></tr>
+        <tr class="tot"><td class="l"><b>역 인접 평균</b></td><td></td><td></td><td>122건</td><td></td><td><b>2,496</b><small>+4.5%</small></td></tr>
         <tr><td class="l">일산더샵그라비스타</td><td>약 200m</td><td>2019</td><td>57건</td><td>84~85㎡</td><td><b>2,357</b></td></tr>
-        <tr><td class="l">일산한류월드유보라더스마트</td><td>약 200m</td><td>2020</td><td>44건</td><td>24㎡·57㎡</td><td><b>2,491</b><small>24㎡ 2,477 · 57㎡ 2,502</small></td></tr>
-        <tr class="tot"><td class="l"><b>200m 평균</b></td><td></td><td></td><td>101건</td><td></td><td><b>2,415</b><small>400m 대비 +1.1%</small></td></tr>
-        <tr><td class="l">일산디엠시티스카이뷰</td><td>약 400m</td><td>2020</td><td>34건</td><td>85㎡</td><td><b>2,388</b></td></tr>
+        <tr><td class="l">일산한류월드유보라더스마트</td><td>약 200m</td><td>2020</td><td>44건</td><td>24·57㎡</td><td><b>2,491</b></td></tr>
+        <tr class="tot"><td class="l"><b>200m 평균</b></td><td></td><td></td><td>101건</td><td></td><td><b>2,415</b><small>+1.1%</small></td></tr>
+        <tr><td class="l">일산디엠시티스카이뷰</td><td>약 400m</td><td>2020</td><td>34건</td><td>85㎡</td><td><b>2,388</b><small>기준</small></td></tr>
       </tbody></table>
     <div class="note">
-      · 200m와 400m 사이 가격 차이는 1% 안팎이고, 200m 그룹 안에서 단지 간 편차(2,357 ↔ 2,491)가 더 큽니다.<br>
-      · 역 바로 인접한 단지에서만 4~5% 높게 나타납니다. 동탄 롯데캐슬(역 직결)은 3,164로 크게 높지만 백화점 직결·신축 효과가 섞여 비교에서 뺐습니다.<br>
-      · 5·6BL은 운정중앙역 약 200m이므로 역세권(거리) 가산은 0%로 두었습니다. 상가 앞 등 역 코앞 입지로 볼 근거가 생기면 +4~5%를 상한으로 참고합니다.<br>
-      · 면적대가 달라(동탄 30㎡ 미만 원룸형, 킨텍스 84㎡ 위주) 평당가 절대값은 우리 호실(전용 36.7·51.95㎡)과 직접 비교하지 않고, 거리별 차이만 봅니다.
+      · 200m vs 400m 차이 1% 안팎, 200m 그룹 내 단지 편차(2,357~2,491)가 더 큼<br>
+      · 역 바로 인접 단지만 +4~5%<br>
+      · 5·6BL = 운정중앙역 약 200m → 역세권 가산 0%, 역 코앞 입지 근거 생기면 상한 +4~5%<br>
+      · 면적대가 달라(동탄 30㎡ 미만, 킨텍스 84㎡ 위주) 평당가 절대값은 비교 제외, 거리별 차이만 사용
     </div>
-  </div>
+  </details>
   <div class="foot" id="foot"></div>
 </div>
 </div>
@@ -104,10 +103,10 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
 (function () {
   /* ---------- 자료 ---------- */
   var PRESETS = [
-    { k: "etower2", n: "이타워2 라이브오피스 매매 호가 평균 (4건)", v: 1294, ev: "네이버 26.10 · 같은 유형(라이브오피스, 운정) 단지 · 전용 43·44㎡ · 평균 1,294 / 중위 1,311" },
-    { k: "etower2m", n: "이타워2 라이브오피스 매매 호가 중위값", v: 1311, ev: "네이버 26.10 · 표본 4건이라 평균과 함께 참고" },
-    { k: "small", n: "운정 소형 오피스텔 매매 호가 가중평균 (전용 60㎡ 미만)", v: 2106, ev: "네이버·KB 26.10 · 운정 소형 오피스텔 건수 가중 평균 · 입주 연식·상품이 달라 참고용" },
-    { k: "large", n: "운정 대형 오피스텔 매매 호가 가중평균 (전용 60㎡ 이상)", v: 2670, ev: "네이버·KB 26.10 · 운정 대형 오피스텔 건수 가중 평균 · 타입이 달라 참고용" },
+    { k: "etower2", n: "이타워2 호가 평균", v: 1294, ev: "근거: 네이버 26.10 · 이타워2(라이브오피스, 운정) 4건 · 전용 43·44㎡" },
+    { k: "etower2m", n: "이타워2 호가 중위값", v: 1311, ev: "근거: 네이버 26.10 · 이타워2 4건 중위값" },
+    { k: "small", n: "운정 소형 오피스텔 호가 평균", v: 2106, ev: "근거: 네이버·KB 26.10 · 전용 60㎡ 미만 건수 가중 평균 · 연식·상품 달라 참고용" },
+    { k: "large", n: "운정 대형 오피스텔 호가 평균", v: 2670, ev: "근거: 네이버·KB 26.10 · 전용 60㎡ 이상 건수 가중 평균 · 타입 달라 참고용" },
     { k: "custom", n: "직접 입력", v: null, ev: "" }
   ];
   var BLS = [
@@ -122,15 +121,15 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     { k: "top", n: "최상층", lo: 0, hi: 0 }
   ];
   var ITEMS = [
-    { g: "층", k: "low", n: "저층 (2~4층)", ev: "참고(아파트): 계양 분양권 전매 5개 단지 모두 저층 < 중층 < 고층, 저층 피 -1,338~+1,387만원. 부산·인천 실거래 기준 저층 약 -6~-7%(중층 대비)." },
-    { g: "층", k: "mid", n: "중층 (5~8층)", ev: "기준 층으로 두려면 0% 유지. 참고: 중층 평균 피 +507~+3,423만원." },
-    { g: "층", k: "high", n: "고층 (9층~)", ev: "참고(아파트): 중층 대비 고층 약 +0.4~+1.4%, 고층 평균 피 +1,561~+5,079만원." },
-    { g: "층", k: "topf", n: "최상층", ev: "참고: 인천 계양 최상층은 중층과 거의 동률(2024), 부산 최상층 약 +2.9%." },
-    { g: "타입", k: "t36", n: "36OA (소형 호실)", ev: "작은 면적일수록 평당가가 높게 형성되는 경향(오피스텔 조사: 소형 평당가 > 대형은 아님, 운정 소형 2,106 / 대형 2,670). 이타워2는 43㎡(1,307) > 44㎡(1,290)." },
-    { g: "타입", k: "t51", n: "51OA (중소형 호실)", ev: "기준 타입으로 두려면 0%." },
-    { g: "입지", k: "stn", n: "역세권 (운정중앙역)", ev: "5·6BL은 운정중앙역 약 200m. 동탄역·킨텍스역 실거래에서 역 200~400m 구간은 거리에 따른 가격 차이가 없었고(오른쪽 하단 근거표), 역 바로 인접 단지만 약 +4~5%라 0%로 둠." },
-    { g: "입지", k: "vw", n: "조망·향", ev: "분양면적표에 향 정보 없음. 확정 후 입력." },
-    { g: "기타", k: "etc", n: "기타 가산", ev: "신축·상품 차이, 1층 상가 연계, 시장 분위기 등." }
+    { g: "층", k: "low", n: "저층 (2~4층)", ev: "아파트 참고: 중층 대비 약 -6~-7%" },
+    { g: "층", k: "mid", n: "중층 (5~8층)", ev: "기준 층 (0% 유지)" },
+    { g: "층", k: "high", n: "고층 (9층~)", ev: "아파트 참고: 중층 대비 +0.4~1.4%" },
+    { g: "층", k: "topf", n: "최상층", ev: "아파트 참고: 중층과 비슷 ~ +2.9%" },
+    { g: "타입", k: "t36", n: "36OA (소형)", ev: "소형이 평당가 높은 경향 · 이타워2 43㎡ 1,307 > 44㎡ 1,290" },
+    { g: "타입", k: "t51", n: "51OA (중소형)", ev: "기준 타입 (0%)" },
+    { g: "입지", k: "stn", n: "역세권 (운정중앙역)", ev: "역 약 200m · 동탄·킨텍스에서 200~400m 거리 가산 없음, 역 인접만 +4~5% → 0%" },
+    { g: "입지", k: "vw", n: "조망·향", ev: "향 정보 없음 · 확정 후 입력" },
+    { g: "기타", k: "etc", n: "기타 가산", ev: "신축·상품·시장 분위기 등" }
   ];
   var KEY = "shopmaps:price:v1";
   var st = { preset: "etower2", base: 1294, pct: {} };
@@ -147,7 +146,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
   sel.innerHTML = PRESETS.map(function (p) { return '<option value="' + p.k + '">' + p.n + (p.v ? " — " + fmt(p.v) : "") + "</option>"; }).join("");
   sel.value = st.preset;
   $("base").value = st.base;
-  function presetNote() { var p = PRESETS.filter(function (x) { return x.k === st.preset; })[0]; $("presetEv").textContent = p && p.ev ? "근거: " + p.ev : ""; }
+  function presetNote() { var p = PRESETS.filter(function (x) { return x.k === st.preset; })[0]; $("presetEv").textContent = p && p.ev ? p.ev : ""; }
   presetNote();
   sel.onchange = function () {
     st.preset = sel.value;
@@ -159,7 +158,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
 
   var html = "", lastG = "";
   ITEMS.forEach(function (it) {
-    if (it.g !== lastG) { html += '<div style="margin:10px 0 2px;font-weight:700;color:var(--navy);font-size:12px">' + it.g + "</div>"; lastG = it.g; }
+    if (it.g !== lastG) { html += '<div style="margin:7px 0 0;font-weight:700;color:var(--navy);font-size:12px">' + it.g + "</div>"; lastG = it.g; }
     html += '<div class="row"><span class="nm">' + it.n + '</span><span class="pct"><input class="inp" type="number" step="0.5" data-k="' + it.k + '" value="' + st.pct[it.k] + '">%</span><span class="ev">' + it.ev + "</span></div>";
   });
   $("items").innerHTML = html;
@@ -190,12 +189,12 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     return n;
   }
   function calc() {
-    var base = st.base || 0, out = "", grand = 0, grandUnits = 0, grandAreaV = 0, grandArea = 0;
+    var base = st.base || 0, out = "", grand = 0, grandUnits = 0, grandArea = 0;
     var cards = [];
     BLS.forEach(function (bl) {
-      var nFloors = bl.top - 1, rows = "", blTot = 0, blUnits = 0, blArea = 0;
+      var nFloors = bl.top - 1;
       out += '<h3>' + bl.id + ' · 2~' + bl.top + '층 · ' + (bl.units["36OA"] + bl.units["51OA"]) + '실</h3>';
-      out += '<table class="dt"><colgroup><col style="width:22%"><col style="width:7%"><col><col><col><col></colgroup><thead><tr><th rowspan="2">층 구간</th><th rowspan="2">층수</th><th colspan="2">36OA (전용 ' + TYPES["36OA"].py + '평)</th><th colspan="2">51OA (전용 ' + TYPES["51OA"].py + '평)</th></tr><tr><th>가산율 · 평당가</th><th>호당 분양가</th><th>가산율 · 평당가</th><th>호당 분양가</th></tr></thead><tbody>';
+      out += '<table class="dt"><colgroup><col style="width:19%"><col style="width:7%"><col style="width:20%"><col style="width:20%"><col style="width:17%"><col style="width:17%"></colgroup><thead><tr><th rowspan="2">층 구간</th><th rowspan="2">층수</th><th colspan="2">36OA (전용 ' + TYPES["36OA"].py + '평)</th><th colspan="2">51OA (전용 ' + TYPES["51OA"].py + '평)</th></tr><tr><th>평당가 (가산율)</th><th>호당 분양가</th><th>평당가 (가산율)</th><th>호당 분양가</th></tr></thead><tbody>';
       var avg = { "36OA": 0, "51OA": 0 };
       BANDS.forEach(function (b) {
         var nf = floorsIn(bl, b.k);
@@ -205,15 +204,15 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
         ["36OA", "51OA"].forEach(function (t) {
           var pc = pctFor(b.k, t), pp = base * (1 + pc / 100), per = pp * TYPES[t].py;
           avg[t] += per * nf / nFloors;
-          out += '<td><b>' + fmt(pp) + '</b><small class="' + (pc > 0 ? "pos" : pc < 0 ? "neg" : "") + '">' + (pc > 0 ? "+" : "") + pc.toFixed(1) + '%</small></td><td><b>' + fmt(per) + '</b><small>(' + eok(per) + ')</small></td>';
+          out += '<td><b>' + fmt(pp) + '</b><small class="' + (pc > 0 ? "pos" : pc < 0 ? "neg" : "") + '">' + (pc > 0 ? "+" : "") + pc.toFixed(1) + '%</small></td><td><b>' + fmt(per) + '</b><small>' + eok(per) + '</small></td>';
         });
         out += '</tr>';
       });
       var tot = 0, tu = 0, ta = 0;
       ["36OA", "51OA"].forEach(function (t) { var u = bl.units[t]; tot += avg[t] * u; tu += u; ta += u * TYPES[t].py; });
-      out += '<tr class="tot"><td class="l"><b>평균 (층 균등 가정)</b></td><td>' + nFloors + '</td>';
+      out += '<tr class="tot"><td class="l"><b>평균</b></td><td>' + nFloors + '</td>';
       ["36OA", "51OA"].forEach(function (t) {
-        out += '<td><b>' + fmt(avg[t] / TYPES[t].py) + '</b><small>평당 평균</small></td><td><b>' + fmt(avg[t]) + '</b><small>(' + eok(avg[t]) + ') · ' + bl.units[t] + '실</small></td>';
+        out += '<td><b>' + fmt(avg[t] / TYPES[t].py) + '</b><small>' + bl.units[t] + '실</small></td><td><b>' + fmt(avg[t]) + '</b><small>' + eok(avg[t]) + '</small></td>';
       });
       out += '</tr></tbody></table>';
       cards.push({ id: bl.id, tot: tot, tu: tu, ta: ta });
@@ -221,14 +220,13 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     });
     $("tables").innerHTML = out;
     var s = "";
-    cards.forEach(function (c) { s += '<div><span>' + c.id + ' 예상 분양수입 (' + c.tu + '실)</span><b>' + fmt(c.tot) + '만원</b><span>(' + eok(c.tot) + ') · 평균 ' + eok(c.tot / c.tu) + '/실</span></div>'; });
-    s += '<div><span>합계 (' + grandUnits + '실)</span><b>' + fmt(grand) + '만원</b><span>(' + eok(grand) + ') · 전용 평당 평균 ' + fmt(grand / grandArea) + '</span></div>';
+    cards.forEach(function (c) { s += '<div><span class="t">' + c.id + ' 예상 분양수입 (' + c.tu + '실)</span><b>' + eok(c.tot) + '</b><span>호당 평균 ' + eok(c.tot / c.tu) + '</span></div>'; });
+    s += '<div><span class="t">합계 (' + grandUnits + '실)</span><b>' + eok(grand) + '</b><span>전용 평당 평균 ' + fmt(grand / grandArea) + '</span></div>';
     $("sum").innerHTML = s;
     $("baseTag").textContent = "기준 " + fmt(base) + "만원/평";
-    $("foot").innerHTML = '· 계산식: 호당 분양가 = 전용면적(평) × 기준 전용 평당가 × (1 + 층 가산율 + 타입 가산율 + 입지·기타 가산율)<br>' +
-      '· 호실수·면적: 5·6BL 분양면적표 (5BL 36OA 10·51OA 63, 6BL 36OA 11·51OA 70 / 전용 36.72㎡=11.11평, 51.95㎡=15.71평)<br>' +
-      '· 평균은 층별 호실이 균등하게 분포한다는 가정입니다. 실제 층별 호실 배분이 정해지면 반영이 필요합니다.<br>' +
-      '· 기준가는 호가 기준이라 실제 거래가보다 높을 수 있습니다. 가산율은 입력값이며 조사 근거는 참고용입니다.';
+    $("foot").innerHTML = '· 단위: 평당가·호당가 만원, 작은 글씨는 억 환산<br>' +
+      '· 호실수·면적: 분양면적표 (5BL 36OA 10·51OA 63 / 6BL 36OA 11·51OA 70, 전용 11.11평·15.71평)<br>' +
+      '· 층 평균은 층별 호실 균등 가정 · 기준가는 호가라 실거래보다 높을 수 있음 · 가산율은 입력값';
   }
   calc();
 })();
