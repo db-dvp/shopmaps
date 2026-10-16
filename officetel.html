@@ -53,7 +53,7 @@ table.st tr.go{cursor:pointer}table.st tr.go:hover td{background:#f6f8fd}
 </head>
 <body>
 <header><div id="title"></div><span class="s" id="src"></span></header>
-<div id="wrap"><div id="mapbox"><div id="map"></div><div class="legend"><span><i style="background:var(--in)"></i>대형 단지 (전용 60㎡ 이상)</span><span><i style="background:var(--bld)"></i>소형 단지 (전용 60㎡ 미만)</span><span><i style="background:#8a5cc7"></i>생활숙박시설 (오피스텔과 별도)</span><span><i style="background:#e08a1e"></i>라이브오피스 (오피스텔과 별도)</span><span class="zb" id="zb"></span><span class="lg2">번호 = 단지 번호 · 마우스를 올리면 이름·평당가(선택한 탭 기준)</span></div></div><div id="panel"><div id="err"></div></div></div>
+<div id="wrap"><div id="mapbox"><div id="map"></div><div class="legend"><span><i style="background:var(--in)"></i>대형 단지 (전용 60㎡ 이상)</span><span><i style="background:var(--bld)"></i>소형 단지 (전용 60㎡ 미만)</span><span><i style="background:#8a5cc7"></i>생활숙박시설 (오피스텔과 별도)</span><span><i style="background:#e08a1e"></i>라이브오피스 (오피스텔과 별도)</span><span class="zb" id="zb"></span></div></div><div id="panel"><div id="err"></div></div></div>
 <script src="data-officetel.js"></script>
 <script src="data-officetel-kb.js"></script>
 <script src="data-officetel-rent.js"></script>
@@ -114,7 +114,7 @@ function overview(){
       }
     });
   });
-  h+='</table><div class="note">출처: 네이버부동산·KB부동산 매물 호가(2026.10 조회, 같은 매물 합침). 숫자 밑의 작은 글씨는 호가 건수이고, 회색 숫자는 표본 3건 미만이라 참고용입니다. 오피스텔은 전세보다 월세 매물이 많아 전세가 비어 있는 단지가 많습니다. 호가는 실제 거래가보다 높을 수 있습니다. 보증금·월세 단위는 만원.</div>';
+  h+='</table><div class="note">출처: 네이버부동산·KB부동산 호가 (2026.10 조회, 동일 매물 합산)<br>· 숫자 하단 소글씨: 호가 건수 / 회색 숫자: 표본 3건 미만(참고용)<br>· 오피스텔은 전세보다 월세 매물이 많아 전세 공란 단지 다수<br>· 호가는 실거래가보다 높을 수 있음<br>· 단위: 보증금·월세 만원</div>';
   $('panel').innerHTML=h; wire(); if(window.__lab)window.__lab();
 }
 function wire(){
