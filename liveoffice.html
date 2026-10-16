@@ -33,7 +33,7 @@ table.dt{border-collapse:collapse;width:100%;font-size:12px;table-layout:fixed}
 .dt td.l{text-align:left;padding-left:8px}
 .dt tr.tot td{background:var(--head)}
 .na{color:#9aa1ad}
-.neg{color:#2a67c7}.pos{color:var(--hot)}
+.dt tr.x td{color:#9aa1ad}.neg{color:#2a67c7}.pos{color:var(--hot)}
 .note{font-size:11px;color:var(--mute);line-height:1.6;margin-top:10px}
 .foot{margin-top:14px;padding-top:8px;border-top:1px dashed var(--line);font-size:11px;color:var(--mute);line-height:1.6}
 .sum{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px}
@@ -66,6 +66,37 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
   <div class="sub">전용면적 × 기준 평당가 × (1 + 가산율 합). 호당 가격 단위는 만원이며 괄호는 억 환산입니다.</div>
   <div class="sum" id="sum"></div>
   <div id="tables"></div>
+  <div id="evid">
+    <h3>역세권(거리) 가산 근거 — 동탄역·킨텍스역 오피스텔 실거래</h3>
+    <div class="sub">GTX-A 정차역 두 곳의 주거용 오피스텔 실거래가를 역과의 거리별로 비교했습니다. 국토부 실거래가 공개시스템 오피스텔(매매), 계약일 2024.10.17~2026.10.16, 해제 거래 제외, 전용면적 기준 평당가(만원)입니다. 거리는 지도에서 잰 개략값입니다.</div>
+    <table class="dt"><colgroup><col style="width:30%"><col style="width:13%"><col style="width:9%"><col style="width:10%"><col style="width:16%"><col style="width:22%"></colgroup>
+      <thead><tr><th colspan="6">동탄역 (여울동)</th></tr><tr><th>단지</th><th>역과의 거리</th><th>준공</th><th>거래</th><th>면적대</th><th>평당가</th></tr></thead>
+      <tbody>
+        <tr class="x"><td class="l">동탄역롯데캐슬</td><td>역 직결</td><td>2021</td><td>36건</td><td>30㎡ 미만</td><td><b>3,164</b><small>비교 제외(백화점 직결)</small></td></tr>
+        <tr><td class="l">동탄역푸르지오시티</td><td>약 320m</td><td>2019</td><td>18건</td><td>30㎡ 미만</td><td><b>2,136</b></td></tr>
+        <tr><td class="l">동탄역린스트라우스</td><td>약 360m</td><td>2018</td><td>5건</td><td>30㎡ 미만</td><td><b>2,124</b></td></tr>
+        <tr><td class="l">동탄역예미지시그너스</td><td>약 400m</td><td>2021</td><td>17건</td><td>30㎡ 미만</td><td><b>2,199</b></td></tr>
+        <tr class="tot"><td class="l" colspan="6">320~400m 세 단지 편차 3.5% (가장 먼 단지가 가장 비쌈) → 거리에 따른 가격 차이 없음</td></tr>
+      </tbody></table>
+    <table class="dt" style="margin-top:10px"><colgroup><col style="width:30%"><col style="width:13%"><col style="width:9%"><col style="width:10%"><col style="width:16%"><col style="width:22%"></colgroup>
+      <thead><tr><th colspan="6">킨텍스역 (대화동·장항동)</th></tr><tr><th>단지</th><th>역과의 거리</th><th>준공</th><th>거래</th><th>면적대</th><th>평당가</th></tr></thead>
+      <tbody>
+        <tr><td class="l">힐스테이트일산</td><td>역 인접</td><td>2019</td><td>67건</td><td>84㎡</td><td><b>2,405</b></td></tr>
+        <tr><td class="l">킨텍스꿈에그린<small style="display:inline;margin-left:3px">(포레나킨텍스 추정)</small></td><td>역 인접</td><td>2019</td><td>46건</td><td>84~85㎡</td><td><b>2,602</b></td></tr>
+        <tr><td class="l">킨텍스원시티</td><td>역 인접</td><td>2019</td><td>9건</td><td>84.9㎡</td><td><b>2,637</b></td></tr>
+        <tr class="tot"><td class="l"><b>역 인접 평균</b></td><td></td><td></td><td>122건</td><td></td><td><b>2,496</b><small>400m 대비 +4.5%</small></td></tr>
+        <tr><td class="l">일산더샵그라비스타</td><td>약 200m</td><td>2019</td><td>57건</td><td>84~85㎡</td><td><b>2,357</b></td></tr>
+        <tr><td class="l">일산한류월드유보라더스마트</td><td>약 200m</td><td>2020</td><td>44건</td><td>24㎡·57㎡</td><td><b>2,491</b><small>24㎡ 2,477 · 57㎡ 2,502</small></td></tr>
+        <tr class="tot"><td class="l"><b>200m 평균</b></td><td></td><td></td><td>101건</td><td></td><td><b>2,415</b><small>400m 대비 +1.1%</small></td></tr>
+        <tr><td class="l">일산디엠시티스카이뷰</td><td>약 400m</td><td>2020</td><td>34건</td><td>85㎡</td><td><b>2,388</b></td></tr>
+      </tbody></table>
+    <div class="note">
+      · 200m와 400m 사이 가격 차이는 1% 안팎이고, 200m 그룹 안에서 단지 간 편차(2,357 ↔ 2,491)가 더 큽니다.<br>
+      · 역 바로 인접한 단지에서만 4~5% 높게 나타납니다. 동탄 롯데캐슬(역 직결)은 3,164로 크게 높지만 백화점 직결·신축 효과가 섞여 비교에서 뺐습니다.<br>
+      · 5·6BL은 운정중앙역 약 200m이므로 역세권(거리) 가산은 0%로 두었습니다. 상가 앞 등 역 코앞 입지로 볼 근거가 생기면 +4~5%를 상한으로 참고합니다.<br>
+      · 면적대가 달라(동탄 30㎡ 미만 원룸형, 킨텍스 84㎡ 위주) 평당가 절대값은 우리 호실(전용 36.7·51.95㎡)과 직접 비교하지 않고, 거리별 차이만 봅니다.
+    </div>
+  </div>
   <div class="foot" id="foot"></div>
 </div>
 </div>
@@ -97,7 +128,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     { g: "층", k: "topf", n: "최상층", ev: "참고: 인천 계양 최상층은 중층과 거의 동률(2024), 부산 최상층 약 +2.9%." },
     { g: "타입", k: "t36", n: "36OA (소형 호실)", ev: "작은 면적일수록 평당가가 높게 형성되는 경향(오피스텔 조사: 소형 평당가 > 대형은 아님, 운정 소형 2,106 / 대형 2,670). 이타워2는 43㎡(1,307) > 44㎡(1,290)." },
     { g: "타입", k: "t51", n: "51OA (중소형 호실)", ev: "기준 타입으로 두려면 0%." },
-    { g: "입지", k: "stn", n: "역세권 (운정중앙역)", ev: "이타워2(해올1길)는 역에서 먼 편. 5·6BL은 운정중앙역 인접(사업지 마커 위치 기준)이라 가산 근거로 쓸 수 있음. 비슷한 역 가산비를 구하면 입력." },
+    { g: "입지", k: "stn", n: "역세권 (운정중앙역)", ev: "5·6BL은 운정중앙역 약 200m. 동탄역·킨텍스역 실거래에서 역 200~400m 구간은 거리에 따른 가격 차이가 없었고(오른쪽 하단 근거표), 역 바로 인접 단지만 약 +4~5%라 0%로 둠." },
     { g: "입지", k: "vw", n: "조망·향", ev: "분양면적표에 향 정보 없음. 확정 후 입력." },
     { g: "기타", k: "etc", n: "기타 가산", ev: "신축·상품 차이, 1층 상가 연계, 시장 분위기 등." }
   ];
