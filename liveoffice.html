@@ -109,8 +109,8 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     { g: "타입", k: "t36", n: "36OA (소형)", d: -7, ev: "오피스텔 실거래: 51OA 대비 -7% (-5~-11%) · 큰 면적이 평당가 높음" },
     { g: "타입", k: "t51", n: "51OA (중소형)", d: 0, ev: "기준 타입" }
   ];
-  var KEY = "shopmaps:price:v3";
-  var st = { preset: "custom", base: 1294, pct: {} };
+  var KEY = "shopmaps:price:v4";
+  var st = { preset: "custom", base: 1890, pct: {} };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) { st = sv; } } catch (e) {}
   ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = it.d || 0; });
 
