@@ -1,21 +1,23 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>사업수지</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
-:root{--navy:#1b2a56}
+:root{--navy:#1b2a56;--bg:#f3f1ec}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
-body{font-family:"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;background:#fff;font-size:13px}
+body{font-family:"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;background:var(--bg);font-size:13px}
 #top{height:46px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 16px}
 #top h1{font-size:15px;margin:0;font-weight:700}
 #msg{padding:40px 20px;color:#555;text-align:center}
-#sheet{padding:12px;overflow:auto;height:calc(100% - 46px)}
-table.sj{border-collapse:collapse;table-layout:fixed;background:#fff}
-table.sj td{overflow:hidden}
+#wrap{height:calc(100% - 46px);overflow:auto;padding:14px 16px 28px}
+#sheet{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 6px #0001;width:max-content;max-width:100%;margin:0 auto;overflow-x:auto}
+table.sj{border-collapse:collapse;table-layout:fixed;font-family:inherit}
+table.sj td{padding:0 4px;line-height:1.25;overflow:hidden;font-family:inherit}
 </style></head><body>
 <div id="top"><h1 id="ttl">사업수지</h1></div>
 <div id="msg">로그인 확인 중…</div>
-<div id="sheet" hidden></div>
+<div id="wrap" hidden><div id="sheet"></div></div>
 <script>
 (function(){
 var bl=(location.search.match(/bl=(\d)/)||[])[1]==="6"?"6":"5";
@@ -34,7 +36,9 @@ async function run(){
     var d=b64(enc.trim());
     var raw=await crypto.subtle.decrypt({name:"AES-GCM",iv:d.slice(0,12)},key,d.slice(12));
     var txt=await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
-    var s=document.getElementById("sheet");s.innerHTML=txt;s.hidden=false;msg.hidden=true;done=true;
+    var data=JSON.parse(txt);
+    window.SOOJI={bl:bl,formulas:data.f};
+    document.getElementById("sheet").innerHTML=data.h;document.getElementById("wrap").hidden=false;msg.hidden=true;done=true;
   }catch(e){msg.hidden=false;msg.textContent="자료를 열 수 없습니다. 다시 로그인해 주세요."}
 }
 run();setInterval(run,1500);
