@@ -109,7 +109,9 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     { g: "타입", k: "t36", n: "36OA (소형)", d: -7, ev: "오피스텔 실거래: 51OA 대비 -7% (-5~-11%) · 큰 면적이 평당가 높음" },
     { g: "타입", k: "t51", n: "51OA (중소형)", d: 0, ev: "기준 타입" }
   ];
-  var KEY = "shopmaps:price:v4";
+  var QBL = (location.search.match(/bl=(\d)/) || [])[1];
+  if (QBL) { BLS = BLS.filter(function (b) { return b.id === QBL + "BL"; }); var h1 = document.querySelector("#top h1"); if (h1) h1.textContent = "파주운정3지구 " + QBL + "BL 라이브오피스 분양가 시뮬레이터"; document.title = "분양가 시뮬레이터 " + QBL + "BL"; }
+  var KEY = "shopmaps:price:v4" + (QBL ? ":" + QBL : "");
   var st = { preset: "custom", base: 1890, pct: {} };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) { st = sv; } } catch (e) {}
   ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = it.d || 0; });
