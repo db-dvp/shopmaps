@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>사업수지</title>
+<style>
+:root{--navy:#1b2a56}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;background:#fff;font-size:13px}
+#top{height:46px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 16px}
+#top h1{font-size:15px;margin:0;font-weight:700}
+#msg{padding:40px 20px;color:#555;text-align:center}
+#sheet{padding:12px;overflow:auto;height:calc(100% - 46px)}
+table.sj{border-collapse:collapse;table-layout:fixed;background:#fff}
+table.sj td{overflow:hidden}
+</style></head><body>
+<div id="top"><h1 id="ttl">사업수지</h1></div>
+<div id="msg">로그인 확인 중…</div>
+<div id="sheet" hidden></div>
+<script>
+(function(){
+var bl=(location.search.match(/bl=(\d)/)||[])[1]==="6"?"6":"5";
+document.getElementById("ttl").textContent="파주운정3지구 주복 "+bl+"BL 사업수지 (수지분석)";
+document.title="사업수지 "+bl+"BL";
+var done=false;
+function b64(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+async function run(){
+  if(done)return;
+  var a=null;try{a=JSON.parse(localStorage.getItem("shopmaps:auth")||"null")}catch(e){}
+  var msg=document.getElementById("msg");
+  if(!a||!a.k||a.exp<Date.now()){msg.hidden=false;msg.textContent="로그인이 필요합니다. 처음 화면에서 아이디·비밀번호를 입력해 주세요.";return}
+  try{
+    var key=await crypto.subtle.importKey("raw",b64(a.k),"AES-GCM",false,["decrypt"]);
+    var enc=await fetch("sooji"+bl+".enc",{cache:"no-store"}).then(function(r){return r.text()});
+    var d=b64(enc.trim());
+    var raw=await crypto.subtle.decrypt({name:"AES-GCM",iv:d.slice(0,12)},key,d.slice(12));
+    var txt=await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+    var s=document.getElementById("sheet");s.innerHTML=txt;s.hidden=false;msg.hidden=true;done=true;
+  }catch(e){msg.hidden=false;msg.textContent="자료를 열 수 없습니다. 다시 로그인해 주세요."}
+}
+run();setInterval(run,1500);
+})();
+</script></body></html>
