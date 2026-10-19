@@ -14,8 +14,10 @@ body{font-family:"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,
 #sheet{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 6px #0001;width:max-content;max-width:100%;margin:0 auto;overflow-x:auto}
 table.sj{border-collapse:collapse;table-layout:fixed;font-family:inherit}
 table.sj td{padding:0 4px;line-height:1.25;overflow:hidden;font-family:inherit}
+#zm{position:fixed;right:22px;top:58px;display:flex;gap:4px;align-items:center;background:#fffffff0;border:1px solid #d9dce6;border-radius:8px;padding:3px 5px;box-shadow:0 1px 6px #0002;z-index:5}#zm button{border:0;background:#eef1f8;color:#1b2a56;font:inherit;font-size:13px;font-weight:700;padding:3px 10px;border-radius:6px;cursor:pointer}#zm span{font-size:12px;min-width:44px;text-align:center;color:#333}
 </style></head><body>
 <div id="top"><h1 id="ttl">사업수지</h1></div>
+<div id="zm"><button id="zo" title="축소">−</button><span id="zv">100%</span><button id="zi" title="확대">+</button><button id="zr" title="화면 너비에 맞춤">맞춤</button></div>
 <div id="msg">로그인 확인 중…</div>
 <div id="wrap" hidden><div id="sheet"></div></div>
 <script>
@@ -23,7 +25,12 @@ table.sj td{padding:0 4px;line-height:1.25;overflow:hidden;font-family:inherit}
 var bl=(location.search.match(/bl=(\d)/)||[])[1]==="6"?"6":"5";
 document.getElementById("ttl").textContent="파주운정3지구 주복 "+bl+"BL 사업수지 (수지분석)";
 document.title="사업수지 "+bl+"BL";
-var done=false;
+var done=false,Z=1,ZK="shopmaps:sj:zoom";
+function setZ(z){Z=Math.max(0.4,Math.min(3,z));var s=document.getElementById("sheet");s.style.zoom=Z;s.style.maxWidth=Z>1?"none":"100%";document.getElementById("zv").textContent=Math.round(Z*100)+"%";try{localStorage.setItem(ZK,String(Z))}catch(e){}}
+function fitZ(){var s=document.getElementById("sheet"),w=document.getElementById("wrap");s.style.zoom=1;s.style.maxWidth="none";var nat=s.scrollWidth,av=w.clientWidth-32;setZ(nat>0?av/nat:1)}
+document.getElementById("zi").onclick=function(){setZ(Z+0.1)};document.getElementById("zo").onclick=function(){setZ(Z-0.1)};document.getElementById("zr").onclick=fitZ;
+document.getElementById("wrap").addEventListener("wheel",function(e){if(e.ctrlKey){e.preventDefault();setZ(Z*(e.deltaY<0?1.08:1/1.08))}},{passive:false});
+try{var z0=parseFloat(localStorage.getItem(ZK));if(z0>0)setZ(z0)}catch(e){}
 function b64(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
 async function run(){
   if(done)return;
