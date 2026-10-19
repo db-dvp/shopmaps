@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <title>파주 상업시설·오피스텔 검토</title>
 <style>
 :root{--navy:#1b2a56;--navy2:#2c3f7a;--line:#dfe2ea;--bg:#f3f1ec}
@@ -20,21 +21,22 @@ body{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,
 /* 안쪽 페이지의 자체 상단바(46px)는 위로 밀어 가린다 */
 iframe{position:absolute;left:0;top:-46px;width:100%;height:calc(100% + 46px);border:0;background:var(--bg)}
 iframe.off{visibility:hidden;pointer-events:none}
-#gate{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:99}
-#gate form{background:#fff;border-radius:12px;padding:28px 26px;width:min(340px,92vw);box-shadow:0 10px 40px #0006}
-#gate h2{margin:0 0 4px;font-size:16px;color:var(--navy)}
-#gate p{margin:0 0 16px;color:#667;font-size:12px}
-#gate input{display:block;width:100%;margin:0 0 10px;padding:10px 12px;border:1px solid #cfd5e3;border-radius:8px;font:inherit;font-size:14px}
-#gate button{width:100%;padding:11px;border:0;border-radius:8px;background:var(--navy);color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+#gate{position:fixed;inset:0;background:#131a40;display:flex;align-items:center;justify-content:center;z-index:99;font-family:"Noto Sans KR","Malgun Gothic",system-ui,sans-serif}
+#gate form{background:#fff;border-radius:18px;padding:30px 28px 28px;width:min(320px,90vw);box-shadow:0 12px 44px #0008;text-align:center}
+#gate h2{margin:0 0 6px;font-size:15px;font-weight:700;color:#1f2a5e;letter-spacing:.2px}
+#gate p{margin:0 0 20px;color:#6b7390;font-size:11.5px}
+#gate input{display:block;width:100%;margin:0 0 10px;padding:13px 14px;border:1px solid #e0d5c1;background:#f4efe6;border-radius:10px;font:inherit;font-size:14px;outline:0;color:#222}
+#gate input:focus{border-color:#6674c7;box-shadow:0 0 0 2px #6674c744}
+#gate button{width:100%;padding:12px;border:0;border-radius:10px;background:#1f2a5e;color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:2px}
 #gate[hidden],#out[hidden]{display:none}
-#gate .err{color:#c0392b;font-size:12px;min-height:16px;margin:2px 0 8px}
+#gate .err{color:#c0392b;font-size:12px;min-height:16px;margin:0 0 6px;text-align:left}
 @media(max-width:900px){#top .src{display:none}#top{gap:8px;padding:0 10px}.seg{overflow-x:auto;max-width:calc(100vw - 150px)}.seg button{padding:5px 9px}#top h1{display:none}}
 </style>
 </head>
 <body>
 <div id="top"><div class="seg"><button data-t="sj5">사업수지 5BL</button><button data-t="sj6">사업수지 6BL</button><button data-t="shop">상업시설</button><button data-t="office">오피스텔</button><button data-t="p5">분양가 시뮬레이터 5BL</button><button data-t="p6">분양가 시뮬레이터 6BL</button></div><h1 id="ttl"></h1><span class="src" id="src"></span><button id="out" hidden>로그아웃</button></div>
 <div id="stage"><iframe id="f-sj5" title="사업수지 5BL" class="off"></iframe><iframe id="f-sj6" title="사업수지 6BL" class="off"></iframe><iframe id="f-shop" title="상업시설" class="off"></iframe><iframe id="f-office" title="오피스텔" class="off"></iframe><iframe id="f-p5" title="분양가 시뮬레이터 5BL" class="off"></iframe><iframe id="f-p6" title="분양가 시뮬레이터 6BL" class="off"></iframe></div>
-<div id="gate"><form id="gf" autocomplete="on"><h2>파주운정3지구 검토 자료</h2><p>아이디와 비밀번호를 입력해 주세요. (로그인은 2시간 유지됩니다)</p><input id="gid" name="username" placeholder="아이디" autocomplete="username" autocapitalize="off"><input id="gpw" name="password" type="password" placeholder="비밀번호" autocomplete="current-password"><div class="err" id="gerr"></div><button type="submit">로그인</button></form></div>
+<div id="gate"><form id="gf" autocomplete="on"><h2>파주운정3지구 5,6BL 분양가 검토자료</h2><p>내부 열람용 자료입니다. ID/PW를 입력해주세요.</p><input id="gid" name="username" placeholder="ID" autocomplete="username" autocapitalize="off"><input id="gpw" name="password" type="password" placeholder="PASSWORD" autocomplete="current-password"><div class="err" id="gerr"></div><button type="submit">확인</button></form></div>
 <script>
 (function(){
 var T={sj5:{t:'파주운정3 주복 5BL 사업수지 (수지분석)',u:'sooji.html?bl=5'},
