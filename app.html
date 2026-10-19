@@ -10,38 +10,86 @@
 html,body{height:100%;margin:0;overflow:hidden}
 body{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;background:var(--bg);font-size:13px}
 #top{height:46px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:14px;padding:0 16px}
-#top h1{font-size:15px;margin:0;font-weight:700;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top h1{font-size:15px;margin:0;font-weight:700;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 #top .src{margin-left:auto;font-size:11.5px;opacity:.85;white-space:nowrap}
+#out{border:0;background:#ffffff24;color:#dfe6ff;font:inherit;font-size:12px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;flex:none;margin-left:auto}
 .seg{display:flex;background:#ffffff24;border-radius:8px;padding:3px;gap:2px;flex:none}
-.seg button{border:0;background:transparent;color:#dfe6ff;font:inherit;font-size:13px;font-weight:700;padding:5px 16px;border-radius:6px;cursor:pointer}
+.seg button{border:0;background:transparent;color:#dfe6ff;font:inherit;font-size:13px;font-weight:700;padding:5px 14px;border-radius:6px;cursor:pointer;white-space:nowrap}
 .seg button.on{background:#fff;color:var(--navy)}
 #stage{position:relative;height:calc(100% - 46px);overflow:hidden}
 /* 안쪽 페이지의 자체 상단바(46px)는 위로 밀어 가린다 */
 iframe{position:absolute;left:0;top:-46px;width:100%;height:calc(100% + 46px);border:0;background:var(--bg)}
 iframe.off{visibility:hidden;pointer-events:none}
-@media(max-width:700px){#top .src{display:none}#top{gap:8px;padding:0 10px}.seg button{padding:5px 10px}}
+#gate{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:99}
+#gate form{background:#fff;border-radius:12px;padding:28px 26px;width:min(340px,92vw);box-shadow:0 10px 40px #0006}
+#gate h2{margin:0 0 4px;font-size:16px;color:var(--navy)}
+#gate p{margin:0 0 16px;color:#667;font-size:12px}
+#gate input{display:block;width:100%;margin:0 0 10px;padding:10px 12px;border:1px solid #cfd5e3;border-radius:8px;font:inherit;font-size:14px}
+#gate button{width:100%;padding:11px;border:0;border-radius:8px;background:var(--navy);color:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+#gate[hidden],#out[hidden]{display:none}
+#gate .err{color:#c0392b;font-size:12px;min-height:16px;margin:2px 0 8px}
+@media(max-width:900px){#top .src{display:none}#top{gap:8px;padding:0 10px}.seg{overflow-x:auto;max-width:calc(100vw - 150px)}.seg button{padding:5px 9px}#top h1{display:none}}
 </style>
 </head>
 <body>
-<div id="top"><div class="seg"><button data-t="shop">상업시설</button><button data-t="office">오피스텔</button><button data-t="price">분양가 시뮬레이터</button></div><h1 id="ttl"></h1><span class="src" id="src"></span></div>
-<div id="stage"><iframe id="f-shop" title="상업시설" src="index.html"></iframe><iframe id="f-office" class="off" title="오피스텔"></iframe><iframe id="f-price" class="off" title="분양가 시뮬레이터"></iframe></div>
+<div id="top"><div class="seg"><button data-t="sj5">사업수지 5BL</button><button data-t="sj6">사업수지 6BL</button><button data-t="shop">상업시설</button><button data-t="office">오피스텔</button><button data-t="p5">분양가 시뮬레이터 5BL</button><button data-t="p6">분양가 시뮬레이터 6BL</button></div><h1 id="ttl"></h1><span class="src" id="src"></span><button id="out" hidden>로그아웃</button></div>
+<div id="stage"><iframe id="f-sj5" title="사업수지 5BL" class="off"></iframe><iframe id="f-sj6" title="사업수지 6BL" class="off"></iframe><iframe id="f-shop" title="상업시설" class="off"></iframe><iframe id="f-office" title="오피스텔" class="off"></iframe><iframe id="f-p5" title="분양가 시뮬레이터 5BL" class="off"></iframe><iframe id="f-p6" title="분양가 시뮬레이터 6BL" class="off"></iframe></div>
+<div id="gate"><form id="gf" autocomplete="on"><h2>파주운정3지구 검토 자료</h2><p>아이디와 비밀번호를 입력해 주세요. (로그인은 2시간 유지됩니다)</p><input id="gid" name="username" placeholder="아이디" autocomplete="username" autocapitalize="off"><input id="gpw" name="password" type="password" placeholder="비밀번호" autocomplete="current-password"><div class="err" id="gerr"></div><button type="submit">로그인</button></form></div>
 <script>
 (function(){
-var T={shop:{t:'파주운정3 5,6BL 상업시설 분양가 검토',s:'',u:'index.html'},
-        office:{t:'파주·일산 오피스텔 최근 호가 · 평당가',s:'',u:'officetel.html'},
-        price:{t:'파주운정3지구 5,6BL 라이브오피스 분양가 시뮬레이터',s:'',u:'liveoffice.html'}};
+var T={sj5:{t:'파주운정3 주복 5BL 사업수지 (수지분석)',u:'sooji.html?bl=5'},
+       sj6:{t:'파주운정3 주복 6BL 사업수지 (수지분석)',u:'sooji.html?bl=6'},
+       shop:{t:'파주운정3 5,6BL 상업시설 분양가 검토',u:'index.html'},
+       office:{t:'파주·일산 오피스텔 최근 호가 · 평당가',u:'officetel.html'},
+       p5:{t:'파주운정3지구 5BL 라이브오피스 분양가 시뮬레이터',u:'liveoffice.html?bl=5'},
+       p6:{t:'파주운정3지구 6BL 라이브오피스 분양가 시뮬레이터',u:'liveoffice.html?bl=6'}};
+var ORDER=['sj5','sj6','shop','office','p5','p6'];
+var SALT='shopmaps-v1-dbdvp',ITER=200000,CHECK='mhpF2LrO5wKtPM4cYlIWzbg9MZwPWiLsuSz8Ch8L',AK='shopmaps:auth',HOURS2=2*60*60*1000;
+var cur='sj5';
+function b64d(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function b64e(a){var s='';for(var i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s)}
+function getAuth(){try{var a=JSON.parse(localStorage.getItem(AK)||'null');return a&&a.k&&a.exp>Date.now()?a:null}catch(e){return null}}
 function show(k,push){
-  if(!T[k])k='shop';
-  ['shop','office','price'].forEach(function(n){
+  if(!T[k])k='sj5';
+  cur=k;
+  if(!getAuth())return;
+  ORDER.forEach(function(n){
     var f=document.getElementById('f-'+n);
     if(n===k){ if(!f.getAttribute('src'))f.setAttribute('src',T[n].u); f.classList.remove('off'); } else f.classList.add('off');
   });
   [].forEach.call(document.querySelectorAll('.seg button'),function(b){b.classList.toggle('on',b.getAttribute('data-t')===k)});
-  document.getElementById('ttl').textContent=T[k].t; document.getElementById('src').textContent=T[k].s; document.title=T[k].t;
+  document.getElementById('ttl').textContent=T[k].t; document.title=T[k].t;
   if(push) try{history.replaceState(null,'','#'+k)}catch(e){}
 }
+function lock(){
+  try{localStorage.removeItem(AK)}catch(e){}
+  ORDER.forEach(function(n){var f=document.getElementById('f-'+n);f.removeAttribute('src');f.classList.add('off')});
+  document.getElementById('gate').hidden=false;document.getElementById('out').hidden=true;
+}
+function unlock(){
+  document.getElementById('gate').hidden=true;document.getElementById('out').hidden=false;
+  show((location.hash||'').replace('#','')||cur);
+}
 [].forEach.call(document.querySelectorAll('.seg button'),function(b){b.onclick=function(){show(b.getAttribute('data-t'),true)}});
-show((location.hash||'').replace('#','')||'shop',false);
+document.getElementById('out').onclick=lock;
+document.getElementById('gf').onsubmit=async function(e){
+  e.preventDefault();
+  var err=document.getElementById('gerr');err.textContent='';
+  var id=document.getElementById('gid').value.trim(),pw=document.getElementById('gpw').value;
+  try{
+    var base=await crypto.subtle.importKey('raw',new TextEncoder().encode(id+':'+pw),'PBKDF2',false,['deriveBits']);
+    var bits=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(SALT),iterations:ITER,hash:'SHA-256'},base,256));
+    var key=await crypto.subtle.importKey('raw',bits,'AES-GCM',false,['decrypt']);
+    var d=b64d(CHECK);
+    var ok=new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:d.slice(0,12)},key,d.slice(12)));
+    if(ok!=='ok')throw 0;
+    localStorage.setItem(AK,JSON.stringify({k:b64e(bits),exp:Date.now()+HOURS2}));
+    document.getElementById('gpw').value='';
+    unlock();
+  }catch(x){err.textContent='아이디 또는 비밀번호가 맞지 않습니다.'}
+};
+setInterval(function(){if(!document.getElementById('gate').hidden)return;if(!getAuth())lock()},5000);
+if(getAuth())unlock();else document.getElementById('gate').hidden=false;
 })();
 </script>
 </body>
