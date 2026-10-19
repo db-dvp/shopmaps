@@ -111,10 +111,10 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
   ];
   var QBL = (location.search.match(/bl=(\d)/) || [])[1];
   if (QBL) { BLS = BLS.filter(function (b) { return b.id === QBL + "BL"; }); var h1 = document.querySelector("#top h1"); if (h1) h1.textContent = "파주운정3지구 " + QBL + "BL 라이브오피스 분양가 시뮬레이터"; document.title = "분양가 시뮬레이터 " + QBL + "BL"; }
-  var KEY = "shopmaps:price:v5" + (QBL ? ":" + QBL : "");
-  var st = { preset: "custom", t36: 1700, t51: 1890, pct: {} };
+  var KEY = "shopmaps:price:v6" + (QBL ? ":" + QBL : "");
+  var st = { preset: "custom", t36: 1700, t51: 1828, pct: {} };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) { st = sv; } } catch (e) {}
-  if (typeof st.t36 !== "number") st.t36 = 1700; if (typeof st.t51 !== "number") st.t51 = 1890;
+  if (typeof st.t36 !== "number") st.t36 = 1700; if (typeof st.t51 !== "number") st.t51 = 1828;
   ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = it.d || 0; });
 
   function $(id) { return document.getElementById(id); }
