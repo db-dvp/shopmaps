@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GTX-A 운정중앙역</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+:root{--navy:#1b2a56;--navy2:#2c3f7a;--line:#dfe2ea;--bg:#eef1f7;--page:#f3f1ec;--ink:#1d2433;--mut:#6b7488;--gx:#7b3fa0;--gxl:#f1e9f7;--org:#e08a1e;--grn:#12a39c;--red:#d6453d}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;background:var(--page);color:var(--ink);font-size:13px}
+header{height:46px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:14px;padding:0 16px}
+header h1{font-size:15px;margin:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .s{margin-left:auto;font-size:11.5px;opacity:.85;white-space:nowrap}
+#wrap{height:calc(100% - 46px);overflow:auto;padding:16px}
+.in{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border-radius:12px;padding:16px 18px;box-shadow:0 1px 6px #0001}
+.card h2{margin:0 0 4px;font-size:15px;color:var(--navy);font-weight:800}
+.card .sub{color:var(--mut);font-size:12px;margin-bottom:12px;line-height:1.5}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kp>div{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kp>div.hot{background:var(--navy);border-color:var(--navy);color:#fff}
+.kp .k{display:block;font-size:11.5px;color:var(--mut)}.kp .hot .k{color:#c9d2f0}
+.kp b{display:block;font-size:26px;margin:3px 0 1px;letter-spacing:-.5px;color:var(--navy);font-weight:800}.kp .hot b{color:#fff}
+.kp .n{font-size:11px;color:var(--mut)}.kp .hot .n{color:#c9d2f0}
+.map svg{width:100%;height:auto;display:block}
+.map text{font-family:inherit}
+.leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:11.5px;color:var(--mut);margin-top:8px}
+.leg i{display:inline-block;width:22px;height:0;border-top:4px solid var(--gx);vertical-align:3px;margin-right:6px}
+.leg i.d{border-top:4px dashed var(--org)}.leg i.g{border-top-color:#8a93ad}
+.cmp{display:flex;flex-direction:column;gap:8px}
+.cmp .r{display:grid;grid-template-columns:110px 1fr 64px;gap:10px;align-items:center;font-size:12.5px}
+.cmp .bar{height:20px;background:var(--bg);border-radius:6px;overflow:hidden}.cmp .bar>span{display:block;height:100%;border-radius:6px}
+.cmp .v{text-align:right;font-weight:800;color:var(--navy)}
+.nx{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 4px}
+.nx .t{background:var(--gxl);color:var(--gx);font-weight:800;border-radius:10px;padding:6px 12px;font-size:15px}
+.nx .t small{display:block;font-weight:500;font-size:10.5px;color:var(--mut)}
+.nx .lb{color:var(--mut);font-size:12px;margin-right:4px}
+table.tt{border-collapse:collapse;width:100%}
+table.tt th,table.tt td{border:1px solid var(--line);padding:5px 8px;font-size:12.5px;text-align:left}
+table.tt th{background:var(--bg);color:var(--navy);text-align:center;font-weight:700}
+table.tt td.h{width:58px;text-align:center;font-weight:800;color:var(--navy);background:#fafbfe}
+table.tt td.c{width:64px;text-align:center;color:var(--mut)}
+table.tt td.g{width:92px;text-align:center;font-weight:700}
+table.tt td.m span{display:inline-block;min-width:30px;text-align:center;padding:1px 4px;margin:1px 2px;border-radius:6px;font-variant-numeric:tabular-nums}
+table.tt tr.pk td.m{background:#fbf4ff}table.tt tr.pk td.h{background:var(--gxl);color:var(--gx)}
+table.tt td.m span.now{background:var(--gx);color:#fff;font-weight:800}
+table.tt td.m span.first,table.tt td.m span.last{background:var(--navy);color:#fff;font-weight:700}
+.pkt{display:inline-block;background:var(--gxl);color:var(--gx);border-radius:8px;padding:0 7px;font-size:11px;font-weight:700;margin-left:6px}
+.tl{position:relative;margin:4px 0 0 10px;padding-left:22px;border-left:3px solid #d9dce6}
+.tl .e{position:relative;padding:0 0 14px}
+.tl .e:last-child{padding-bottom:0}
+.tl .e:before{content:"";position:absolute;left:-31px;top:3px;width:13px;height:13px;border-radius:50%;background:#fff;border:3px solid #8a93ad}
+.tl .e.done:before{background:var(--gx);border-color:var(--gx)}
+.tl .e.cur:before{background:var(--org);border-color:var(--org)}
+.tl .e.plan:before{border-color:var(--gx)}
+.tl .d{font-size:12px;font-weight:800;color:var(--navy)}
+.tl .tg{display:inline-block;font-size:10.5px;font-weight:700;border-radius:8px;padding:0 7px;margin-left:6px;vertical-align:1px;color:#fff;background:#8a93ad}
+.tl .tg.ok{background:var(--gx)}.tl .tg.w{background:var(--org)}
+.tl .x{font-size:12.5px;line-height:1.55;margin-top:2px}
+.tl .x small{color:var(--mut)}
+.alert{background:#fff7ec;border:1px solid #f3d6a7;border-radius:10px;padding:10px 14px;font-size:12.5px;line-height:1.6;color:#6b4a10;margin-bottom:12px}
+.links{display:flex;flex-wrap:wrap;gap:8px}.links a{background:var(--navy);color:#fff;text-decoration:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700}.links a.l{background:var(--bg);color:var(--navy);border:1px solid var(--line)}
+.note{font-size:11px;color:var(--mut);line-height:1.6}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.kp{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.cmp .r{grid-template-columns:84px 1fr 56px}}
+</style></head><body>
+<header><h1>GTX-A 운정중앙역 · 서울까지 얼마나 걸리나</h1><span class="s" id="asof"></span></header>
+<div id="wrap"><div class="in">
+
+<div class="card"><div class="kp">
+ <div class="hot"><span class="k">운정중앙 → 서울역</span><b>21분 30초</b><span class="n">정차: 킨텍스·대곡·연신내</span></div>
+ <div><span class="k">출퇴근 배차간격</span><b id="kpPk">6~7분</b><span class="n">06:30~09:00 · 17:00~19:30 (공식 6분 15초)</span></div>
+ <div><span class="k">운정중앙역 하루 출발</span><b id="kpCnt">-</b><span class="n">서울 방면, 공식 시간표 기준</span></div>
+ <div><span class="k">첫차 / 막차</span><b>05:30 / 00:38</b><span class="n">운정중앙 출발 (서울 방면)</span></div>
+</div></div>
+
+<div class="card map"><h2>노선도와 구간별 상황</h2><div class="sub">운정중앙~서울역은 운행 중이고, 서울역~수서(삼성역 무정차 통과)가 이어지면 동탄까지 한 노선이 됩니다. 연결 시기는 아직 확정되지 않았습니다.</div>
+<svg viewBox="0 0 1000 190" role="img" aria-label="GTX-A 노선도">
+ <line x1="60" y1="84" x2="500" y2="84" stroke="#7b3fa0" stroke-width="9" stroke-linecap="round"/>
+ <line x1="500" y1="84" x2="700" y2="84" stroke="#e08a1e" stroke-width="7" stroke-dasharray="3 11" stroke-linecap="round"/>
+ <line x1="700" y1="84" x2="940" y2="84" stroke="#8a93ad" stroke-width="9" stroke-linecap="round"/>
+ <g font-size="14" font-weight="700" text-anchor="middle" fill="#1d2433">
+  <circle cx="60" cy="84" r="14" fill="#fff" stroke="#1b2a56" stroke-width="6"/>
+  <circle cx="170" cy="84" r="9" fill="#fff" stroke="#7b3fa0" stroke-width="4"/>
+  <circle cx="280" cy="84" r="9" fill="#fff" stroke="#7b3fa0" stroke-width="4"/>
+  <circle cx="335" cy="84" r="7" fill="#fff" stroke="#8a93ad" stroke-width="3" stroke-dasharray="3 2"/>
+  <circle cx="390" cy="84" r="9" fill="#fff" stroke="#7b3fa0" stroke-width="4"/>
+  <circle cx="500" cy="84" r="11" fill="#fff" stroke="#7b3fa0" stroke-width="5"/>
+  <circle cx="600" cy="84" r="8" fill="#fff" stroke="#e08a1e" stroke-width="3" stroke-dasharray="3 2"/>
+  <circle cx="700" cy="84" r="9" fill="#fff" stroke="#8a93ad" stroke-width="4"/>
+  <circle cx="780" cy="84" r="9" fill="#fff" stroke="#8a93ad" stroke-width="4"/>
+  <circle cx="860" cy="84" r="9" fill="#fff" stroke="#8a93ad" stroke-width="4"/>
+  <circle cx="940" cy="84" r="9" fill="#fff" stroke="#8a93ad" stroke-width="4"/>
+  <text x="60" y="122" fill="#1b2a56" font-size="16" font-weight="800">운정중앙</text>
+  <text x="170" y="116">킨텍스</text><text x="280" y="116">대곡</text>
+  <text x="335" y="138" font-size="12" fill="#6b7488" font-weight="500">창릉(예정)</text>
+  <text x="390" y="116">연신내</text><text x="500" y="116" font-size="15" font-weight="800">서울역</text>
+  <text x="600" y="116" fill="#9a6410">삼성</text><text x="600" y="136" font-size="11.5" fill="#9a6410" font-weight="500">무정차 통과</text>
+  <text x="700" y="116">수서</text><text x="780" y="116">성남</text><text x="860" y="116">구성</text><text x="940" y="116">동탄</text>
+ </g>
+ <g font-size="12.5" text-anchor="middle" font-weight="700">
+  <text x="280" y="58" fill="#7b3fa0">운행 중 · 2024.12.28 개통</text>
+  <text x="280" y="36" fill="#1b2a56" font-size="14">운정중앙~서울역 21분 30초</text>
+  <text x="600" y="58" fill="#9a6410">연결 예정 · 일정 미정</text>
+  <text x="600" y="36" fill="#1b2a56" font-size="14">서울역~수서 약 10분 (보도)</text>
+  <text x="820" y="58" fill="#6b7488">운행 중 (수서~동탄 별도 운행)</text>
+ </g>
+</svg>
+<div class="leg"><span><i></i>운정중앙~서울역 운행 중</span><span><i class="d"></i>서울역~수서 연결 예정 (삼성역 무정차)</span><span><i class="g"></i>수서~동탄 운행 중 (현재 별도 운행)</span></div></div>
+
+<div class="two">
+<div class="card"><h2>서울까지 얼마나 걸리나</h2><div class="sub">운정중앙 → 서울역 기준 · 국토부 개통 보도자료</div>
+ <div class="cmp">
+  <div class="r"><span>GTX-A</span><div class="bar"><span style="width:32.6%;background:#7b3fa0"></span></div><span class="v">21.5분</span></div>
+  <div class="r"><span>경의중앙선</span><div class="bar"><span style="width:69.7%;background:#8a93ad"></span></div><span class="v">약 46분</span></div>
+  <div class="r"><span>광역버스</span><div class="bar"><span style="width:100%;background:#b7bdcd"></span></div><span class="v">약 66분</span></div>
+ </div>
+ <div class="note" style="margin-top:10px">기존 대비 경의중앙선 24.5분, 광역버스 44.5분 단축 (개통 당시 국토부 설명). 운임은 개통 당시 기준 운정중앙~서울역 4,450원, K-패스 적용 시 3,560원.</div>
+</div>
+<div class="card"><h2>지금 이후 다음 열차</h2><div class="sub">운정중앙역 출발 · 서울 방면 · <span id="nowt"></span> 기준(한국시간)</div>
+ <div class="nx" id="nx"></div>
+ <div class="note">공식 시간표 단일 표 기준입니다. 출퇴근 시간(06:30~09:00, 17:00~19:30)은 주말·공휴일에도 같은 간격이 적용된다고 안내되어 있습니다. 실제 운행은 <a href="https://www.gtx-a.com/realtimeTI.do" target="_blank" rel="noopener">실시간 열차표</a>로 확인하세요.</div>
+</div>
+</div>
+
+<div class="card"><h2>운정중앙역 열차 시간표 <span class="pkt">출퇴근 시간대 색칠</span></h2><div class="sub">서울 방면 출발 시각(분) · 출처 GTX-A 공식 홈페이지 열차시간표 · 첫차·막차는 진한 색, 지금 이후 가장 가까운 열차는 보라색으로 표시됩니다.</div>
+<table class="tt" id="tt"><thead><tr><th>시</th><th>출발 시각 (분)</th><th>편수</th><th>평균 간격</th></tr></thead><tbody></tbody></table>
+<div class="note" style="margin-top:8px">시각표는 2026.10.20 공식 페이지 조회 기준이며 개정될 수 있습니다. 서울 → 운정중앙 방면(상행)은 공식 시간표 페이지에서 확인하세요.</div>
+</div>
+
+<div class="card"><h2>앞으로 연결은 어떻게, 언제?</h2><div class="sub">주요 일정을 시간순으로 정리했습니다. 예정 일정은 확정이 아니며 보도 시점에 따라 바뀔 수 있습니다.</div>
+ <div class="alert"><b>핵심:</b> 삼성역 무정차 통과(서울역~수서 연결)는 당초 2026년 8월 예정이었으나 삼성역 구조물 철근 누락 문제로 연기되어 <b>새 일정이 아직 정해지지 않았습니다</b>. 운정중앙~동탄 직결은 2026년을 넘길 전망이고, 삼성역 정차를 포함한 완전 개통은 2028년이 목표입니다. (2026.10.17 보도)</div>
+ <div class="tl">
+  <div class="e done"><div class="d">2024.12.28<span class="tg ok">완료</span></div><div class="x">운정중앙~서울역 개통 (킨텍스·대곡·연신내 정차). 개통 초기 7개 편성, 약 10분 간격.</div></div>
+  <div class="e done"><div class="d">2025.03.01<span class="tg ok">완료</span></div><div class="x">출퇴근 시간대 배차 10분 → 6분 15초로 단축, 편성 7 → 10개로 증가. <small>(하루 왕복 224 → 약 282~292회, 보도마다 차이)</small></div></div>
+  <div class="e cur"><div class="d">2026.8 → 연기<span class="tg w">지연</span></div><div class="x">서울역~수서 연결(삼성역 무정차 통과) 당초 목표. 삼성역 지하 5층 기둥 철근 누락으로 보강이 필요해 운행 일정 미정.</div></div>
+  <div class="e plan"><div class="d">2026.11<span class="tg">예정</span></div><div class="x">정부 합동점검 (11월 20일까지).</div></div>
+  <div class="e plan"><div class="d">2026.12<span class="tg">예정</span></div><div class="x">국가철도공단이 12개 보강 공법 중 최종 공법 선정 예정. 이후 공사기간 협의. <small>점검이 끝나도 곧바로 운행이 시작되지는 않을 수 있습니다.</small></div></div>
+  <div class="e plan"><div class="d">연결 이후<span class="tg">예정</span></div><div class="x">운정중앙~동탄 직결. 운행 방식은 운정중앙~수서, 운정중앙~동탄 등으로 나뉠 전망. <small>(2025.9 보도: 운정중앙발 하루 141회가 동탄행 약 100회·수서행 약 41회로 나뉨, 잠정 수치) 수서~동탄은 SRT와 선로를 공유해 횟수에 한계가 있습니다.</small></div></div>
+  <div class="e plan"><div class="d">2028<span class="tg">목표</span></div><div class="x">삼성역 정차를 포함한 GTX-A 전 구간 완전 개통 목표.</div></div>
+  <div class="e plan"><div class="d">2030<span class="tg">목표</span></div><div class="x">창릉역 신설 (대곡~연신내 사이, 개통 목표).</div></div>
+ </div>
+</div>
+
+<div class="card"><h2>공식 링크와 출처</h2><div class="links" style="margin-bottom:10px">
+ <a href="https://www.gtx-a.com/trainT.do" target="_blank" rel="noopener">공식 열차시간표</a>
+ <a class="l" href="https://www.gtx-a.com/realtimeTI.do" target="_blank" rel="noopener">실시간 열차표</a>
+ <a class="l" href="https://www.gtx-a.com/main.do" target="_blank" rel="noopener">GTX-A 홈페이지</a></div>
+ <div class="note">출처: GTX-A 공식 홈페이지(시간표·보도자료, 2024.12.29 소요시간·운임) · 뉴스핌 2026.10.17(삼성역 통과 지연·일정) · 뉴스핌 2026.2.20(전 구간 개통 계획) · 고양신문 2025.2(출퇴근 배차 단축) · 서울시 미디어허브 2025.9(직결 후 운행 방식). 소요시간·운임은 개통 당시 기준이며 이후 변경될 수 있습니다. 조회일 2026.10.20.</div></div>
+
+</div></div>
+<script>
+(function(){
+/* 운정중앙역 출발(서울 방면) 시각표 — gtx-a.com/trainT.do, 2026.10.20 조회 */
+var T=[[5,[30,40,50]],[6,[0,6,12,18,25,31,37,43,50,56]],[7,[2,8,15,21,27,33,40,46,52,58]],[8,[5,11,17,23,30,36,42,48,55]],[9,[3,11,19,27,35,43,51]],[10,[0,10,20,30,40,50]],[11,[0,10,20,30,40,50]],[12,[0,10,20,30,40,50]],[13,[0,10,20,30,40,48,56]],[14,[4,12,20,28,36,44,52]],[15,[0,8,16,24,32,40,48,56]],[16,[4,12,20,27,34,40,46,52,59]],[17,[5,11,17,24,30,36,42,49,55]],[18,[1,7,14,20,26,32,39,45,51,57]],[19,[4,10,16,22,29,37,45,53]],[20,[1,9,17,25,33,41,49,57]],[21,[5,13,21,30,40,50]],[22,[0,10,20,30,45]],[23,[0,15,30,45]],[24,[0,18,38]]];
+var $=function(i){return document.getElementById(i)};
+$('asof').textContent='기준 2026.10.20 · GTX-A 공식 시간표 · 보도자료';
+var all=[];T.forEach(function(r){r[1].forEach(function(m){all.push(r[0]*60+m)})});
+$('kpCnt').textContent=all.length+'회';
+/* 출퇴근 구간 평균 간격 */
+function span(a,b){var x=all.filter(function(t){return t>=a&&t<b}).sort(function(p,q){return p-q});return x.length>1?(x[x.length-1]-x[0])/(x.length-1):0}
+var pk=(span(6*60+30,9*60)+span(17*60,19*60+30))/2;
+$('kpPk').textContent=pk?(Math.round(pk*10)/10).toString().replace(/\.0$/,'')+'분':'6~7분';
+function isPk(h){return h===6||h===7||h===8||h===17||h===18}
+function now(){var d=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Seoul'}));var m=d.getHours()*60+d.getMinutes();return m<300?m+1440:m}
+function pad(n){return (n<10?'0':'')+n}
+function fm(t){var h=Math.floor(t/60),m=t%60;return pad(h===24?0:h)+':'+pad(m)}
+function draw(){
+  var nm=now(); var nxt=null; for(var i=0;i<all.length;i++){var t=all[i]; if(t>=nm){nxt=t;break}}
+  if(nxt===null) nxt=all[0];
+  var first=all[0],last=all[all.length-1],tb=document.querySelector('#tt tbody'),h='';
+  T.forEach(function(r){var hr=r[0],ms=r[1],lab=pad(hr===24?0:hr),cnt=ms.length,iv='';
+    var ts=ms.map(function(m){return hr*60+m});
+    var s='';ms.forEach(function(m){var t=hr*60+m,c=t===nxt?'now':(t===first?'first':(t===last?'last':''));s+='<span class="'+c+'">'+pad(m)+(t===first?' 첫차':(t===last?' 막차':''))+'</span>'});
+    if(cnt>1){var d=(ts[cnt-1]-ts[0])/(cnt-1);iv=(Math.round(d*10)/10).toString()+'분'}else iv='-';
+    h+='<tr class="'+(isPk(hr)?'pk':'')+'"><td class="h">'+lab+'시</td><td class="m">'+s+'</td><td class="c">'+cnt+'편</td><td class="g">'+iv+'</td></tr>'});
+  tb.innerHTML=h;
+  $('nowt').textContent=fm(nm>=1440?nm-1440:nm);
+  var list=all.filter(function(t){return t>=nm}).slice(0,5);
+  if(!list.length) list=all.slice(0,5);
+  $('nx').innerHTML=list.map(function(t,i){var w=t-nm;if(w<0)w+=24*60;return '<span class="t">'+fm(t)+'<small>'+(i===0&&w<=60?(w+'분 후'):(i===0?'가장 가까운 열차':'')) +'</small></span>'}).join('');
+}
+draw();setInterval(draw,30000);
+})();
+</script></body></html>
