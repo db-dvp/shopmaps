@@ -74,6 +74,19 @@ function unlock(){
   show((location.hash||'').replace('#','')||cur);
 }
 [].forEach.call(document.querySelectorAll('.seg button'),function(b){b.onclick=function(){show(b.getAttribute('data-t'),true)}});
+/* 탭 드래그로 순서 변경 (이 브라우저에 저장) */
+(function(){var seg=document.querySelector('.seg'),TK='shopmaps:tabs';
+function bs(){return [].slice.call(seg.querySelectorAll('button'))}
+function save(){try{localStorage.setItem(TK,JSON.stringify(bs().map(function(b){return b.getAttribute('data-t')})))}catch(e){}}
+try{var sv=JSON.parse(localStorage.getItem(TK)||'null');if(sv&&sv.length){var m={};bs().forEach(function(b){m[b.getAttribute('data-t')]=b});sv.forEach(function(k){if(m[k]){seg.appendChild(m[k]);delete m[k]}});for(var k in m)seg.appendChild(m[k])}}catch(e){}
+var drag=null;
+bs().forEach(function(b){b.draggable=true;b.title='드래그해서 탭 순서를 바꿀 수 있습니다';
+ b.addEventListener('dragstart',function(e){drag=b;b.style.opacity='.4';e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',b.getAttribute('data-t'))}catch(x){}});
+ b.addEventListener('dragend',function(){b.style.opacity='';drag=null;save()});
+ b.addEventListener('dragover',function(e){if(!drag||drag===b)return;e.preventDefault();var r=b.getBoundingClientRect(),after=e.clientX>r.left+r.width/2;seg.insertBefore(drag,after?b.nextSibling:b)});
+ b.addEventListener('drop',function(e){e.preventDefault()});
+});
+})();
 document.getElementById('out').onclick=lock;
 document.getElementById('gf').onsubmit=async function(e){
   e.preventDefault();
