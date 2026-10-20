@@ -107,16 +107,16 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     { k: "high", n: "고층 (9층~)", lo: 9, hi: 99 }
   ];
   var ITEMS = [
-    { g: "층별", k: "low", n: "저층 (2~4층)", d: -2, ev: "오피스텔 실거래: 중층 대비 -2% (-1.7~-2.7%)" },
-    { g: "층별", k: "mid", n: "중층 (5~8층)", d: 0, ev: "기준 층" },
-    { g: "층별", k: "high", n: "고층 (9층~)", d: 1, ev: "오피스텔 실거래: 중층 대비 +1% (+0.4~+1.9%) · 최상층 포함" }
+    { g: "층별", k: "low", n: "저층 (2~4층)", d: -2, e: -2, ev: "오피스텔 실거래: 중층 대비 -2% (-1.7~-2.7%)" },
+    { g: "층별", k: "mid", n: "중층 (5~8층)", d: 0, e: 0, ev: "기준 층" },
+    { g: "층별", k: "high", n: "고층 (9층~)", d: 0, e: 1, ev: "오피스텔 실거래: 중층 대비 +1% (+0.4~+1.9%) · 최상층 포함" }
   ];
   var QBL = (location.search.match(/bl=(\d)/) || [])[1];
   if (QBL) { BLS = BLS.filter(function (b) { return b.id === QBL + "BL"; }); var h1 = document.querySelector("#top h1"); if (h1) h1.textContent = "파주운정3지구 " + QBL + "BL 라이브오피스 분양가 시뮬레이터"; document.title = "분양가 시뮬레이터 " + QBL + "BL"; }
-  var KEY = "shopmaps:price:v6" + (QBL ? ":" + QBL : "");
-  var st = { preset: "custom", t36: 1700, t51: 1828, pct: {} };
+  var KEY = "shopmaps:price:v7" + (QBL ? ":" + QBL : "");
+  var st = { preset: "custom", t36: 1200, t51: 1200, pct: {} };
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) { st = sv; } } catch (e) {}
-  if (typeof st.t36 !== "number") st.t36 = 1700; if (typeof st.t51 !== "number") st.t51 = 1828;
+  if (typeof st.t36 !== "number") st.t36 = 1200; if (typeof st.t51 !== "number") st.t51 = 1200;
   ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = it.d || 0; });
 
   function $(id) { return document.getElementById(id); }
@@ -150,7 +150,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     el.oninput = function () { st.pct[el.getAttribute("data-k")] = +el.value || 0; save(); calc(); };
   });
   function setAll(useDef) {
-    ITEMS.forEach(function (it) { st.pct[it.k] = useDef ? (it.d || 0) : 0; });
+    ITEMS.forEach(function (it) { st.pct[it.k] = useDef ? (it.e || 0) : 0; });
     [].forEach.call(document.querySelectorAll("#items input"), function (el) { el.value = st.pct[el.getAttribute("data-k")]; });
     save(); calc();
   }
@@ -256,7 +256,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     $("baseTag").textContent = "36OA " + fmt(st.t36) + " / 51OA " + fmt(st.t51) + " 만원/평"; $("gap").textContent = "36OA는 51OA 대비 " + ((st.t36 / st.t51 - 1) * 100).toFixed(1) + "% (오피스텔 실거래 참고 -7%, -5~-11%)"; renderPF();
     $("foot").innerHTML = '· 단위: 평당가·호당가 만원, 작은 글씨는 억 환산<br>' +
       '· 호실수·면적: 분양면적표 (5BL 36OA 10·51OA 63 / 6BL 36OA 11·51OA 70, 전용 11.11평·15.71평)<br>' +
-      '· 층 평균은 층별 호실 균등 가정 · 기준가는 호가라 실거래보다 높을 수 있음 · 가산율 기본값은 오피스텔 실거래 근거(위 표), 수정 가능';
+      '· 층 평균은 층별 호실 균등 가정 · 기준가는 호가라 실거래보다 높을 수 있음 · 가산율 기본: 저층 -2% · 중·고층 0% (근거값 복원 버튼: 고층 +1%)';
   }
   (function () {
     var sp = $("split"), left = $("left"), wrap = $("wrap"), LK = "shopmaps:price:lw", drag = false;
