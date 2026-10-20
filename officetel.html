@@ -203,8 +203,8 @@ function render(i){
     }
   }
   }
-  (c.extra||[]).forEach(function(t){h+='<div class="note">· '+t+'</div>'});
-  h+='<div class="note">출처: 네이버부동산·KB부동산 매물 호가, 국토부 신고 실거래(호갱노노). 중개사 중복 등록 가능성이 있고 호가는 실제 거래가보다 높을 수 있습니다.</div>';
+  if(c.id!=='etower2'){(c.extra||[]).forEach(function(t){h+='<div class="note">· '+t+'</div>'});
+  h+='<div class="note">출처: 네이버부동산·KB부동산 매물 호가, 국토부 신고 실거래(호갱노노). 중개사 중복 등록 가능성이 있고 호가는 실제 거래가보다 높을 수 있습니다.</div>';}
   $('panel').innerHTML=h;
   wire(); if(window.__lab)window.__lab();
 }
