@@ -82,9 +82,9 @@ function openPlan(c,i){var p=window.FLOORPLANS[c.id][i],o=document.createElement
 var LO=25,HI=60;
 function rb(r){return r.ex>=LO&&r.ex<=HI?' style="font-weight:800;background:#f1faf8"':''}
 function wmean(rows,f){var tn=0,ta=0;(rows||[]).forEach(function(r){if(r.ex>=LO&&r.ex<=HI&&f(r)!=null){tn+=r.n;ta+=f(r)*r.n}});return tn?{v:ta/tn,n:tn}:null}
-function mid(c){var R=rentOf(c);return{m:wmean(c.byType,function(r){return r.ppEx}),j:wmean(R.j&&R.j.byType,function(r){return r.ppEx}),w:wmean(R.w&&R.w.byType,function(r){return r.ppRent})}}
-function isB(c){if(sizeOf(c)!=='S')return false;var M=mid(c);return !!(M.m||M.j||M.w)}
-function midTile(label,x,dec){return '<div><span class="k">'+label+'</span>'+(x?'<b>'+(dec?x.v.toFixed(1):Math.round(x.v).toLocaleString())+'</b><span class="u">만원/평 · '+x.n+'건</span>':'<b class="nb">해당 없음</b>')+'</div>'}
+function mid(c){if(sizeOf(c)==='W'){var o={};['m','j','w'].forEach(function(k){var tn=0,ta=0;D.forEach(function(b){if(sizeOf(b)==='S'){var x=mid(b)[k];if(x){tn+=x.n;ta+=x.v*x.n}}});o[k]=tn?{v:ta/tn,n:tn}:null});return o}var R=rentOf(c);return{m:wmean(c.byType,function(r){return r.ppEx}),j:wmean(R.j&&R.j.byType,function(r){return r.ppEx}),w:wmean(R.w&&R.w.byType,function(r){return r.ppRent})}}
+function isB(c){if(sizeOf(c)==='W')return (c.byType||[]).some(function(r){return r.ex>=LO&&r.ex<=HI});if(sizeOf(c)!=='S')return false;var M=mid(c);return !!(M.m||M.j||M.w)}
+function midTile(label,x,dec){if(cur>=0&&sizeOf(D[cur])==='W')label=label.replace('전용 25~60㎡','소형 오피스텔');return '<div><span class="k">'+label+'</span>'+(x?'<b>'+(dec?x.v.toFixed(1):Math.round(x.v).toLocaleString())+'</b><span class="u">만원/평 · '+x.n+'건</span>':'<b class="nb">해당 없음</b>')+'</div>'}
 function bd(i){return '<span class="bd '+sizeOf(D[i])+'">'+NOF(i)+'</span>'}
 function tabs(){
   if(cur<0) return '';
@@ -116,7 +116,7 @@ function overview(){
     secs.forEach(function(s){ var rg=s[0], list=s[1];
       h+='<tr class="gh"><td colspan="5">'+rg+' · '+list.length+'개 단지</td></tr>';
       list.forEach(function(o){var c=o.c, ap=(c.approval&&c.approval!=='-')?c.approval:'';
-        h+='<tr class="go'+(sz[0]==='S'&&o.b?' b25':'')+'" data-i="'+o.i+'"><td><span class="no '+sz[0]+'">'+NOF(o.i)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+(c.households?c.households.toLocaleString()+'세대':'')+(c.households&&ap?' · ':'')+(ap?'입주 '+ap:'')+'</span></td>'+
+        h+='<tr class="go'+((sz[0]==='S'||sz[0]==='W')&&o.b?' b25':'')+'" data-i="'+o.i+'"><td><span class="no '+sz[0]+'">'+NOF(o.i)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+(c.households?c.households.toLocaleString()+'세대':'')+(c.households&&ap?' · ':'')+(ap?'입주 '+ap:'')+'</span></td>'+
           cell('m',o.mv,o.m?o.m.n:0,f0)+cell('o',o.jv,o.j?o.j.n:0,f0)+
           cell('o',o.wv,o.w?o.w.n:0,f1)+'</tr>'; });
       if(list.length>1){
