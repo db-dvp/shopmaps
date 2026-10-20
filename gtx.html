@@ -68,12 +68,12 @@ table.tt td.m span.first,table.tt td.m span.last{background:var(--navy);color:#f
 
 <div class="card"><div class="kp">
  <div class="hot"><span class="k">운정중앙 → 서울역</span><b>21분 30초</b><span class="n">정차: 킨텍스·대곡·연신내</span></div>
- <div><span class="k">출퇴근 배차간격</span><b id="kpPk">6~7분</b><span class="n">06:30~09:00 · 17:00~19:30 (공식 6분 15초)</span></div>
- <div><span class="k">운정중앙역 하루 출발</span><b id="kpCnt">-</b><span class="n">서울 방면, 공식 시간표 기준</span></div>
+ <div><span class="k">출퇴근 배차간격</span><b id="kpPk">6~7분</b><span class="n">06:30~09:00 · 17:00~19:30</span></div>
+ <div><span class="k">운정중앙역 하루 출발</span><b id="kpCnt">-</b><span class="n">서울 방면</span></div>
  <div><span class="k">첫차 / 막차</span><b>05:30 / 00:38</b><span class="n">운정중앙 출발 (서울 방면)</span></div>
 </div></div>
 
-<div class="card map"><h2>노선도와 구간별 상황</h2><div class="sub">운정중앙~서울역은 운행 중이고, 서울역~수서(삼성역 무정차 통과)가 이어지면 동탄까지 한 노선이 됩니다. 연결 시기는 아직 확정되지 않았습니다.</div>
+<div class="card map"><h2>노선도와 구간별 상황</h2><div class="sub">서울역~수서 연결 시 동탄까지 한 노선 (일정 미정)</div>
 <svg viewBox="0 0 1000 190" role="img" aria-label="GTX-A 노선도">
  <line x1="60" y1="84" x2="500" y2="84" stroke="#7b3fa0" stroke-width="9" stroke-linecap="round"/>
  <line x1="500" y1="84" x2="700" y2="84" stroke="#e08a1e" stroke-width="7" stroke-dasharray="3 11" stroke-linecap="round"/>
@@ -108,36 +108,35 @@ table.tt td.m span.first,table.tt td.m span.last{background:var(--navy);color:#f
 <div class="leg"><span><i></i>운정중앙~서울역 운행 중</span><span><i class="d"></i>서울역~수서 연결 예정 (삼성역 무정차)</span><span><i class="g"></i>수서~동탄 운행 중 (현재 별도 운행)</span></div></div>
 
 <div class="two">
-<div class="card"><h2>서울까지 얼마나 걸리나</h2><div class="sub">운정중앙 → 서울역 기준 · 국토부 개통 보도자료</div>
+<div class="card"><h2>서울까지 얼마나 걸리나</h2><div class="sub">운정중앙 → 서울역</div>
  <div class="cmp">
   <div class="r"><span>GTX-A</span><div class="bar"><span style="width:32.6%;background:#7b3fa0"></span></div><span class="v">21.5분</span></div>
   <div class="r"><span>경의중앙선</span><div class="bar"><span style="width:69.7%;background:#8a93ad"></span></div><span class="v">약 46분</span></div>
   <div class="r"><span>광역버스</span><div class="bar"><span style="width:100%;background:#b7bdcd"></span></div><span class="v">약 66분</span></div>
  </div>
- <div class="note" style="margin-top:10px">기존 대비 경의중앙선 24.5분, 광역버스 44.5분 단축 (개통 당시 국토부 설명). 운임은 개통 당시 기준 운정중앙~서울역 4,450원, K-패스 적용 시 3,560원.</div>
+ <div class="note" style="margin-top:10px">개통 당시 기준 · 운임 4,450원 (K-패스 3,560원)</div>
 </div>
-<div class="card"><h2>지금 이후 다음 열차</h2><div class="sub">운정중앙역 출발 · 서울 방면 · <span id="nowt"></span> 기준(한국시간)</div>
+<div class="card"><h2>지금 이후 다음 열차</h2><div class="sub">운정중앙 출발 · 서울 방면 · <span id="nowt"></span> 기준</div>
  <div class="nx" id="nx"></div>
- <div class="note">공식 시간표 단일 표 기준입니다. 출퇴근 시간(06:30~09:00, 17:00~19:30)은 주말·공휴일에도 같은 간격이 적용된다고 안내되어 있습니다. 실제 운행은 <a href="https://www.gtx-a.com/realtimeTI.do" target="_blank" rel="noopener">실시간 열차표</a>로 확인하세요.</div>
+ <div class="note">공식 표는 평일·주말 구분 없음 · <a href="https://www.gtx-a.com/realtimeTI.do" target="_blank" rel="noopener">실시간 열차표</a></div>
 </div>
 </div>
 
-<div class="card"><h2>운정중앙역 열차 시간표 <span class="pkt">출퇴근 시간대 색칠</span></h2><div class="sub">서울 방면 출발 시각(분) · 출처 GTX-A 공식 홈페이지 열차시간표 · 첫차·막차는 진한 색, 지금 이후 가장 가까운 열차는 보라색으로 표시됩니다.</div>
+<div class="card"><h2>운정중앙역 열차 시간표 <span class="pkt">출퇴근 시간대 색칠</span></h2><div class="sub">서울 방면 출발 시각(분)</div>
 <table class="tt" id="tt"><thead><tr><th>시</th><th>출발 시각 (분)</th><th>편수</th><th>평균 간격</th></tr></thead><tbody></tbody></table>
-<div class="note" style="margin-top:8px">시각표는 2026.10.20 공식 페이지 조회 기준이며 개정될 수 있습니다. 서울 → 운정중앙 방면(상행)은 공식 시간표 페이지에서 확인하세요.</div>
+<div class="note" style="margin-top:8px">GTX-A 공식 시간표 · 2026.10.20 조회</div>
 </div>
 
-<div class="card"><h2>앞으로 연결은 어떻게, 언제?</h2><div class="sub">주요 일정을 시간순으로 정리했습니다. 예정 일정은 확정이 아니며 보도 시점에 따라 바뀔 수 있습니다.</div>
- <div class="alert"><b>핵심:</b> 삼성역 무정차 통과(서울역~수서 연결)는 당초 2026년 8월 예정이었으나 삼성역 구조물 철근 누락 문제로 연기되어 <b>새 일정이 아직 정해지지 않았습니다</b>. 운정중앙~동탄 직결은 2026년을 넘길 전망이고, 삼성역 정차를 포함한 완전 개통은 2028년이 목표입니다. (2026.10.17 보도)</div>
+<div class="card"><h2>앞으로 연결은 어떻게, 언제?</h2> <div class="alert"><b>삼성역 무정차 통과(서울역~수서 연결)는 철근 누락으로 연기, 새 일정 미정.</b> 운정중앙~동탄 직결은 2026년을 넘길 전망 · 완전 개통 목표 2028년 (2026.10.17 보도)</div>
  <div class="tl">
-  <div class="e done"><div class="d">2024.12.28<span class="tg ok">완료</span></div><div class="x">운정중앙~서울역 개통 (킨텍스·대곡·연신내 정차). 개통 초기 7개 편성, 약 10분 간격.</div></div>
-  <div class="e done"><div class="d">2025.03.01<span class="tg ok">완료</span></div><div class="x">출퇴근 시간대 배차 10분 → 6분 15초로 단축, 편성 7 → 10개로 증가. <small>(하루 왕복 224 → 약 282~292회, 보도마다 차이)</small></div></div>
-  <div class="e cur"><div class="d">2026.8 → 연기<span class="tg w">지연</span></div><div class="x">서울역~수서 연결(삼성역 무정차 통과) 당초 목표. 삼성역 지하 5층 기둥 철근 누락으로 보강이 필요해 운행 일정 미정.</div></div>
+  <div class="e done"><div class="d">2024.12.28<span class="tg ok">완료</span></div><div class="x">운정중앙~서울역 개통 (킨텍스·대곡·연신내 정차). 초기 10분 간격.</div></div>
+  <div class="e done"><div class="d">2025.03.01<span class="tg ok">완료</span></div><div class="x">출퇴근 시간대 배차 10분 → 6분 15초로 단축, 편성 7 → 10개로 증가.</div></div>
+  <div class="e cur"><div class="d">2026.8 → 연기<span class="tg w">지연</span></div><div class="x">서울역~수서 연결(삼성역 무정차 통과) 당초 목표 → 삼성역 철근 누락으로 연기.</div></div>
   <div class="e plan"><div class="d">2026.11<span class="tg">예정</span></div><div class="x">정부 합동점검 (11월 20일까지).</div></div>
-  <div class="e plan"><div class="d">2026.12<span class="tg">예정</span></div><div class="x">국가철도공단이 12개 보강 공법 중 최종 공법 선정 예정. 이후 공사기간 협의. <small>점검이 끝나도 곧바로 운행이 시작되지는 않을 수 있습니다.</small></div></div>
-  <div class="e plan"><div class="d">연결 이후<span class="tg">예정</span></div><div class="x">운정중앙~동탄 직결. 운행 방식은 운정중앙~수서, 운정중앙~동탄 등으로 나뉠 전망. <small>(2025.9 보도: 운정중앙발 하루 141회가 동탄행 약 100회·수서행 약 41회로 나뉨, 잠정 수치) 수서~동탄은 SRT와 선로를 공유해 횟수에 한계가 있습니다.</small></div></div>
-  <div class="e plan"><div class="d">2028<span class="tg">목표</span></div><div class="x">삼성역 정차를 포함한 GTX-A 전 구간 완전 개통 목표.</div></div>
-  <div class="e plan"><div class="d">2030<span class="tg">목표</span></div><div class="x">창릉역 신설 (대곡~연신내 사이, 개통 목표).</div></div>
+  <div class="e plan"><div class="d">2026.12<span class="tg">예정</span></div><div class="x">보강 공법 최종 선정 (12개 중), 이후 공사기간 협의.</div></div>
+  <div class="e plan"><div class="d">연결 이후<span class="tg">예정</span></div><div class="x">운정중앙~동탄 직결. 운정발 <small>동탄행 약 100회 · 수서행 약 41회 (2025.9 보도, 잠정)</small></div></div>
+  <div class="e plan"><div class="d">2028<span class="tg">목표</span></div><div class="x">삼성역 정차 포함 전 구간 완전 개통 목표.</div></div>
+  <div class="e plan"><div class="d">2030<span class="tg">목표</span></div><div class="x">창릉역 신설 목표 (대곡~연신내).</div></div>
  </div>
 </div>
 
@@ -145,7 +144,7 @@ table.tt td.m span.first,table.tt td.m span.last{background:var(--navy);color:#f
  <a href="https://www.gtx-a.com/trainT.do" target="_blank" rel="noopener">공식 열차시간표</a>
  <a class="l" href="https://www.gtx-a.com/realtimeTI.do" target="_blank" rel="noopener">실시간 열차표</a>
  <a class="l" href="https://www.gtx-a.com/main.do" target="_blank" rel="noopener">GTX-A 홈페이지</a></div>
- <div class="note">출처: GTX-A 공식 홈페이지(시간표·보도자료, 2024.12.29 소요시간·운임) · 뉴스핌 2026.10.17(삼성역 통과 지연·일정) · 뉴스핌 2026.2.20(전 구간 개통 계획) · 고양신문 2025.2(출퇴근 배차 단축) · 서울시 미디어허브 2025.9(직결 후 운행 방식). 소요시간·운임은 개통 당시 기준이며 이후 변경될 수 있습니다. 조회일 2026.10.20.</div></div>
+ <div class="note">출처: GTX-A 공식 사이트 · 뉴스핌(2026.10.17, 2026.2.20) · 고양신문 · 서울시 미디어허브 · 조회 2026.10.20</div></div>
 
 </div></div>
 <script>
