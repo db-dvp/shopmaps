@@ -28,7 +28,7 @@ table.sj td{padding:0 4px;line-height:1.25;overflow:hidden;font-family:inherit}
 var bl=(location.search.match(/bl=(\d)/)||[])[1]==="6"?"6":"5";
 document.getElementById("ttl").textContent="파주운정3지구 주복 "+bl+"BL 사업수지 (수지분석)";
 document.title="사업수지 "+bl+"BL";
-var done=false,Z=1,ZK="shopmaps:sj:zoom",PK="shopmaps:price:v6:"+bl,M=null,last="";
+var done=false,Z=1,ZK="shopmaps:sj:zoom",PK="shopmaps:price:v7:"+bl,M=null,last="";
 function setZ(z){Z=Math.max(0.4,Math.min(3,z));var s=document.getElementById("sheet");s.style.zoom=Z;s.style.maxWidth=Z>1?"none":"100%";document.getElementById("zv").textContent=Math.round(Z*100)+"%";try{localStorage.setItem(ZK,String(Z))}catch(e){}}
 function fitZ(){var s=document.getElementById("sheet"),w=document.getElementById("wrap");s.style.zoom=1;s.style.maxWidth="none";var nat=s.scrollWidth,av=w.clientWidth-32;setZ(nat>0?av/nat:1)}
 document.getElementById("zi").onclick=function(){setZ(Z+0.1)};document.getElementById("zo").onclick=function(){setZ(Z-0.1)};document.getElementById("zr").onclick=fitZ;
@@ -39,7 +39,7 @@ function b64(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;
 function build(m){var idx={};m.cells.forEach(function(c){idx[c.id]=c;if(c.k==="F")c.fn=new Function("v","return "+c.js)});m.idx=idx;return m}
 function calc(m,a,b){var memo={};function v(id){if(id in memo)return memo[id];var c=m.idx[id],r;if(!c)r=m.consts[id]||0;else if(c.k==="L")r=c.c[0]+c.c[1]*a+c.c[2]*b;else r=c.fn(v);memo[id]=r;return r}var o={};m.cells.forEach(function(c){o[c.id]=v(c.id)});return o}
 function fmt(f,x){var neg=x<0,ax=Math.abs(x),s;if(f.pct){s=(Math.round(ax*Math.pow(10,f.dec+2)+1e-9)/Math.pow(10,f.dec)).toFixed(f.dec)+"%"}else{s=Math.round(ax+1e-9).toString().replace(/\B(?=(\d{3})+(?!\d))/g,",")}return f.pre+(neg?"-":"")+s+f.suf}
-function readP(){var p={t36:1700,t51:1828};try{var s=JSON.parse(localStorage.getItem(PK)||"null");if(s&&+s.t36>0)p.t36=+s.t36;if(s&&+s.t51>0)p.t51=+s.t51}catch(e){}return p}
+function readP(){var p={t36:1200,t51:1200};try{var s=JSON.parse(localStorage.getItem(PK)||"null");if(s&&+s.t36>0)p.t36=+s.t36;if(s&&+s.t51>0)p.t51=+s.t51}catch(e){}return p}
 function apply(){
   if(!M)return;
   var p=readP(),key=p.t36+"|"+p.t51;if(key===last)return;last=key;
