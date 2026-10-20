@@ -78,7 +78,7 @@ function chg(cur,base){
 var cur=0, mode='m', RENT=window.OFFICETEL_RENT||{}, MN={m:'매매',j:'전세',w:'월세'};
 function rentOf(c){return RENT[c.id]||{}}
 function planHtml(c){var P=(window.FLOORPLANS||{})[c.id];if(!P)return '';return '<div class="plans">'+P.map(function(p,i){return '<figure class="pl" data-i="'+i+'"><img src="'+p.src+'" alt="'+p.t+' 도면"><figcaption>'+p.t+' (전용 '+p.ex+'㎡)</figcaption></figure>'}).join('')+'</div>'}
-function openPlan(c,i){var p=window.FLOORPLANS[c.id][i],o=document.createElement('div');o.id='lb';o.innerHTML='<img src="'+p.src+'" alt=""><div>'+p.t+' (전용 '+p.ex+'㎡) · 클릭하면 닫힘</div>';function cl(){if(o.parentNode)o.parentNode.removeChild(o);document.removeEventListener('keydown',kd)}function kd(e){if(e.key==='Escape')cl()}o.onclick=cl;document.addEventListener('keydown',kd);document.body.appendChild(o)}
+function openPlan(c,i){var p=window.FLOORPLANS[c.id][i],o=document.createElement('div');o.id='lb';o.innerHTML='<img src="'+p.src+'" alt=""><div>전용 '+p.ex+'㎡ 복층 도면 · 클릭하면 닫힘</div>';function cl(){if(o.parentNode)o.parentNode.removeChild(o);document.removeEventListener('keydown',kd)}function kd(e){if(e.key==='Escape')cl()}o.onclick=cl;document.addEventListener('keydown',kd);document.body.appendChild(o)}
 var LO=25,HI=60;
 function rb(r){return r.ex>=LO&&r.ex<=HI?' style="font-weight:800;background:#f1faf8"':''}
 function wmean(rows,f){var tn=0,ta=0;(rows||[]).forEach(function(r){if(r.ex>=LO&&r.ex<=HI&&f(r)!=null){tn+=r.n;ta+=f(r)*r.n}});return tn?{v:ta/tn,n:tn}:null}
@@ -131,7 +131,7 @@ function overview(){
 }
 function wire(){
   [].forEach.call(document.querySelectorAll('.back'),function(b){b.onclick=function(){render(-1)}});
-  [].forEach.call(document.querySelectorAll('.pl'),function(f){f.onclick=function(){openPlan(D[cur],+f.getAttribute('data-i'))}});
+  var FP=cur>=0&&window.FLOORPLANS&&FLOORPLANS[D[cur].id];if(FP)[].forEach.call(document.querySelectorAll('table tr'),function(tr){var td=tr.cells[0];if(td&&td.tagName==='TD'&&td.textContent==='44'){tr.style.cursor='zoom-in';td.innerHTML+=' <span style="font-size:10px;font-weight:700;color:var(--navy);border:1px solid var(--navy);border-radius:4px;padding:0 3px">도면</span>';tr.onclick=function(){openPlan(D[cur],1)}}});
   [].forEach.call(document.querySelectorAll('.mode'),function(b){b.onclick=function(){mode=b.getAttribute('data-m');render(cur)}});
   [].forEach.call(document.querySelectorAll('tr.go'),function(b){b.onclick=function(){var k=+b.getAttribute('data-i');render(k);if(window.__go&&k>=0)window.__go(k)}});
 }
@@ -162,7 +162,6 @@ function render(i){
   if(i<0){cur=-1;overview();return;}
   cur=i; var c=D[i], a=c.asking;
   var h=tabs()+'<div class="dh"><span class="no '+sizeOf(c)+'">'+NOF(i)+'</span><h2>'+c.name+'</h2></div><div class="meta">'+(c.address?c.address+' · ':'')+(c.households?c.households.toLocaleString()+'세대 · ':'')+(c.approval&&c.approval!=='-'?'입주 '+c.approval:'세대수·입주 미확인')+'<br>'+c.developer+'</div>';
-  h+=planHtml(c);
   if(mode!=='m'){ h+=rentDetail(c); }
   else if(c.byType&&!c.byType.length){ h+='<div class="note" style="margin-top:12px">이 단지는 KB부동산에 등록된 <b>매매 매물이 없습니다</b>. 전세·월세 탭을 확인하세요.</div>'; }
   else if(c.byType){
