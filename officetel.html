@@ -51,6 +51,8 @@ table.st tr.go{cursor:pointer}table.st tr.go:hover td{background:#f6f8fd}
 @media(max-width:800px){#wrap{flex-direction:column}#mapbox{height:45%;flex:none}#panel{width:100%;max-width:none;border-left:0;border-top:1px solid var(--line)}}
 table.st tr.go.b25 td{background:#f1faf8}
 .big b.nb{font-size:16px;color:var(--mut);font-weight:600}
+.plans{display:flex;gap:10px;margin:8px 0 2px}.pl{flex:1;margin:0;border:1px solid var(--line);border-radius:8px;background:#fbfbfb;padding:6px;cursor:zoom-in;text-align:center}.pl:hover{border-color:var(--navy)}.pl img{display:block;width:100%;height:180px;object-fit:contain}.pl figcaption{font-size:11.5px;font-weight:700;color:var(--navy);margin-top:3px}
+#lb{position:fixed;inset:0;background:rgba(10,14,30,.88);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:zoom-out}#lb img{max-width:94vw;max-height:86vh;object-fit:contain;background:#fbfbfb;border-radius:10px}#lb div{color:#fff;font-size:14px;font-weight:700}
 </style>
 </head>
 <body>
@@ -61,6 +63,7 @@ table.st tr.go.b25 td{background:#f1faf8}
 <script src="data-officetel-rent.js"></script>
 <script src="data-officetel-yadang.js"></script>
 <script src="data-officetel-tanhyeon.js"></script>
+<script src="data-etower2-plan.js"></script>
 <script>
 (function(){
 /* 지도 번호: 위→아래, 같은 높이는 왼쪽→오른쪽 순 (표 순서는 매매 평당가순 그대로) */
@@ -74,6 +77,8 @@ function chg(cur,base){
 }
 var cur=0, mode='m', RENT=window.OFFICETEL_RENT||{}, MN={m:'매매',j:'전세',w:'월세'};
 function rentOf(c){return RENT[c.id]||{}}
+function planHtml(c){var P=(window.FLOORPLANS||{})[c.id];if(!P)return '';return '<div class="plans">'+P.map(function(p,i){return '<figure class="pl" data-i="'+i+'"><img src="'+p.src+'" alt="'+p.t+' 도면"><figcaption>'+p.t+' (전용 '+p.ex+'㎡)</figcaption></figure>'}).join('')+'</div>'}
+function openPlan(c,i){var p=window.FLOORPLANS[c.id][i],o=document.createElement('div');o.id='lb';o.innerHTML='<img src="'+p.src+'" alt=""><div>'+p.t+' (전용 '+p.ex+'㎡) · 클릭하면 닫힘</div>';function cl(){if(o.parentNode)o.parentNode.removeChild(o);document.removeEventListener('keydown',kd)}function kd(e){if(e.key==='Escape')cl()}o.onclick=cl;document.addEventListener('keydown',kd);document.body.appendChild(o)}
 var LO=25,HI=60;
 function rb(r){return r.ex>=LO&&r.ex<=HI?' style="font-weight:800;background:#f1faf8"':''}
 function wmean(rows,f){var tn=0,ta=0;(rows||[]).forEach(function(r){if(r.ex>=LO&&r.ex<=HI&&f(r)!=null){tn+=r.n;ta+=f(r)*r.n}});return tn?{v:ta/tn,n:tn}:null}
@@ -98,7 +103,7 @@ function overview(){
   h+='<table class="st"><colgroup><col style="width:40px"><col><col style="width:84px"><col style="width:84px"><col style="width:84px"></colgroup>';
   var hd='<tr><th>번호</th><th>단지</th><th>매매 평당</th><th>전세 평당</th><th>월세 평당</th></tr>';
   var cell=function(cls,v,n,fmt){return v==null?'<td class="na">-</td>':'<td class="'+cls+(n<3?' na':'')+'">'+fmt(v)+'<small>'+n+'건</small></td>'};
-  [['S','소형 (전용 60㎡ 미만)'],['L','대형 (전용 60㎡ 이상)'],['H','생활숙박시설 (오피스텔과 별도)'],['W','라이브오피스 (오피스텔과 별도)']].forEach(function(sz){
+  [['W','라이브오피스 (오피스텔과 별도)'],['S','소형 (전용 60㎡ 미만)'],['L','대형 (전용 60㎡ 이상)'],['H','생활숙박시설 (오피스텔과 별도)']].forEach(function(sz){
     var secs=[],total=0;
     REGIONS.forEach(function(rg){
       var list=[]; D.forEach(function(c,i){ if((c.region||'운정')===rg && sizeOf(c)===sz[0]){
@@ -126,6 +131,7 @@ function overview(){
 }
 function wire(){
   [].forEach.call(document.querySelectorAll('.back'),function(b){b.onclick=function(){render(-1)}});
+  [].forEach.call(document.querySelectorAll('.pl'),function(f){f.onclick=function(){openPlan(D[cur],+f.getAttribute('data-i'))}});
   [].forEach.call(document.querySelectorAll('.mode'),function(b){b.onclick=function(){mode=b.getAttribute('data-m');render(cur)}});
   [].forEach.call(document.querySelectorAll('tr.go'),function(b){b.onclick=function(){var k=+b.getAttribute('data-i');render(k);if(window.__go&&k>=0)window.__go(k)}});
 }
@@ -156,6 +162,7 @@ function render(i){
   if(i<0){cur=-1;overview();return;}
   cur=i; var c=D[i], a=c.asking;
   var h=tabs()+'<div class="dh"><span class="no '+sizeOf(c)+'">'+NOF(i)+'</span><h2>'+c.name+'</h2></div><div class="meta">'+(c.address?c.address+' · ':'')+(c.households?c.households.toLocaleString()+'세대 · ':'')+(c.approval&&c.approval!=='-'?'입주 '+c.approval:'세대수·입주 미확인')+'<br>'+c.developer+'</div>';
+  h+=planHtml(c);
   if(mode!=='m'){ h+=rentDetail(c); }
   else if(c.byType&&!c.byType.length){ h+='<div class="note" style="margin-top:12px">이 단지는 KB부동산에 등록된 <b>매매 매물이 없습니다</b>. 전세·월세 탭을 확인하세요.</div>'; }
   else if(c.byType){
