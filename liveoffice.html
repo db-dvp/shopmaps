@@ -107,7 +107,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     { k: "high", n: "고층 (9층~)", lo: 9, hi: 99 }
   ];
   var ITEMS = [
-    { g: "층별", k: "low", n: "저층 (2~4층)", d: -2, e: -2, ev: "오피스텔 실거래: 중층 대비 -2% (-1.7~-2.7%)" },
+    { g: "층별", k: "low", n: "저층 (2~4층)", d: 0, e: -2, ev: "오피스텔 실거래: 중층 대비 -2% (-1.7~-2.7%)" },
     { g: "층별", k: "mid", n: "중층 (5~8층)", d: 0, e: 0, ev: "기준 층" },
     { g: "층별", k: "high", n: "고층 (9층~)", d: 0, e: 1, ev: "오피스텔 실거래: 중층 대비 +1% (+0.4~+1.9%) · 최상층 포함" }
   ];
@@ -118,6 +118,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) { st = sv; } } catch (e) {}
   if (typeof st.t36 !== "number") st.t36 = 1200; if (typeof st.t51 !== "number") st.t51 = 1200;
   ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = it.d || 0; });
+  if (!st.m8) { st.m8 = 1; if (st.pct && st.pct.low === -2) st.pct.low = 0; }
 
   function $(id) { return document.getElementById(id); }
   function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
