@@ -102,7 +102,7 @@ function overview(){
   });
   h+='</table>';
   h+='<div class="flt" id="flt"></div><div class="note" id="cnt" style="margin:4px 0 0"></div><table class="st" id="tbl"><colgroup><col style="width:56px"><col><col style="width:70px"><col style="width:74px"><col style="width:84px"></colgroup><thead id="th"></thead><tbody id="tb"></tbody></table>';
-  h+='<div class="note">평당가 = 호가 ÷ (전용㎡ ÷ 3.3058). 단지 평균은 타입별 평균 호가의 매물수 가중 평균입니다. 번호는 지도에서 위(북)→아래(남) 순서입니다. 열 제목을 누르면 정렬, 아래 입력칸으로 필터합니다. 중개사 중복 등록과 호가 특성상 실거래가보다 높을 수 있습니다. 입주 초기 단지는 KB부동산에 매매 호가가 거의 없어 평균에서 제외했습니다.</div>';
+  h+='<div class="note">평당 = 호가÷(전용㎡÷3.3058) · 번호는 지도 북→남 · 열 제목 클릭=정렬, 아래 칸=필터</div>';
   $('panel').innerHTML=h; drawFlt(); drawList();
 }
 var FG=[['','전체'],['A','호가 형성'],['B','입주 초기']];
@@ -145,21 +145,13 @@ function drawList(){
   L.forEach(function(x){var c=x.c,i=x.i,lk=c.lk?'<span class="lk">'+c.lk+'</span>':'';
     if(c.group==='A'){var o=c.overall;h+='<tr class="go" data-i="'+i+'"><td><span class="no A">'+N(c)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+c.dong+' · 매물 '+o.n+'건</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh.replace(/\(.*\)/,'')+'</td><td class="v m">'+f0(o.ppAvg)+'</td></tr>'}
     else{var b=c.types.filter(function(t){return t.bunPP}), bp=b.length?Math.round(b.reduce(function(s2,t){return s2+t.bunPP*t.hh},0)/b.reduce(function(s2,t){return s2+t.hh},0)):null;
-      h+='<tr class="go" data-i="'+i+'"><td><span class="no B">'+N(c)+'</span></td><td class="nm">'+c.short+lk+'<span class="cat">'+c.dong+(bp?' · 분양가 평균 평당 '+f0(bp):'')+'</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh+'</td><td class="na">'+(c.nv?(c.nv.sale?'네이버 매매 '+c.nv.sale.length+'건<small>평당 '+f0(c.nv.sale.reduce(function(a,x){return a+x.pp},0)/c.nv.sale.length)+'</small>':'매매 없음')+(c.nv.jw?'<small>전세 평당 '+f0(c.nv.jw.pp)+'</small>':''):'호가 없음')+'</td></tr>'}});
+      h+='<tr class="go" data-i="'+i+'"><td><span class="no B">'+N(c)+'</span></td><td class="nm">'+c.short+lk+'<span class="cat">'+c.dong+(bp?' · 분양가 평균 평당 '+f0(bp):'')+'</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh+'</td><td class="na">'+(c.nv?(c.nv.sale?'네이버 매매 '+c.nv.sale.n+'건<small>평당 '+f0(c.nv.sale.pp)+'</small>':'매매 없음')+(c.nv.jw?'<small>전세 평당 '+f0(c.nv.jw.pp)+'</small>':''):'호가 없음')+'</td></tr>'}});
   $('tb').innerHTML=h||'<tr><td colspan="5" class="na">조건에 맞는 단지가 없습니다</td></tr>';wire();
 }
 function wire(){[].forEach.call(document.querySelectorAll('[data-i]'),function(e){e.onclick=function(){render(+e.getAttribute('data-i'));if(window.__go)window.__go(+e.getAttribute('data-i'))}});var b=document.querySelector('[data-back]');if(b)b.onclick=function(){render(-1)}}
-function rg(a,b,fn){return fn(a)+(b>a?' ~ '+fn(b):'')}
+function rg(a,b,fn){return fn(a)+(b>a?'~'+fn(b):'')}
 function mo(v){return f0(v)+'만'}
-function nvBlock(c){var n=c.nv;if(!n)return '';var h='';
-  if(n.sale){h+='<h3>매매 호가 (네이버) <span class="x">· 전매제한 여부 확인 필요</span></h3><table><tr><th>타입</th><th>전용㎡</th><th>호가</th><th>전용 평당</th><th>확인일</th></tr>';
-    n.sale.forEach(function(x){h+='<tr><td>'+x.type+(x.co?' <span class="x">(협회매물)</span>':'')+'</td><td>'+x.ex.toFixed(1)+'</td><td>'+f0(x.p)+' ('+eok(x.p)+')</td><td><b>'+f0(x.pp)+'</b></td><td>'+x.dt+'</td></tr>'});h+='</table>'}
-  if(n.jw){h+='<h3>전세 호가 (네이버) <span class="x">· 매물 '+n.jw.n+'건</span></h3><table><tr><th>타입</th><th>전용㎡</th><th>건수</th><th>평균 전세</th><th>최저~최고</th><th>전용 평당</th></tr>';
-    n.jw.types.forEach(function(t){h+='<tr><td>'+t.type+'</td><td>'+t.ex.toFixed(1)+'</td><td>'+t.n+'</td><td>'+f0(t.avg)+' ('+eok(t.avg)+')</td><td>'+rg(t.lo,t.hi,eok)+'</td><td><b>'+f0(t.pp)+'</b></td></tr>'});
-    h+='<tr class="avg"><td colspan="2">전체</td><td>'+n.jw.n+'</td><td>'+f0(n.jw.avg)+' ('+eok(n.jw.avg)+')</td><td></td><td>'+f0(n.jw.pp)+'</td></tr></table>'}
-  if(n.wo){h+='<h3>월세 호가 (네이버) <span class="x">· 매물 '+n.wo.n+'건 · 보증금 / 월세, 만원</span></h3><table><tr><th>타입</th><th>전용㎡</th><th>건수</th><th>평균 보증금</th><th>보증금 범위</th><th>평균 월세</th><th>월세 범위</th></tr>';
-    n.wo.types.forEach(function(t){h+='<tr><td>'+t.type+'</td><td>'+t.ex.toFixed(1)+'</td><td>'+t.n+'</td><td>'+f0(t.dAvg)+' ('+eok(t.dAvg)+')</td><td>'+rg(t.dLo,t.dHi,eok)+'</td><td><b>'+mo(t.mAvg)+'</b></td><td>'+rg(t.mLo,t.mHi,mo)+'</td></tr>'});h+='</table>'}
-  return h+'<div class="note">네이버 부동산 호가 ('+n.dt+'). 카드 1개를 1건으로 집계(같은 매물을 여러 중개사가 올린 경우 합침), 가격 범위로 표기된 매물은 중간값 사용. 건수가 적은 타입은 참고용입니다.</div>'}
+function ct(o,k){if(!o)return '-';var h='';if(k==='w')h='<b>'+eok(o.dAvg)+' / '+mo(o.mAvg)+'</b><br><span class="x">'+o.n+'건 · 월 '+rg(o.mLo,o.mHi,mo)+'</span>';else h='<b>'+eok(o.avg)+'</b><br><span class="x">평당 '+f0(o.pp)+' · '+o.n+'건'+(o.hi>o.lo?'<br>'+rg(o.lo,o.hi,eok):'')+'</span>';return h}
 function render(i){
   if(i<0){cur=-1;overview();if(window.__lab)window.__lab();return}
   cur=i;var c=D[i],G=c.group;
@@ -169,18 +161,18 @@ function render(i){
   if(o){
     var mt=ts.filter(function(t){return t.main&&t.n});var mp=wmean(mt,function(t){return t.ppEx});
     h+='<div class="big"><div><span class="k">주력 타입 평균 평당 (매매 호가)</span><b>'+(mp?f0(mp.v):'-')+'</b><span class="u">만원/평 · '+(mp?mp.n:0)+'건</span></div><div><span class="k">단지 전체 평균 평당</span><b>'+f0(o.ppAvg)+'</b><span class="u">만원/평 · '+o.n+'건 · 중앙 '+f0(o.ppMed)+'</span></div></div>';
-    if(o.n<30)h+='<div class="warn">※ 호가 표본이 '+o.n+'건이라 대표성이 낮습니다.</div>';
+    if(o.n<30)h+='<div class="warn">※ 표본 '+o.n+'건, 대표성 낮음.</div>';
   }
-  h+='<h3>타입별 세대수 · 호가 <span class="x">(굵은 행 = 주력 타입, 세대수 상위·20%↑)</span></h3><table><tr><th>타입</th><th>전용/공급㎡</th><th>세대수</th><th>매물</th><th>평균 호가</th><th>최저~최고</th><th>전용 평당</th><th>분양가</th></tr>';
+  var nv=c.nv||{},sj={},sw={},ss={};
+  ((nv.jw||{}).types||[]).forEach(function(t){sj[t.type]=t});((nv.wo||{}).types||[]).forEach(function(t){sw[t.type]=t});((nv.sale||{}).types||[]).forEach(function(t){ss[t.type]=t});
+  h+='<h3>타입별 세대수 · 호가 <span class="x">(굵은 행=주력)</span></h3><table><tr><th>타입</th><th>전용/공급㎡</th><th>세대수</th><th>분양가</th><th>매매</th><th>전세</th><th>월세 (보증/월)</th></tr>';
   ts.forEach(function(t){
-    h+='<tr'+(t.main?' class="mn"':'')+'><td>'+t.type+'</td><td>'+t.ex.toFixed(1)+' / '+t.su.toFixed(1)+'</td><td>'+t.hh.toLocaleString()+' <span class="x">('+Math.round(t.hh/tot*100)+'%)</span></td>'+
-      (t.n?'<td>'+t.n+'</td><td>'+f0(t.avg)+' ('+eok(t.avg)+')</td><td>'+eok(t.mn)+(t.mx>t.mn?' ~ '+eok(t.mx):'')+'</td><td><b>'+f0(t.ppEx)+'</b></td>':'<td>-</td><td>-</td><td>-</td><td>-</td>')+
-      '<td>'+(t.bun?eok(t.bun)+'<br><span class="x">평당 '+f0(t.bunPP)+'</span>':'-')+'</td></tr>';
+    var sa=t.n?{n:t.n,avg:t.avg,lo:t.mn,hi:t.mx,pp:t.ppEx}:ss[t.type];
+    h+='<tr'+(t.main?' class="mn"':'')+'><td>'+t.type+'</td><td>'+t.ex.toFixed(1)+' / '+t.su.toFixed(1)+'</td><td>'+t.hh.toLocaleString()+' <span class="x">('+Math.round(t.hh/tot*100)+'%)</span></td><td>'+(t.bun?eok(t.bun)+'<br><span class="x">평당 '+f0(t.bunPP)+'</span>':'-')+'</td><td>'+ct(sa)+'</td><td>'+ct(sj[t.type])+'</td><td>'+ct(sw[t.type],'w')+'</td></tr>';
   });
-  h+='<tr class="avg"><td colspan="2">합계</td><td>'+tot.toLocaleString()+'</td><td colspan="5"></td></tr></table>';
+  h+='<tr class="avg"><td colspan="2">합계</td><td>'+tot.toLocaleString()+'</td><td colspan="4"></td></tr></table>';
   (c.extra||[]).forEach(function(t){h+='<div class="note">· '+t+'</div>'});
-  h+=nvBlock(c);
-  h+='<div class="note">출처: KB부동산 매매 호가(26.10 조회, 같은 매물 합침), 신축 단지의 전세·월세·일부 매매는 네이버 부동산, 분양가는 호갱노노(청약 공고). 호가는 실거래가보다 높을 수 있습니다.</div>';
+  h+='<div class="note">출처: KB(매매) · 네이버 26.10.23(입주 초기 매매·전세·월세) · 호갱노노(분양가)<br>평당 = 호가÷(전용㎡÷3.3058) · 범위 호가는 중간값 · 소표본은 참고용</div>';
   $('panel').innerHTML=h;wire();if(window.__lab)window.__lab();
 }
 render(-1);
