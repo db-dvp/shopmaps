@@ -237,6 +237,7 @@ function drawSlots(){
     if(src)h+='<div class="img"><img src="'+src+'" referrerpolicy="no-referrer" alt="'+c.name+' '+t.k+' 평면" data-cap="'+c.name+' · '+t.k+'" onerror="this.parentNode.innerHTML=\'<div class=empty>이미지를 불러오지 못했습니다.<br><a target=_blank href='+src+'>원본 열기 ↗</a></div>\'"></div>';
     else h+='<div class="empty dash">도면 대기 중입니다.<br>준비되면 등록하거나, 지금은 이미지 파일을 임시로 올려볼 수 있어요.<br><label>이미지 불러오기<input type="file" accept="image/*" data-up="'+c.id+'_'+t.k+'"></label></div>';
     if(our&&src)h+='<div style="padding:0 10px 8px;text-align:right"><label class="pbtn" style="cursor:pointer">다른 이미지<input type="file" accept="image/*" data-up="'+c.id+'_'+t.k+'" style="display:none"></label></div>';
+    h+='</div>';
   }
   $('slots').innerHTML=h;
   [].forEach.call($('slots').querySelectorAll('.x'),function(b){b.onclick=function(){var i=+b.getAttribute('data-x');slots[i]=null;nxt=i;drawTypes();drawSlots()}});
