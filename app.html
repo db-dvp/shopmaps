@@ -77,7 +77,7 @@ function unlock(){
 }
 [].forEach.call(document.querySelectorAll('.seg button'),function(b){b.onclick=function(){show(b.getAttribute('data-t'),true)}});
 /* 탭 드래그로 순서 변경 (이 브라우저에 저장) */
-(function(){var seg=document.querySelector('.seg'),TK='shopmaps:tabs';
+(function(){var seg=document.querySelector('.seg'),TK='shopmaps:tabs2';
 function bs(){return [].slice.call(seg.querySelectorAll('button'))}
 function save(){try{localStorage.setItem(TK,JSON.stringify(bs().map(function(b){return b.getAttribute('data-t')})))}catch(e){}}
 try{var sv=JSON.parse(localStorage.getItem(TK)||'null');if(sv&&sv.length){var m={};bs().forEach(function(b){m[b.getAttribute('data-t')]=b});sv.forEach(function(k){if(m[k]){seg.appendChild(m[k]);delete m[k]}});for(var k in m)seg.appendChild(m[k])}}catch(e){}
