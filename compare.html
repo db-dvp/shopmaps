@@ -65,15 +65,15 @@ summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:12.5px}
 </style>
 </head>
 <body>
-<header><b>시티프라디움 ↔ 우리 5·6BL 비교</b><span>프라디움: 입주자모집공고·홈페이지(26.10.22) / 우리: 설계개요(26.10.13)</span></header>
+<header><b>시티프라디움 ↔ 파주운정3 주복 5·6BL 비교</b><span>프라디움: 입주자모집공고·홈페이지(26.10.22) / 우리: 설계개요(26.10.13)</span></header>
 <div id="wrap">
 <div id="left">
   <h2>단지 개요 비교</h2>
-  <p class="sub">우리 = 파주운정3 5BL·6BL 주상복합(설계개요 261013), 시티프라디움 = GTX 운정중앙역 시티프라디움 3·4단지(2026.10.22 모집공고).</p>
+  <p class="sub">파주운정3 주복 5BL·6BL(설계개요 261013 · 사업수지표) vs 시티프라디움 = GTX 운정중앙역 시티프라디움 3·4단지(2026.10.22 모집공고).</p>
   <table class="ov" id="ov"></table>
 
   <h2>면적대별 분양가 비교<span class="seg" id="basis"></span></h2>
-  <p class="sub">같은 면적대끼리 비교. 분양가는 발코니 확장비 별도(공급금액 기준), 평균은 세대수 가중. 우리 분양가는 아래 타입표에 입력하면 반영됩니다.</p>
+  <p class="sub">같은 면적대끼리 비교. 분양가는 발코니 확장비 별도(공급금액 기준), 평균은 세대수 가중. 파주운정3 주복 분양가는 사업수지표 가정(공급평당 2,500만원, 분양가상한제 예상, 확장비 별도)이며 아래 타입표에서 직접 바꿀 수 있습니다.</p>
   <table class="band" id="band"></table>
 
   <h2>타입별 면적 · 분양가<span class="seg" id="basis2"></span></h2>
@@ -115,14 +115,14 @@ var PD=[
   {k:'84',img:'unit-84a.webp',ex:84.9594,jc:29.9723,sup:114.9317,etc:84.6974,ct:199.6291,hh:316,bal:1391,bands:[['2층',2,67270],['3~4층',16,69400],['5~9층',40,71100],['10~14층',40,72800],['15~19층',40,74600],['20~24층',32,75600],['25~29층',40,76500],['30~34층',40,78200],['35~39층',40,79800],['40층 이상',26,81400]]}]}
 ];
 var OUR=[
- {id:'o5',name:'우리 5BL',blk:'5BL',loc:'파주운정3 5BL (주상복합)',site:18745.0,bldg:3247.05,floors:'지하 3층 ~ 지상 38층',dongs:'3개동 (501·502·503)',far:'299.99%',hh:422,extra:'라이브오피스 73실(36OA 10·51OA 63) · 근생 1층',
+ {id:'o5',name:'파주운정3 주복5BL',blk:'5BL',loc:'파주운정3 5BL (주상복합)',site:18745.0,bldg:3247.05,floors:'지하 3층 ~ 지상 38층',dongs:'3개동 (501·502·503)',far:'299.99%',hh:422,extra:'라이브오피스 73실(36OA 10·51OA 63) · 근생 1층',
   types:[
   {k:'61A',ex:61.9960,jc:24.03,sup:86.03,etc:49.03,ct:135.05,hh:68},
   {k:'84B',ex:84.9500,jc:31.25,sup:116.20,etc:67.18,ct:183.37,hh:146},
   {k:'89A',ex:89.9522,jc:32.59,sup:122.55,etc:71.13,ct:193.68,hh:69},
   {k:'89B',ex:89.9840,jc:32.78,sup:122.76,etc:71.16,ct:193.92,hh:68},
   {k:'108A',ex:108.9600,jc:37.16,sup:146.12,etc:86.16,ct:232.29,hh:71}]},
- {id:'o6',name:'우리 6BL',blk:'6BL',loc:'파주운정3 6BL (주상복합)',site:18924.0,bldg:2255.83,floors:'지하 3층 ~ 지상 38층',dongs:'3개동 (601·602·603)',far:'299.83%',hh:422,extra:'라이브오피스 81실(36OA 11·51OA 70) · 근생 1층',
+ {id:'o6',name:'파주운정3 주복6BL',blk:'6BL',loc:'파주운정3 6BL (주상복합)',site:18924.0,bldg:2255.83,floors:'지하 3층 ~ 지상 38층',dongs:'3개동 (601·602·603)',far:'299.83%',hh:422,extra:'라이브오피스 81실(36OA 11·51OA 70) · 근생 1층',
   types:[
   {k:'61A',ex:61.9960,jc:23.98,sup:85.98,etc:50.09,ct:136.06,hh:68},
   {k:'84B',ex:84.9500,jc:31.18,sup:116.13,etc:68.63,ct:184.76,hh:148},
@@ -141,7 +141,8 @@ function savePrice(){try{localStorage.setItem('cmp:price',JSON.stringify(PRICE))
 function stat(t){var n=0,s=0,mn=1e9,mx=0;t.bands.forEach(function(b){n+=b[1];s+=b[1]*b[2];mn=Math.min(mn,b[2]);mx=Math.max(mx,b[2])});return {n:n,avg:s/n,mn:mn,mx:mx}}
 function pp(price,t){return price/(t[BASIS]/P2)}
 function find(id,k){var all=PD.concat(OUR),i,j;for(i=0;i<all.length;i++)if(all[i].id===id)for(j=0;j<all[i].types.length;j++)if(all[i].types[j].k===k)return {c:all[i],t:all[i].types[j]};return null}
-function priceOf(c,t){if(c.id.charAt(0)==='p')return stat(t).avg;var v=parseFloat(PRICE[c.id+'_'+t.k]);return isNaN(v)?null:v*10000}
+function priceOf(c,t){if(c.id.charAt(0)==='p')return stat(t).avg;var v=parseFloat(PRICE[c.id+'_'+t.k]);return isNaN(v)?t.sup/P2*2500:v*10000}
+function ourStat(c){var n=0,s=0,mn=1e9,mx=0,q=0;c.types.forEach(function(t){var p=priceOf(c,t);n+=t.hh;s+=p*t.hh;q+=pp(p,t)*t.hh;mn=Math.min(mn,p);mx=Math.max(mx,p)});return {n:n,avg:s/n,mn:mn,mx:mx,pq:q/n}}
 /* ---------- 개요표 ---------- */
 function drawOv(){
   var cs=OUR.concat(PD),h='<tr><th class="l">구분</th>';
@@ -154,12 +155,12 @@ function drawOv(){
   row('용적률',function(c){return c.far});
   row('공동주택',function(c){return c.hh+'세대'});
   row('타입 구성',function(c){return c.types.map(function(t){return t.k}).join(' · ')});
-  row('공급 구성',function(c){return c.id.charAt(0)==='p'?'사전당첨 우선 '+c.pre+' · 특공 '+c.sp+' · 일반 '+c.gen+'<small>(특공은 일반분양에 포함 표기)</small>':'—'});
+  row('공급 구성',function(c){return c.id.charAt(0)==='p'?'사전당첨 우선 '+c.pre+' · 특공 '+c.sp+' · 일반 '+c.gen+'<small>(특공은 일반분양에 포함 표기)</small>':'일반분양 '+c.hh+'세대<small>수지표: 분양 13개월 완료 가정</small>'});
   row('부대',function(c){return c.extra||'공고문 외 상가 별도'});
-  row('입주 예정',function(c){return c.id.charAt(0)==='p'?'2030.07':'<span style="color:#9aa3b8">미입력</span>'});
-  row('분양가 범위',function(c){if(c.id.charAt(0)==='o')return '<span style="color:#9aa3b8">미정</span>';var mn=1e9,mx=0;c.types.forEach(function(t){var s=stat(t);mn=Math.min(mn,s.mn);mx=Math.max(mx,s.mx)});return eok(mn)+' ~ '+eok(mx)});
-  row('평균 분양가',function(c){if(c.id.charAt(0)==='o')return '<span style="color:#9aa3b8">미정</span>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=x.avg*x.n});return eok(s/n)});
-  row('평균 평당 ('+BN[BASIS]+')',function(c){if(c.id.charAt(0)==='o')return '<span style="color:#9aa3b8">미정</span>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=pp(x.avg,t)*x.n});return '<b>'+f0(s/n)+'</b>만원'});
+  row('입주 예정',function(c){return c.id.charAt(0)==='p'?'2030.07':'공사기간 43개월<small>분양 오픈 2027.07.27 (수지표)</small>'});
+  row('분양가 범위',function(c){if(c.id.charAt(0)==='o'){var o=ourStat(c);return eok(o.mn)+' ~ '+eok(o.mx)+'<small>수지표 가정</small>'}var mn=1e9,mx=0;c.types.forEach(function(t){var s=stat(t);mn=Math.min(mn,s.mn);mx=Math.max(mx,s.mx)});return eok(mn)+' ~ '+eok(mx)});
+  row('평균 분양가',function(c){if(c.id.charAt(0)==='o')return eok(ourStat(c).avg)+'<small>수지표 가정</small>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=x.avg*x.n});return eok(s/n)});
+  row('평균 평당 ('+BN[BASIS]+')',function(c){if(c.id.charAt(0)==='o')return '<b>'+f0(ourStat(c).pq)+'</b>만원<small>수지표 가정</small>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=pp(x.avg,t)*x.n});return '<b>'+f0(s/n)+'</b>만원'});
   $('ov').innerHTML=h;
 }
 /* ---------- 면적대 비교 ---------- */
@@ -184,11 +185,11 @@ function slotIdx(id,k){for(var i=0;i<2;i++)if(slots[i]&&slots[i].id===id&&slots[
 function drawTypes(){
   var h='<tr><th class="l">타입</th><th>전용㎡<small>(평)</small></th><th>공급㎡<small>(평)</small></th><th>계약㎡</th><th>세대수</th><th>분양가<small>최저~최고</small></th><th>평균<small>분양가</small></th><th>평당<small>('+BN[BASIS]+')</small></th><th>도면</th></tr>';
   PD.concat(OUR).forEach(function(c){var our=c.id.charAt(0)==='o';
-    h+='<tr class="grp'+(our?' our':'')+'"><td colspan="9">'+c.name+' · '+c.hh+'세대'+(our?' (분양가는 직접 입력)':'')+'</td></tr>';
+    h+='<tr class="grp'+(our?' our':'')+'"><td colspan="9">'+c.name+' · '+c.hh+'세대'+(our?' (분양가: 수지표 가정 공급평당 2,500만원 · 직접 입력 가능)':'')+'</td></tr>';
     c.types.forEach(function(t){var i=slotIdx(c.id,t.k),has=our?!!(OURIMG[c.id+'_'+t.k]||tmpImg[c.id+'_'+t.k]):!!t.img;
       var rng='—',avg='—',pq='—';
       if(!our){var s=stat(t);rng=eok(s.mn)+' ~ '+eok(s.mx);avg='<b>'+eok(s.avg)+'</b>';pq='<b>'+f0(pp(s.avg,t))+'</b>'}
-      else{var v=PRICE[c.id+'_'+t.k];avg='<input class="inp" data-k="'+c.id+'_'+t.k+'" inputmode="decimal" placeholder="억" value="'+(v==null?'':v)+'" onclick="event.stopPropagation()">';var p=priceOf(c,t);pq=p!=null?'<b>'+f0(pp(p,t))+'</b>':'—'}
+      else{var v=PRICE[c.id+'_'+t.k];avg='<input class="inp" data-k="'+c.id+'_'+t.k+'" inputmode="decimal" placeholder="'+(t.sup/P2*0.25).toFixed(2)+'" value="'+(v==null?'':v)+'" onclick="event.stopPropagation()">';var p=priceOf(c,t);pq=p!=null?'<b>'+f0(pp(p,t))+'</b>':'—'}
       h+='<tr class="row'+(i>=0?' s'+i:'')+'" data-id="'+c.id+'" data-k="'+t.k+'"><td class="l"><span class="tp">'+t.k+'</span>'+(i>=0?'<span class="badge b'+i+'">'+(i?'B':'A')+'</span>':'')+'</td>'
        +'<td>'+t.ex.toFixed(2)+'<small>'+pyeong(t.ex)+'</small></td><td>'+t.sup.toFixed(2)+'<small>'+pyeong(t.sup)+'</small></td><td>'+t.ct.toFixed(2)+'<small>'+pyeong(t.ct)+'</small></td><td>'+t.hh+'</td>'
        +'<td>'+rng+'</td><td class="pr">'+avg+'</td><td class="pr" data-pq="'+c.id+'_'+t.k+'">'+pq+'</td><td><span class="pbtn'+(has?'':' none')+'">'+(has?'평면 ▸':'도면 없음')+'</span></td></tr>'});
@@ -230,7 +231,7 @@ function drawSlots(){
     var sp='전용 <b>'+t.ex.toFixed(2)+'㎡</b>('+pyeong(t.ex)+'평) · 공급 <b>'+t.sup.toFixed(2)+'㎡</b>('+pyeong(t.sup)+'평) · 계약 <b>'+t.ct.toFixed(2)+'㎡</b>('+pyeong(t.ct)+'평) · <b>'+t.hh+'세대</b><br>';
     var p=priceOf(c,t);
     if(!our){var st=stat(t);sp+='분양가 <b>'+eok(st.mn)+' ~ '+eok(st.mx)+'</b> · 평균 <b>'+eok(st.avg)+'</b> · '+BN[BASIS]+' 평당 <b>'+f0(pp(st.avg,t))+'</b>만원 · 확장비 '+f0(t.bal)+'만원'}
-    else sp+=(p!=null?'입력 분양가 <b>'+eok(p)+'</b> · '+BN[BASIS]+' 평당 <b>'+f0(pp(p,t))+'</b>만원':'분양가 미입력 (타입표에서 입력)');
+    else sp+=(p!=null?'분양가 <b>'+eok(p)+'</b> · '+BN[BASIS]+' 평당 <b>'+f0(pp(p,t))+'</b>만원':'분양가 미입력 (타입표에서 입력)');
     h+='<div class="slot s'+i+'"><div class="sh"><span class="badge b'+i+'" style="margin:0">'+tag+'</span>'+c.name+' · '+t.k+'<button class="x" data-x="'+i+'" title="내리기">✕</button></div><div class="spec">'+sp+'</div>';
     if(src)h+='<div class="img"><img src="'+src+'" referrerpolicy="no-referrer" alt="'+c.name+' '+t.k+' 평면" data-cap="'+c.name+' · '+t.k+'" onerror="this.parentNode.innerHTML=\'<div class=empty>이미지를 불러오지 못했습니다.<br><a target=_blank href='+src+'>원본 열기 ↗</a></div>\'"></div>';
     else h+='<div class="empty dash">도면 대기 중입니다.<br>준비되면 등록하거나, 지금은 이미지 파일을 임시로 올려볼 수 있어요.<br><label>이미지 불러오기<input type="file" accept="image/*" data-up="'+c.id+'_'+t.k+'"></label></div>';
