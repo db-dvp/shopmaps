@@ -34,8 +34,8 @@ iframe.off{visibility:hidden;pointer-events:none}
 </style>
 </head>
 <body>
-<div id="top"><div class="seg"><button data-t="sj5">사업수지 5BL</button><button data-t="sj6">사업수지 6BL</button><button data-t="apt">아파트</button><button data-t="shop">상업시설</button><button data-t="office">오피스텔</button><button data-t="gtx">GTX-A</button><button data-t="p5">분양가 시뮬레이터 5BL</button><button data-t="p6">분양가 시뮬레이터 6BL</button></div><h1 id="ttl"></h1><span class="src" id="src"></span><button id="out" hidden>로그아웃</button></div>
-<div id="stage"><iframe id="f-sj5" title="사업수지 5BL" class="off"></iframe><iframe id="f-sj6" title="사업수지 6BL" class="off"></iframe><iframe id="f-apt" title="아파트" class="off"></iframe><iframe id="f-shop" title="상업시설" class="off"></iframe><iframe id="f-office" title="오피스텔" class="off"></iframe><iframe id="f-gtx" title="GTX-A" class="off"></iframe><iframe id="f-p5" title="분양가 시뮬레이터 5BL" class="off"></iframe><iframe id="f-p6" title="분양가 시뮬레이터 6BL" class="off"></iframe></div>
+<div id="top"><div class="seg"><button data-t="sj5">사업수지 5BL</button><button data-t="sj6">사업수지 6BL</button><button data-t="apt">아파트</button><button data-t="shop">상업시설</button><button data-t="office">오피스텔</button><button data-t="gtx">GTX-A</button><button data-t="p5">분양가 시뮬레이터 5BL</button><button data-t="p6">분양가 시뮬레이터 6BL</button><button data-t="cmp">시티프라디움 비교</button></div><h1 id="ttl"></h1><span class="src" id="src"></span><button id="out" hidden>로그아웃</button></div>
+<div id="stage"><iframe id="f-sj5" title="사업수지 5BL" class="off"></iframe><iframe id="f-sj6" title="사업수지 6BL" class="off"></iframe><iframe id="f-apt" title="아파트" class="off"></iframe><iframe id="f-shop" title="상업시설" class="off"></iframe><iframe id="f-office" title="오피스텔" class="off"></iframe><iframe id="f-gtx" title="GTX-A" class="off"></iframe><iframe id="f-p5" title="분양가 시뮬레이터 5BL" class="off"></iframe><iframe id="f-p6" title="분양가 시뮬레이터 6BL" class="off"></iframe><iframe id="f-cmp" title="시티프라디움 비교" class="off"></iframe></div>
 <div id="gate"><form id="gf" autocomplete="on"><h2>파주운정3지구 5,6BL 분양가 검토자료</h2><p>내부 열람용 자료입니다. ID/PW를 입력해주세요.</p><input id="gid" name="username" placeholder="ID" autocomplete="username" autocapitalize="off"><input id="gpw" name="password" type="password" placeholder="PASSWORD" autocomplete="current-password"><div class="err" id="gerr"></div><button type="submit">확인</button></form></div>
 <script>
 (function(){
@@ -46,8 +46,9 @@ var T={sj5:{t:'파주운정3 주복 5BL 사업수지 (수지분석)',u:'sooji.ht
        office:{t:'파주·일산 오피스텔 최근 호가 · 평당가',u:'officetel.html'},
        gtx:{t:'GTX-A 운정중앙역 · 시간표 · 서울 소요시간 · 연결 계획',u:'gtx.html'},
        p5:{t:'파주운정3지구 5BL 라이브오피스 분양가 시뮬레이터',u:'liveoffice.html?bl=5'},
-       p6:{t:'파주운정3지구 6BL 라이브오피스 분양가 시뮬레이터',u:'liveoffice.html?bl=6'}};
-var ORDER=['sj5','sj6','apt','shop','office','gtx','p5','p6'];
+       p6:{t:'파주운정3지구 6BL 라이브오피스 분양가 시뮬레이터',u:'liveoffice.html?bl=6'},
+       cmp:{t:'시티프라디움 비교',u:'compare.html'}};
+var ORDER=['sj5','sj6','apt','shop','office','gtx','p5','p6','cmp'];
 var SALT='shopmaps-v1-dbdvp',ITER=200000,CHECK='mhpF2LrO5wKtPM4cYlIWzbg9MZwPWiLsuSz8Ch8L',AK='shopmaps:auth',HOURS2=2*60*60*1000;
 var cur='sj5';
 function b64d(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
