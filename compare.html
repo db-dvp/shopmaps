@@ -77,6 +77,12 @@ summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:12.5px}
   <p class="sub">같은 면적대끼리 비교. 분양가는 발코니 확장비 별도(공급금액 기준), 평균은 세대수 가중. 파주운정3 주복 분양가는 사업수지표 기준(공급평당 2,500만원, 분양가상한제 예상, 확장비 별도)이며 수지표를 고치면 이 값은 직접 다시 맞춰야 합니다(자동 연동 아님). 아래 타입표에서 직접 바꿀 수 있습니다.</p>
   <table class="band" id="band"></table>
 
+  <h2>수지표 시뮬레이션 — 프라디움 분양가를 적용하면</h2>
+  <p class="sub">우리 수지표의 아파트 분양가(공급평당 2,500만원) 대신, 같은 면적대 프라디움 분양가(공급평당)를 넣었을 때 수입·영업이익이 어떻게 바뀌는지 추정합니다.</p>
+  <table class="band" id="sim"></table>
+  <table id="sim2" style="margin-top:10px"></table>
+  <div class="note" id="simnote"></div>
+
   <h2>타입별 면적 · 분양가<span class="seg" id="basis2"></span></h2>
   <p class="sub">행을 누르면 오른쪽 도면 비교판에 올라갑니다. 두 개를 골라 나란히 비교하세요. (면적 평수는 ㎡÷3.3058)</p>
   <table id="types"></table>
@@ -159,8 +165,6 @@ function drawOv(){
   row('공급 구성',function(c){return c.id.charAt(0)==='p'?'사전당첨 우선 '+c.pre+' · 특공 '+c.sp+' · 일반 '+c.gen+'<small>(특공은 일반분양에 포함 표기)</small>':'일반분양 '+c.hh+'세대'});
   row('부대',function(c){return c.extra||'공고문 외 상가 별도'});
   row('입주 예정',function(c){return c.id.charAt(0)==='p'?'2030.07':'공사기간 43개월<small>분양 오픈 2027.07.27 (수지표)</small>'});
-  row('분양가 범위',function(c){if(c.id.charAt(0)==='o'){var o=ourStat(c);return eok(o.mn)+' ~ '+eok(o.mx)+'<small>수지표 기준</small>'}var mn=1e9,mx=0;c.types.forEach(function(t){var s=stat(t);mn=Math.min(mn,s.mn);mx=Math.max(mx,s.mx)});return eok(mn)+' ~ '+eok(mx)});
-  row('평균 분양가',function(c){if(c.id.charAt(0)==='o')return eok(ourStat(c).avg)+'<small>수지표 기준</small>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=x.avg*x.n});return eok(s/n)});
   row('평균 평당 ('+BN[BASIS]+')',function(c){if(c.id.charAt(0)==='o')return '<b>'+f0(ourStat(c).pq)+'</b>만원<small>수지표 기준</small>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=pp(x.avg,t)*x.n});return '<b>'+f0(s/n)+'</b>만원'});
   $('ov').innerHTML=h;
 }
@@ -200,6 +204,32 @@ function drawTypes(){
   [].forEach.call($('types').querySelectorAll('.inp'),function(e){e.oninput=function(){var k=e.getAttribute('data-k'),v=e.value.replace(/[^0-9.]/g,'');if(v==='')delete PRICE[k];else PRICE[k]=v;savePrice();drawOv();drawBand();upPQ();drawSlots()}});
 }
 function upPQ(){[].forEach.call($('types').querySelectorAll('td[data-pq]'),function(td){var k=td.getAttribute('data-pq'),p=k.split('_'),r=find(p[0],p[1]);if(r&&r.c.id.charAt(0)==='o'){var x=priceOf(r.c,r.t);td.innerHTML=x!=null?'<b>'+f0(pp(x,r.t))+'</b>':'—'}})}
+/* ---------- 수지 시뮬레이션 ---------- */
+var BASE={o5:{R:400140634,P:56742083},o6:{R:402618371,P:67069890}};
+var MAPK={'61A':['60'],'84B':['84A','84B','84'],'89A':['88'],'89B':['88'],'108A':['115']},TAXK=['89A','89B','108A'],PCUR=2500;
+function pdPy(keys){var pr=0,ar=0;PD.forEach(function(c){c.types.forEach(function(t){if(keys.indexOf(t.k)<0)return;pr+=stat(t).avg*t.hh;ar+=t.sup/P2*t.hh})});return pr/ar}
+function e1(v){return (v/100000).toFixed(1)+'억'}
+function sg(v,f){return (v>=0?'+':'−')+f(Math.abs(v))}
+function simCalc(c){var dR=0,dT=0,sa=0,nw=0,rows=[];
+  c.types.forEach(function(t){var py=t.sup/P2,x=pdPy(MAPK[t.k]),d=t.hh*py*(x-PCUR);dR+=d;if(TAXK.indexOf(t.k)>=0)dT+=d;sa+=t.hh*py;nw+=t.hh*py*x;rows.push({t:t,x:x,cur:py*PCUR,nw:py*x,d:d})});
+  dR*=10;dT*=10;var b=BASE[c.id],dP=dR-0.005*dR-0.1*dT;
+  return {rows:rows,dR:dR,dP:dP,b:b,R2:b.R+dR,PN:b.P+dP,avg:nw/sa}}
+function drawSim(){
+  var cs=OUR.map(simCalc);
+  var h='<tr><th rowspan="2">항목</th>';OUR.forEach(function(c){h+='<th colspan="3" class="our">'+c.name+'</th>'});h+='</tr><tr>';
+  OUR.forEach(function(){h+='<th>현 수지표</th><th>프라디움 가격 적용</th><th>증감</th>'});h+='</tr>';
+  function row(k,fn){h+='<tr><td style="font-weight:700;background:#f7f8fc;text-align:left">'+k+'</td>';cs.forEach(function(r){h+=fn(r)});h+='</tr>'}
+  row('아파트 평균 공급평당',function(r){return '<td>'+f0(PCUR)+'만원</td><td class="c1"><b>'+f0(r.avg)+'</b>만원</td><td>'+sg(r.avg-PCUR,f0)+'</td>'});
+  row('총 수입',function(r){return '<td>'+e1(r.b.R)+'</td><td class="c1"><b>'+e1(r.R2)+'</b></td><td>'+sg(r.dR,e1)+'</td>'});
+  row('영업이익',function(r){return '<td>'+e1(r.b.P)+'</td><td class="c1"><b>'+e1(r.PN)+'</b></td><td>'+sg(r.dP,e1)+'</td>'});
+  row('영업이익률',function(r){var a=r.b.P/r.b.R*100,b=r.PN/r.R2*100;return '<td>'+a.toFixed(2)+'%</td><td class="c1"><b>'+b.toFixed(2)+'%</b></td><td>'+sg(b-a,function(x){return x.toFixed(2)+'%p'})+'</td>'});
+  $('sim').innerHTML=h;
+  var g='<tr><th class="l">타입</th><th>세대수</th><th>매칭 프라디움</th><th>프라디움<small>공급평당</small></th><th>세대당 분양가<small>현 → 적용</small></th><th>수입 변동</th></tr>';
+  cs.forEach(function(r,i){g+='<tr class="grp our"><td colspan="6">'+OUR[i].name+'</td></tr>';
+    r.rows.forEach(function(x){g+='<tr><td class="l tp">'+x.t.k+'</td><td>'+x.t.hh+'</td><td>'+MAPK[x.t.k].join("·")+'</td><td>'+f0(x.x)+'만원</td><td>'+eok(x.cur)+' → <b>'+eok(x.nw)+'</b></td><td>'+sg(x.d*10,e1)+'</td></tr>'})});
+  $('sim2').innerHTML=g;
+  $('simnote').innerHTML='프라디움 평균 분양가(발코니 확장비 제외)를 공급면적 기준 평당으로 환산해 같은 면적대 타입에 적용했습니다. 매칭: 61A↔60, 84B↔84(3·4단지 합산), 89A·89B↔88, 108A↔115. 영업이익은 중도금이자후불제·상가/업무시설 전량 분양 기준이며, 수입 증감분에서 분양광고비(0.5%)와 부가세(전용 85㎡ 초과 유형, 10% 가정)를 뺀 추정치입니다. 현 수지표 값은 2026.10 시점 스냅샷이라 수지표를 고치면 이 페이지의 기준값(수입·영업이익)도 다시 맞춰야 합니다.';
+}
 /* ---------- 층별 ---------- */
 function drawFloors(){
   var ks=['60','84','88','115'],h='';
@@ -246,9 +276,9 @@ function drawSlots(){
 }
 $('big').onclick=function(e){if($('big').className==='on'){$('big').className='on z'}else{$('big').className=''}};
 function $(id){return document.getElementById(id)}
-function seg(el){el.innerHTML=['ex','sup','ct'].map(function(k){return '<button data-b="'+k+'" class="'+(BASIS===k?'on':'')+'">'+BN[k]+'</button>'}).join('');
+function seg(el){el.innerHTML=['ex','sup'].map(function(k){return '<button data-b="'+k+'" class="'+(BASIS===k?'on':'')+'">'+BN[k]+'</button>'}).join('');
   [].forEach.call(el.querySelectorAll('button'),function(b){b.onclick=function(){BASIS=b.getAttribute('data-b');all()}})}
-function all(){seg($('basis'));seg($('basis2'));drawOv();drawBand();drawTypes();drawFloors();drawBal();drawSlots()}
+function all(){seg($('basis'));seg($('basis2'));drawOv();drawBand();drawSim();drawTypes();drawFloors();drawBal();drawSlots()}
 all();
 /* 처음에 대표 비교 한 쌍 */
 pick('pd3','84A');pick('o5','84B');
