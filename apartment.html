@@ -61,7 +61,7 @@ table.st td.nm .cat{font-size:10.5px}
 .mn td{font-weight:800;background:#f1faf8}
 .chip{display:inline-block;background:#e3e8f3;color:var(--navy);border-radius:9px;padding:0 6px;font-size:10.5px;font-weight:700;margin-left:4px}
 .flt{margin:8px 0 2px;line-height:2}.flt .fl{display:inline-block;width:34px;font-size:11px;color:var(--mut);font-weight:700}.fc{border:1px solid var(--line);background:#fff;border-radius:12px;padding:2px 10px;font-size:12px;cursor:pointer;font-family:inherit;margin-right:4px}.fc.on{background:var(--navy);color:#fff;border-color:var(--navy)}#fs,#fq{font:inherit;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:3px 8px;margin-right:6px}#fq{width:120px}
-.sh{cursor:pointer;user-select:none}.sh .ar{font-size:9px;color:#9aa3b8;margin-left:2px}tr.fr td{background:#f7f8fc;padding:3px 2px}.fi{font:inherit;font-size:11px;width:100%;border:1px solid var(--line);border-radius:5px;padding:2px 3px;text-align:center}.fi.h{width:50%}.fi.h:first-child{border-right:0}.lk{display:inline-block;background:#fdeed7;color:#a35a00;border-radius:8px;padding:0 6px;font-size:10px;font-weight:700;margin-left:5px;vertical-align:1px}
+.sh{cursor:pointer;user-select:none}.sh .ar{font-size:9px;color:#9aa3b8;margin-left:2px}tr.fr td{background:#f7f8fc;padding:3px 2px}.fi{font:inherit;font-size:11px;width:100%;border:1px solid var(--line);border-radius:5px;padding:2px 3px;text-align:center}.fi.h{width:50%}.fi.h:first-child{border-right:0}.ty{table-layout:fixed;width:100%}.ty th,.ty td{text-align:center;vertical-align:middle;padding:6px 4px}.ov{table-layout:fixed}.lk{display:inline-block;background:#fdeed7;color:#a35a00;border-radius:8px;padding:0 6px;font-size:10px;font-weight:700;margin-left:5px;vertical-align:1px}
 .ov{width:100%;border-collapse:collapse;font-size:12px;margin:6px 0}.ov th,.ov td{border:1px solid var(--line);padding:5px 7px;text-align:left}.ov th{background:var(--bg);width:84px;color:var(--navy)}
 </style>
 </head>
@@ -165,12 +165,12 @@ function render(i){
   }
   var nv=c.nv||{},sj={},sw={},ss={};
   ((nv.jw||{}).types||[]).forEach(function(t){sj[t.type]=t});((nv.wo||{}).types||[]).forEach(function(t){sw[t.type]=t});((nv.sale||{}).types||[]).forEach(function(t){ss[t.type]=t});
-  h+='<h3>타입별 세대수 · 호가 <span class="x">(굵은 행=주력)</span></h3><table><tr><th>타입</th><th>전용/공급㎡</th><th>세대수</th><th>분양가</th><th>매매</th><th>전세</th><th>월세 (보증/월)</th></tr>';
+  h+='<h3>타입별 세대수 · 호가 <span class="x">(굵은 행=주력)</span></h3><table class="ty"><colgroup><col style="width:11%"><col style="width:19%"><col style="width:14%"><col style="width:22%"><col style="width:16%"><col style="width:18%"></colgroup><tr><th>타입</th><th>전용/공급㎡</th><th>세대수</th><th>매매</th><th>전세</th><th>월세 (보증/월)</th></tr>';
   ts.forEach(function(t){
     var sa=t.n?{n:t.n,avg:t.avg,lo:t.mn,hi:t.mx,pp:t.ppEx}:ss[t.type];
-    h+='<tr'+(t.main?' class="mn"':'')+'><td>'+t.type+'</td><td>'+t.ex.toFixed(1)+' / '+t.su.toFixed(1)+'</td><td>'+t.hh.toLocaleString()+' <span class="x">('+Math.round(t.hh/tot*100)+'%)</span></td><td>'+(t.bun?eok(t.bun)+'<br><span class="x">평당 '+f0(t.bunPP)+'</span>':'-')+'</td><td>'+ct(sa)+'</td><td>'+ct(sj[t.type])+'</td><td>'+ct(sw[t.type],'w')+'</td></tr>';
+    h+='<tr'+(t.main?' class="mn"':'')+'><td>'+t.type+'</td><td>'+t.ex.toFixed(1)+' / '+t.su.toFixed(1)+'</td><td>'+t.hh.toLocaleString()+' <span class="x">('+Math.round(t.hh/tot*100)+'%)</span></td><td>'+ct(sa)+'</td><td>'+ct(sj[t.type])+'</td><td>'+ct(sw[t.type],'w')+'</td></tr>';
   });
-  h+='<tr class="avg"><td colspan="2">합계</td><td>'+tot.toLocaleString()+'</td><td colspan="4"></td></tr></table>';
+  h+='<tr class="avg"><td colspan="2">합계</td><td>'+tot.toLocaleString()+'</td><td colspan="3"></td></tr></table>';
   (c.extra||[]).forEach(function(t){h+='<div class="note">· '+t+'</div>'});
   h+='<div class="note">출처: KB(매매) · 네이버 26.10.23(입주 초기 매매·전세·월세) · 호갱노노(분양가)<br>평당 = 호가÷(전용㎡÷3.3058) · 범위 호가는 중간값 · 소표본은 참고용</div>';
   $('panel').innerHTML=h;wire();if(window.__lab)window.__lab();
