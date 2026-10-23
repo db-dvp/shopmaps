@@ -68,7 +68,7 @@ table.st td.nm .cat{font-size:10.5px}
 <body>
 <header><div id="title"></div><span class="s" id="src"></span></header>
 <div id="wrap"><div id="mapbox"><div id="map"></div><div class="legend"><span><i style="background:#12a39c"></i>호가 형성 단지 (매매 매물 확인)</span><span><i style="background:#e08a1e"></i>입주 초기 · 매매 호가 거의 없음</span><span class="lg2">기준점: 운정중앙역 / 운정3지구 반경 약 1.6km · 사용승인 10년 이내</span></div></div><div id="panel"><div id="err"></div></div></div>
-<script src="data-apartment.js?v=1023c"></script>
+<script src="data-apartment.js?v=1023d"></script>
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)}, Q=3.3058;
@@ -77,7 +77,7 @@ function pp(c){return c.overall?c.overall.ppAvg:-1}
 var A=RAW.filter(function(c){return c.group==='A'}).sort(function(a,b){return pp(b)-pp(a)});
 var B=RAW.filter(function(c){return c.group==='B'}).sort(function(a,b){return a.appr<b.appr?-1:1});
 var D=A.concat(B), cur=-1, F={g:'',q:'',r:{},s:'pp',d:-1};
-var NO={556054:13,1028889:5,2147431:16,2148664:15,1077216:10,1095862:9,658235:2,1027762:1,1097534:7,32313:6,32117:8,40137:11,489087:4,46086:12,46900:20,46084:18,47952:19,433593:14,491116:17,352637:3};
+var NO={1028889:1,32313:2,1097534:3,32117:4,1095862:5,1077216:6,40137:7,46086:8,556054:9,2148664:10,2147431:11,46084:12,47952:13,46900:14};
 function N(c){return NO[c.id]||0}
 $('title').textContent='운정3지구 인근 아파트 최근 호가 · 평당가'; $('src').textContent='호가: KB부동산 26.10 / 분양가: 호갱노노';
 function eok(v){return (v/10000).toFixed(2)+'억'}
