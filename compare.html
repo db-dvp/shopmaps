@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>시티프라디움 비교</title>
+<style>
+:root{--navy:#1b2a56;--navy2:#2c3f7a;--line:#dfe2ea;--bg:#eef1f7;--page:#f3f1ec;--ink:#1d2433;--mut:#6b7280;--our:#d9822b;--pd:#2f6fd6}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;color:var(--ink);background:var(--page);font-size:13px}
+header{height:46px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 16px;gap:12px}
+header b{font-size:15px;letter-spacing:-.2px}header span{margin-left:auto;font-size:11.5px;opacity:.85}
+#wrap{display:flex;height:calc(100% - 46px)}
+#left{flex:1;min-width:0;overflow:auto;padding:16px 20px 40px}
+#right{width:clamp(420px,40vw,660px);flex:none;overflow:auto;border-left:1px solid var(--line);background:#fff;padding:14px 16px 30px}
+h2{font-size:15px;margin:22px 0 8px;color:var(--navy)}h2:first-child{margin-top:0}
+.sub{font-size:11.5px;color:var(--mut);margin:0 0 8px;line-height:1.5}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:12.5px}
+th,td{border:1px solid var(--line);padding:7px 8px;text-align:center}
+th{background:var(--bg);color:var(--navy);font-weight:700;font-size:12px}
+td.l,th.l{text-align:left}
+td small{display:block;font-size:11px;color:var(--mut);font-weight:400;margin-top:1px}
+.ov th.our{background:#fbeedd;color:#8a4b0c}.ov th.pd{background:#e3ecfb;color:#1a4aa0}
+.ov td.k{background:#f7f8fc;font-weight:700;color:var(--navy);text-align:left;width:108px}
+.seg{display:inline-flex;background:#e6e9f2;border-radius:8px;padding:2px;gap:2px;margin-left:10px;vertical-align:1px}
+.seg button{border:0;background:transparent;font:inherit;font-size:11.5px;font-weight:700;color:#4b5468;padding:3px 10px;border-radius:6px;cursor:pointer}
+.seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 3px #0002}
+.grp td{background:#e3e8f3;font-weight:700;color:var(--navy);text-align:left;padding:5px 9px}
+.grp.our td{background:#fbeedd;color:#8a4b0c}
+tr.row{cursor:pointer}tr.row:hover td{background:#f6f8fd}
+tr.row.s0 td{background:#e5eefc!important;box-shadow:inset 0 0 0 0}tr.row.s1 td{background:#fdeeda!important}
+.tp{font-weight:700;font-size:13px}
+.badge{display:inline-block;min-width:18px;padding:1px 6px;border-radius:9px;color:#fff;font-size:10.5px;font-weight:700;margin-left:6px}
+.badge.b0{background:var(--pd)}.badge.b1{background:var(--our)}
+.pbtn{display:inline-block;border:1px solid #c6cde0;border-radius:6px;padding:2px 8px;font-size:11px;color:#2c3f7a;background:#fff}
+.pbtn.none{color:#a3aabb;border-style:dashed}
+.pr b{font-size:13.5px}
+.inp{width:70px;font:inherit;font-size:12.5px;text-align:right;border:1px solid #e0b98a;border-radius:5px;padding:3px 5px;background:#fffaf2}
+.band td.c1{background:#f4f7fe}.band td.c2{background:#fff8ef}
+details{margin:6px 0;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:12.5px}
+.two{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}.two>div{flex:1;min-width:240px}
+.two table{font-size:12px}.two h4{margin:0 0 4px;font-size:12px;color:var(--mut)}
+.note{font-size:11px;color:var(--mut);line-height:1.55;margin-top:8px}
+/* 우측 도면 보드 */
+#right h3{margin:0 0 4px;font-size:15px;color:var(--navy)}
+.slot{border:1.5px solid var(--line);border-radius:10px;margin-top:10px;overflow:hidden;background:#fafbfe}
+.slot.s0{border-color:var(--pd)}.slot.s1{border-color:var(--our)}
+.sh{display:flex;align-items:center;gap:8px;padding:8px 10px;font-weight:700}
+.slot.s0 .sh{background:#e5eefc;color:#1a4aa0}.slot.s1 .sh{background:#fdeeda;color:#8a4b0c}
+.sh .x{margin-left:auto;border:0;background:transparent;font-size:15px;cursor:pointer;color:inherit;opacity:.7}
+.spec{padding:6px 10px;font-size:11.5px;color:#39425a;line-height:1.6;border-bottom:1px solid var(--line);background:#fff}
+.spec b{color:var(--ink)}
+.img{padding:8px;min-height:120px;display:flex;align-items:center;justify-content:center;background:#fff}
+.img img{width:100%;height:auto;max-height:420px;object-fit:contain;cursor:zoom-in;display:block}
+.empty{color:#9aa3b8;text-align:center;padding:26px 10px;font-size:12px;line-height:1.7}
+.empty.dash{border:1.5px dashed #c6cde0;border-radius:8px;margin:8px;background:#fff}
+.empty label{display:inline-block;margin-top:6px;border:1px solid #c6cde0;border-radius:6px;padding:3px 10px;color:#2c3f7a;cursor:pointer;background:#fff;font-size:11.5px}
+.empty input{display:none}
+#big{position:fixed;inset:0;background:#000c;z-index:50;display:none;overflow:auto;padding:20px}
+#big.on{display:block}#big img{width:100%;max-width:none;display:block;margin:0 auto;background:#fff;cursor:zoom-out}#big.z img{width:220%}
+#big .cap{position:fixed;top:10px;left:16px;color:#fff;font-weight:700;font-size:13px;text-shadow:0 1px 3px #000}
+@media(max-width:1000px){#wrap{display:block;height:auto}#left,#right{overflow:visible;width:auto;border:0}header{position:sticky;top:0;z-index:5}}
+</style>
+</head>
+<body>
+<header><b>시티프라디움 ↔ 우리 5·6BL 비교</b><span>프라디움: 입주자모집공고·홈페이지(26.10.22) / 우리: 설계개요(26.10.13)</span></header>
+<div id="wrap">
+<div id="left">
+  <h2>단지 개요 비교</h2>
+  <p class="sub">우리 = 파주운정3 5BL·6BL 주상복합(설계개요 261013), 시티프라디움 = GTX 운정중앙역 시티프라디움 3·4단지(2026.10.22 모집공고).</p>
+  <table class="ov" id="ov"></table>
+
+  <h2>면적대별 분양가 비교<span class="seg" id="basis"></span></h2>
+  <p class="sub">같은 면적대끼리 비교. 분양가는 발코니 확장비 별도(공급금액 기준), 평균은 세대수 가중. 우리 분양가는 아래 타입표에 입력하면 반영됩니다.</p>
+  <table class="band" id="band"></table>
+
+  <h2>타입별 면적 · 분양가<span class="seg" id="basis2"></span></h2>
+  <p class="sub">행을 누르면 오른쪽 도면 비교판에 올라갑니다. 두 개를 골라 나란히 비교하세요. (면적 평수는 ㎡÷3.3058)</p>
+  <table id="types"></table>
+
+  <h2>층별 분양가 (시티프라디움)</h2>
+  <div id="floors"></div>
+
+  <h2>발코니 확장비 (시티프라디움, VAT 포함)</h2>
+  <table id="bal"></table>
+  <div class="note">분양가는 모집공고 공급금액표 기준이며 옵션·확장·취득세 등은 제외입니다. 시티프라디움 입주 예정 2030.07(모집공고 기재). 평면도 이미지는 시티프라디움 공식 홈페이지의 평면안내 페이지에서 불러옵니다(우리 도면은 준비되면 등록).</div>
+</div>
+<aside id="right">
+  <h3>도면 비교</h3>
+  <div class="sub">왼쪽 표에서 평면을 클릭 → 두 칸에 차례로 올라갑니다. 이미지를 누르면 크게 봅니다.</div>
+  <div id="slots"></div>
+</aside>
+</div>
+<div id="big"><div class="cap" id="bigcap"></div><img id="bigimg" alt=""></div>
+<script>
+(function(){
+var P2=3.3058, IMG='https://www.xn--gtx-k74mh0hgtyn8d37ae1cudt6noxdy02c2cg.com/assets/images/final-20261020/';
+function f0(v){return Math.round(v).toLocaleString()}
+function eok(v){return (v/10000).toFixed(2)+'억'}
+function pyeong(a){return (a/P2).toFixed(2)}
+/* ---------- 데이터 ---------- */
+var PD=[
+ {id:'pd3',name:'프라디움 3단지',blk:'3BL',loc:'파주시 동패동 1673번지 일원',site:20759.0,bldg:8666.1118,floors:'지하 4층 ~ 지상 48층',dongs:'아파트 4개동',far:'299.55%',hh:472,pre:135,sp:141,gen:337,
+  types:[
+  {k:'60',img:'unit-60.webp',ex:60.9995,jc:22.0337,sup:83.0332,etc:57.3438,ct:140.3770,hh:70,bal:1034,bands:[['2층',2,49570],['3~4층',4,51200],['5~9층',10,52500],['10~14층',10,53700],['15~19층',10,55000],['20~24층',8,55800],['25~29층',10,56500],['30~34층',10,57700],['35~37층',6,58900]]},
+  {k:'84A',img:'unit-84a.webp',ex:84.9594,jc:27.4805,sup:112.4399,etc:79.8680,ct:192.3079,hh:108,bal:1391,bands:[['2층',3,67270],['3~4층',6,69400],['5~9층',15,71100],['10~14층',15,72800],['15~19층',15,74600],['20~24층',12,75600],['25~29층',15,76500],['30~34층',15,78200],['35~38층',12,79800]]},
+  {k:'84B',img:'unit-84b.webp',ex:84.4998,jc:29.7097,sup:114.2095,etc:79.4359,ct:193.6454,hh:86,bal:1273,bands:[['2층',1,63700],['3~4층',4,65000],['5~9층',10,67700],['10~14층',10,70300],['15~19층',10,72100],['20~24층',8,73800],['25~29층',10,75600],['30~34층',10,76800],['35~39층',10,78100],['40층 이상',13,79400]]},
+  {k:'88',img:'unit-88.webp',ex:88.5023,jc:28.3257,sup:116.8280,etc:83.1985,ct:200.0265,hh:129,bal:1448,bands:[['2층',1,69000],['3~4층',6,69800],['5~9층',15,71200],['10~14층',15,74500],['15~19층',15,76400],['20~24층',12,78200],['25~29층',15,80100],['30~34층',15,81400],['35~39층',15,82800],['40층 이상',20,84100]]},
+  {k:'115',img:'unit-115.webp',ex:115.3141,jc:36.1923,sup:151.5064,etc:108.4037,ct:259.9101,hh:79,bal:1694,bands:[['2층',2,79890],['3~4층',4,80700],['5~9층',10,84800],['10~14층',10,88000],['15~19층',10,90300],['20~24층',8,92400],['25~29층',10,94700],['30~34층',10,96200],['35~39층',9,97800],['40층 이상',6,99400]]}]},
+ {id:'pd4',name:'프라디움 4단지',blk:'4BL',loc:'파주시 동패동 400-7번지 일원',site:19277.0,bldg:8161.9855,floors:'지하 4층 ~ 지상 45층',dongs:'아파트 4개동',far:'299.59%',hh:472,pre:114,sp:230,gen:358,
+  types:[
+  {k:'60',img:'unit-60.webp',ex:60.9995,jc:23.8228,sup:84.8223,etc:60.8114,ct:145.6337,hh:156,bal:1034,bands:[['2층',1,49570],['3~4층',8,51200],['5~9층',20,52500],['10~14층',20,53700],['15~19층',20,55000],['20~24층',16,55800],['25~29층',20,56500],['30~34층',20,57700],['35~39층',20,58900],['40층 이상',11,60100]]},
+  {k:'84',img:'unit-84a.webp',ex:84.9594,jc:29.9723,sup:114.9317,etc:84.6974,ct:199.6291,hh:316,bal:1391,bands:[['2층',2,67270],['3~4층',16,69400],['5~9층',40,71100],['10~14층',40,72800],['15~19층',40,74600],['20~24층',32,75600],['25~29층',40,76500],['30~34층',40,78200],['35~39층',40,79800],['40층 이상',26,81400]]}]}
+];
+var OUR=[
+ {id:'o5',name:'우리 5BL',blk:'5BL',loc:'파주운정3 5BL (주상복합)',site:18745.0,bldg:3247.05,floors:'지하 3층 ~ 지상 38층',dongs:'3개동 (501·502·503)',far:'299.99%',hh:422,extra:'라이브오피스 73실(36OA 10·51OA 63) · 근생 1층',
+  types:[
+  {k:'61A',ex:61.9960,jc:24.03,sup:86.03,etc:49.03,ct:135.05,hh:68},
+  {k:'84B',ex:84.9500,jc:31.25,sup:116.20,etc:67.18,ct:183.37,hh:146},
+  {k:'89A',ex:89.9522,jc:32.59,sup:122.55,etc:71.13,ct:193.68,hh:69},
+  {k:'89B',ex:89.9840,jc:32.78,sup:122.76,etc:71.16,ct:193.92,hh:68},
+  {k:'108A',ex:108.9600,jc:37.16,sup:146.12,etc:86.16,ct:232.29,hh:71}]},
+ {id:'o6',name:'우리 6BL',blk:'6BL',loc:'파주운정3 6BL (주상복합)',site:18924.0,bldg:2255.83,floors:'지하 3층 ~ 지상 38층',dongs:'3개동 (601·602·603)',far:'299.83%',hh:422,extra:'라이브오피스 81실(36OA 11·51OA 70) · 근생 1층',
+  types:[
+  {k:'61A',ex:61.9960,jc:23.98,sup:85.98,etc:50.09,ct:136.06,hh:68},
+  {k:'84B',ex:84.9500,jc:31.18,sup:116.13,etc:68.63,ct:184.76,hh:148},
+  {k:'89A',ex:89.9522,jc:32.52,sup:122.48,etc:72.67,ct:195.15,hh:67},
+  {k:'89B',ex:89.9840,jc:32.71,sup:122.69,etc:72.70,ct:195.39,hh:68},
+  {k:'108A',ex:108.9600,jc:37.08,sup:146.04,etc:88.03,ct:234.07,hh:71}]}
+];
+var BASIS='ex', BN={ex:'전용',sup:'공급',ct:'계약'};
+/* 우리 도면(이미지 경로) : 준비되면 여기에 넣거나 슬롯에서 임시로 불러오기 */
+var OURIMG={};   /* 예: {'o5_84B':'plans/o5-84B.webp'} */
+var tmpImg={};   /* 세션 임시 이미지 */
+/* 우리 분양가 입력 (만원, 타입별) */
+var PRICE={};try{PRICE=JSON.parse(localStorage.getItem('cmp:price')||'{}')||{}}catch(e){PRICE={}}
+function savePrice(){try{localStorage.setItem('cmp:price',JSON.stringify(PRICE))}catch(e){}}
+/* ---------- 계산 ---------- */
+function stat(t){var n=0,s=0,mn=1e9,mx=0;t.bands.forEach(function(b){n+=b[1];s+=b[1]*b[2];mn=Math.min(mn,b[2]);mx=Math.max(mx,b[2])});return {n:n,avg:s/n,mn:mn,mx:mx}}
+function pp(price,t){return price/(t[BASIS]/P2)}
+function find(id,k){var all=PD.concat(OUR),i,j;for(i=0;i<all.length;i++)if(all[i].id===id)for(j=0;j<all[i].types.length;j++)if(all[i].types[j].k===k)return {c:all[i],t:all[i].types[j]};return null}
+function priceOf(c,t){if(c.id.charAt(0)==='p')return stat(t).avg;var v=parseFloat(PRICE[c.id+'_'+t.k]);return isNaN(v)?null:v*10000}
+/* ---------- 개요표 ---------- */
+function drawOv(){
+  var cs=OUR.concat(PD),h='<tr><th class="l">구분</th>';
+  cs.forEach(function(c){h+='<th class="'+(c.id.charAt(0)==='o'?'our':'pd')+'">'+c.name+'</th>'});h+='</tr>';
+  function row(k,fn){h+='<tr><td class="k">'+k+'</td>';cs.forEach(function(c){h+='<td>'+fn(c)+'</td>'});h+='</tr>'}
+  row('대지위치',function(c){return c.loc});
+  row('대지면적',function(c){return f0(c.site)+'㎡<small>'+f0(c.site/P2)+'평</small>'});
+  row('건축규모',function(c){return c.floors+'<small>'+c.dongs+'</small>'});
+  row('건폐율',function(c){return (c.bldg/c.site*100).toFixed(2)+'%<small>건축면적 '+f0(c.bldg)+'㎡</small>'});
+  row('용적률',function(c){return c.far});
+  row('공동주택',function(c){return c.hh+'세대'});
+  row('타입 구성',function(c){return c.types.map(function(t){return t.k}).join(' · ')});
+  row('공급 구성',function(c){return c.id.charAt(0)==='p'?'사전당첨 우선 '+c.pre+' · 특공 '+c.sp+' · 일반 '+c.gen+'<small>(특공은 일반분양에 포함 표기)</small>':'—'});
+  row('부대',function(c){return c.extra||'공고문 외 상가 별도'});
+  row('입주 예정',function(c){return c.id.charAt(0)==='p'?'2030.07':'<span style="color:#9aa3b8">미입력</span>'});
+  row('분양가 범위',function(c){if(c.id.charAt(0)==='o')return '<span style="color:#9aa3b8">미정</span>';var mn=1e9,mx=0;c.types.forEach(function(t){var s=stat(t);mn=Math.min(mn,s.mn);mx=Math.max(mx,s.mx)});return eok(mn)+' ~ '+eok(mx)});
+  row('평균 분양가',function(c){if(c.id.charAt(0)==='o')return '<span style="color:#9aa3b8">미정</span>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=x.avg*x.n});return eok(s/n)});
+  row('평균 평당 ('+BN[BASIS]+')',function(c){if(c.id.charAt(0)==='o')return '<span style="color:#9aa3b8">미정</span>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=pp(x.avg,t)*x.n});return '<b>'+f0(s/n)+'</b>만원'});
+  $('ov').innerHTML=h;
+}
+/* ---------- 면적대 비교 ---------- */
+var BANDS=[['59~61㎡',{o:['61A'],p:['60']}],['84~85㎡',{o:['84B'],p:['84A','84B','84']}],['88~90㎡',{o:['89A','89B'],p:['88']}],['108~115㎡',{o:['108A'],p:['115']}]];
+function groupCell(c,ks,our){
+  var ts=c.types.filter(function(t){return ks.indexOf(t.k)>=0});if(!ts.length)return '<td>—</td>';
+  var n=0,sp=0,sa=0,names=[];
+  ts.forEach(function(t){var p=priceOf(c,t);names.push(t.k+'('+t.ex.toFixed(1)+')');if(p!=null){n+=t.hh;sp+=p*t.hh;sa+=pp(p,t)*t.hh}});
+  if(!n)return '<td class="c2">'+names.join(' · ')+'<small style="color:#b8860b">분양가 입력 대기</small></td>';
+  return '<td class="'+(our?'c2':'c1')+'">'+'<b>'+eok(sp/n)+'</b> · 평당 <b>'+f0(sa/n)+'</b><small>'+names.join(' · ')+'</small></td>';
+}
+function drawBand(){
+  var cs=OUR.concat(PD),h='<tr><th>면적대</th>';
+  cs.forEach(function(c){h+='<th class="'+(c.id.charAt(0)==='o'?'our':'pd')+'">'+c.name+'</th>'});h+='</tr>';
+  BANDS.forEach(function(b){h+='<tr><td style="font-weight:700;background:#f7f8fc">'+b[0]+'</td>';
+    cs.forEach(function(c){h+=groupCell(c,c.id.charAt(0)==='o'?b[1].o:b[1].p,c.id.charAt(0)==='o')});h+='</tr>'});
+  $('band').innerHTML=h;
+}
+/* ---------- 타입표 ---------- */
+var slots=[null,null],nxt=0;
+function slotIdx(id,k){for(var i=0;i<2;i++)if(slots[i]&&slots[i].id===id&&slots[i].k===k)return i;return -1}
+function drawTypes(){
+  var h='<tr><th class="l">타입</th><th>전용㎡<small>(평)</small></th><th>공급㎡<small>(평)</small></th><th>계약㎡</th><th>세대수</th><th>분양가<small>최저~최고</small></th><th>평균<small>분양가</small></th><th>평당<small>('+BN[BASIS]+')</small></th><th>도면</th></tr>';
+  PD.concat(OUR).forEach(function(c){var our=c.id.charAt(0)==='o';
+    h+='<tr class="grp'+(our?' our':'')+'"><td colspan="9">'+c.name+' · '+c.hh+'세대'+(our?' (분양가는 직접 입력)':'')+'</td></tr>';
+    c.types.forEach(function(t){var i=slotIdx(c.id,t.k),has=our?!!(OURIMG[c.id+'_'+t.k]||tmpImg[c.id+'_'+t.k]):!!t.img;
+      var rng='—',avg='—',pq='—';
+      if(!our){var s=stat(t);rng=eok(s.mn)+' ~ '+eok(s.mx);avg='<b>'+eok(s.avg)+'</b>';pq='<b>'+f0(pp(s.avg,t))+'</b>'}
+      else{var v=PRICE[c.id+'_'+t.k];avg='<input class="inp" data-k="'+c.id+'_'+t.k+'" inputmode="decimal" placeholder="억" value="'+(v==null?'':v)+'" onclick="event.stopPropagation()">';var p=priceOf(c,t);pq=p!=null?'<b>'+f0(pp(p,t))+'</b>':'—'}
+      h+='<tr class="row'+(i>=0?' s'+i:'')+'" data-id="'+c.id+'" data-k="'+t.k+'"><td class="l"><span class="tp">'+t.k+'</span>'+(i>=0?'<span class="badge b'+i+'">'+(i?'B':'A')+'</span>':'')+'</td>'
+       +'<td>'+t.ex.toFixed(2)+'<small>'+pyeong(t.ex)+'</small></td><td>'+t.sup.toFixed(2)+'<small>'+pyeong(t.sup)+'</small></td><td>'+t.ct.toFixed(2)+'<small>'+pyeong(t.ct)+'</small></td><td>'+t.hh+'</td>'
+       +'<td>'+rng+'</td><td class="pr">'+avg+'</td><td class="pr" data-pq="'+c.id+'_'+t.k+'">'+pq+'</td><td><span class="pbtn'+(has?'':' none')+'">'+(has?'평면 ▸':'도면 없음')+'</span></td></tr>'});
+  });
+  $('types').innerHTML=h;
+  [].forEach.call($('types').querySelectorAll('tr.row'),function(r){r.onclick=function(){pick(r.getAttribute('data-id'),r.getAttribute('data-k'))}});
+  [].forEach.call($('types').querySelectorAll('.inp'),function(e){e.oninput=function(){var k=e.getAttribute('data-k'),v=e.value.replace(/[^0-9.]/g,'');if(v==='')delete PRICE[k];else PRICE[k]=v;savePrice();drawOv();drawBand();upPQ();drawSlots()}});
+}
+function upPQ(){[].forEach.call($('types').querySelectorAll('td[data-pq]'),function(td){var k=td.getAttribute('data-pq'),p=k.split('_'),r=find(p[0],p[1]);if(r&&r.c.id.charAt(0)==='o'){var x=priceOf(r.c,r.t);td.innerHTML=x!=null?'<b>'+f0(pp(x,r.t))+'</b>':'—'}})}
+/* ---------- 층별 ---------- */
+function drawFloors(){
+  var ks=['60','84','88','115'],h='';
+  [['60',['60'],'60㎡'],['84',['84A','84B','84'],'84㎡'],['88',['88'],'88㎡'],['115',['115'],'115㎡']].forEach(function(g){
+    var inner='';
+    PD.forEach(function(c){c.types.forEach(function(t){if(g[1].indexOf(t.k)<0)return;
+      inner+='<div><h4>'+c.name+' · '+t.k+'</h4><table><tr><th>층</th><th>세대</th><th>분양가</th><th>평당('+BN[BASIS]+')</th></tr>'
+       +t.bands.map(function(b){return '<tr><td>'+b[0]+'</td><td>'+b[1]+'</td><td>'+eok(b[2])+'</td><td>'+f0(pp(b[2],t))+'</td></tr>'}).join('')+'</table></div>'})});
+    h+='<details><summary>'+g[2]+' 층별 분양가</summary><div class="two">'+inner+'</div></details>'});
+  $('floors').innerHTML=h;
+}
+function drawBal(){
+  var h='<tr><th>구분</th><th>타입</th><th>확장비 (VAT 포함)</th><th>계약금 10%</th><th>중도금 10% (2027.07.31)</th><th>잔금 80%</th></tr>';
+  PD.forEach(function(c){c.types.forEach(function(t){var v=t.bal*10000;h+='<tr><td>'+c.name+'</td><td class="tp">'+t.k+'</td><td>'+f0(v/10000)+'만원</td><td>'+f0(v/100000)+'만원</td><td>'+f0(v/100000)+'만원</td><td>'+f0(v*0.8/10000)+'만원</td></tr>'})});
+  $('bal').innerHTML=h;
+}
+/* ---------- 도면 보드 ---------- */
+function pick(id,k){
+  var i=slotIdx(id,k);
+  if(i>=0){slots[i]=null;nxt=i}
+  else{var e=slots[0]?(slots[1]?-1:1):0;if(e<0){e=nxt;nxt=1-nxt}else{nxt=e===0?1:0}slots[e]={id:id,k:k}}
+  drawTypes();drawSlots();
+}
+function imgOf(c,t){if(c.id.charAt(0)==='p')return IMG+t.img;var key=c.id+'_'+t.k;return tmpImg[key]||OURIMG[key]||null}
+function drawSlots(){
+  var h='';
+  for(var i=0;i<2;i++){var s=slots[i],tag=i?'B':'A';
+    if(!s){h+='<div class="slot s'+i+'"><div class="sh"><span class="badge b'+i+'" style="margin:0">'+tag+'</span> 비어 있음</div><div class="empty">왼쪽 표에서 비교할 평면을 클릭하세요</div></div>';continue}
+    var r=find(s.id,s.k),c=r.c,t=r.t,our=c.id.charAt(0)==='o',src=imgOf(c,t);
+    var sp='전용 <b>'+t.ex.toFixed(2)+'㎡</b>('+pyeong(t.ex)+'평) · 공급 <b>'+t.sup.toFixed(2)+'㎡</b>('+pyeong(t.sup)+'평) · 계약 <b>'+t.ct.toFixed(2)+'㎡</b>('+pyeong(t.ct)+'평) · <b>'+t.hh+'세대</b><br>';
+    var p=priceOf(c,t);
+    if(!our){var st=stat(t);sp+='분양가 <b>'+eok(st.mn)+' ~ '+eok(st.mx)+'</b> · 평균 <b>'+eok(st.avg)+'</b> · '+BN[BASIS]+' 평당 <b>'+f0(pp(st.avg,t))+'</b>만원 · 확장비 '+f0(t.bal)+'만원'}
+    else sp+=(p!=null?'입력 분양가 <b>'+eok(p)+'</b> · '+BN[BASIS]+' 평당 <b>'+f0(pp(p,t))+'</b>만원':'분양가 미입력 (타입표에서 입력)');
+    h+='<div class="slot s'+i+'"><div class="sh"><span class="badge b'+i+'" style="margin:0">'+tag+'</span>'+c.name+' · '+t.k+'<button class="x" data-x="'+i+'" title="내리기">✕</button></div><div class="spec">'+sp+'</div>';
+    if(src)h+='<div class="img"><img src="'+src+'" referrerpolicy="no-referrer" alt="'+c.name+' '+t.k+' 평면" data-cap="'+c.name+' · '+t.k+'" onerror="this.parentNode.innerHTML=\'<div class=empty>이미지를 불러오지 못했습니다.<br><a target=_blank href='+src+'>원본 열기 ↗</a></div>\'"></div>';
+    else h+='<div class="empty dash">도면 대기 중입니다.<br>준비되면 등록하거나, 지금은 이미지 파일을 임시로 올려볼 수 있어요.<br><label>이미지 불러오기<input type="file" accept="image/*" data-up="'+c.id+'_'+t.k+'"></label></div>';
+    if(our&&src)h+='<div style="padding:0 10px 8px;text-align:right"><label class="pbtn" style="cursor:pointer">다른 이미지<input type="file" accept="image/*" data-up="'+c.id+'_'+t.k+'" style="display:none"></label></div>';
+  }
+  $('slots').innerHTML=h;
+  [].forEach.call($('slots').querySelectorAll('.x'),function(b){b.onclick=function(){var i=+b.getAttribute('data-x');slots[i]=null;nxt=i;drawTypes();drawSlots()}});
+  [].forEach.call($('slots').querySelectorAll('input[type=file]'),function(inp){inp.onchange=function(){var f=inp.files&&inp.files[0];if(!f)return;tmpImg[inp.getAttribute('data-up')]=URL.createObjectURL(f);drawTypes();drawSlots()}});
+  [].forEach.call($('slots').querySelectorAll('.img img'),function(im){im.onclick=function(){$('bigimg').src=im.src;$('bigcap').textContent=im.getAttribute('data-cap')+' (클릭: 확대/닫기)';$('big').className='on'}});
+}
+$('big').onclick=function(e){if($('big').className==='on'){$('big').className='on z'}else{$('big').className=''}};
+function $(id){return document.getElementById(id)}
+function seg(el){el.innerHTML=['ex','sup','ct'].map(function(k){return '<button data-b="'+k+'" class="'+(BASIS===k?'on':'')+'">'+BN[k]+'</button>'}).join('');
+  [].forEach.call(el.querySelectorAll('button'),function(b){b.onclick=function(){BASIS=b.getAttribute('data-b');all()}})}
+function all(){seg($('basis'));seg($('basis2'));drawOv();drawBand();drawTypes();drawFloors();drawBal();drawSlots()}
+all();
+/* 처음에 대표 비교 한 쌍 */
+pick('pd3','84A');pick('o5','84B');
+})();
+</script>
+</body>
+</html>
