@@ -61,6 +61,7 @@ table.st td.nm .cat{font-size:10.5px}
 .mn td{font-weight:800;background:#f1faf8}
 .chip{display:inline-block;background:#e3e8f3;color:var(--navy);border-radius:9px;padding:0 6px;font-size:10.5px;font-weight:700;margin-left:4px}
 .flt{margin:8px 0 2px;line-height:2}.flt .fl{display:inline-block;width:34px;font-size:11px;color:var(--mut);font-weight:700}.fc{border:1px solid var(--line);background:#fff;border-radius:12px;padding:2px 10px;font-size:12px;cursor:pointer;font-family:inherit;margin-right:4px}.fc.on{background:var(--navy);color:#fff;border-color:var(--navy)}#fs,#fq{font:inherit;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:3px 8px;margin-right:6px}#fq{width:120px}
+.sh{cursor:pointer;user-select:none}.sh .ar{font-size:9px;color:#9aa3b8;margin-left:2px}tr.fr td{background:#f7f8fc;padding:3px 2px}.fi{font:inherit;font-size:11px;width:100%;border:1px solid var(--line);border-radius:5px;padding:2px 3px;text-align:center}.fi.h{width:50%}.fi.h:first-child{border-right:0}.lk{display:inline-block;background:#fdeed7;color:#a35a00;border-radius:8px;padding:0 6px;font-size:10px;font-weight:700;margin-left:5px;vertical-align:1px}
 .ov{width:100%;border-collapse:collapse;font-size:12px;margin:6px 0}.ov th,.ov td{border:1px solid var(--line);padding:5px 7px;text-align:left}.ov th{background:var(--bg);width:84px;color:var(--navy)}
 </style>
 </head>
@@ -75,7 +76,7 @@ var RAW=window.APT_DATA||[];
 function pp(c){return c.overall?c.overall.ppAvg:-1}
 var A=RAW.filter(function(c){return c.group==='A'}).sort(function(a,b){return pp(b)-pp(a)});
 var B=RAW.filter(function(c){return c.group==='B'}).sort(function(a,b){return a.appr<b.appr?-1:1});
-var D=A.concat(B), cur=-1, F={g:'',y:'',q:'',s:'pp'};
+var D=A.concat(B), cur=-1, F={g:'',q:'',r:{},s:'pp',d:-1};
 var NO={556054:13,1028889:5,2147431:16,2148664:15,1077216:10,1095862:9,658235:2,1027762:1,1097534:7,32313:6,32117:8,40137:11,489087:4,46086:12,46900:20,46084:18,47952:19,433593:14,491116:17,352637:3};
 function N(c){return NO[c.id]||0}
 $('title').textContent='운정3지구 인근 아파트 최근 호가 · 평당가'; $('src').textContent='호가: KB부동산 26.10 / 분양가: 호갱노노';
@@ -100,48 +101,70 @@ function overview(){
     h+='<tr><td class="l">'+b[0]+'</td><td>'+p.n+'</td><td>'+f0(pr.v)+' ('+eok(pr.v)+')</td><td><b>'+f0(p.v)+'</b></td><td>'+f0(Math.min.apply(null,vs))+' ~ '+f0(Math.max.apply(null,vs))+'</td></tr>';
   });
   h+='</table>';
-  h+='<div class="flt" id="flt"></div><div id="lst"></div>';
-  h+='<div class="note">평당가 = 호가 ÷ (전용㎡ ÷ 3.3058). 단지 평균은 타입별 평균 호가의 매물수 가중 평균, 중앙값은 타입별 중앙값의 가중 중앙값입니다. 번호는 지도에서 위(북)→아래(남) 순서입니다. 중개사 중복 등록과 호가 특성상 실거래가보다 높을 수 있습니다. 입주 초기 단지는 KB부동산에 매매 호가가 거의 없어 평균에서 제외했습니다.</div>';
+  h+='<div class="flt" id="flt"></div><div class="note" id="cnt" style="margin:4px 0 0"></div><table class="st" id="tbl"><colgroup><col style="width:56px"><col><col style="width:70px"><col style="width:74px"><col style="width:84px"></colgroup><thead id="th"></thead><tbody id="tb"></tbody></table>';
+  h+='<div class="note">평당가 = 호가 ÷ (전용㎡ ÷ 3.3058). 단지 평균은 타입별 평균 호가의 매물수 가중 평균입니다. 번호는 지도에서 위(북)→아래(남) 순서입니다. 열 제목을 누르면 정렬, 아래 입력칸으로 필터합니다. 중개사 중복 등록과 호가 특성상 실거래가보다 높을 수 있습니다. 입주 초기 단지는 KB부동산에 매매 호가가 거의 없어 평균에서 제외했습니다.</div>';
   $('panel').innerHTML=h; drawFlt(); drawList();
 }
-var FG=[['','전체'],['A','호가 형성'],['B','입주 초기']],FY=[['','전체'],['<=2020','~2020'],['2021-2022','2021~22'],['2023-2024','2023~24'],['>=2025','2025~']],FS=[['pp','평균 평당 높은순'],['ppa','평균 평당 낮은순'],['no','지도 번호순'],['new','입주 최신순'],['hh','세대수 많은순']];
-function ychk(c,y){var v=parseInt(c.appr);if(!y)return true;if(y==='<=2020')return v<=2020;if(y==='>=2025')return v>=2025;var p=y.split('-');return v>=+p[0]&&v<=+p[1]}
+var FG=[['','전체'],['A','호가 형성'],['B','입주 초기']];
+var COLS=[['no','번호'],['q','단지'],['y','입주'],['hh','세대수'],['pp','평균 평당']];
 function hhn(c){return +c.hh.replace(/\(.*\)/,'').replace(/,/g,'')}
+function ykey(c){return parseInt(c.appr)}
+function val(c,k){return k==='no'?N(c):k==='q'?c.short:k==='y'?c.appr:k==='hh'?hhn(c):(c.overall?c.overall.ppAvg:null)}
+function num(v){var n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?null:n}
 function drawFlt(){
-  var h='';
-  function chips(lab,arr,key){h+='<span class="fl">'+lab+'</span>';arr.forEach(function(a){h+='<button class="fc'+(F[key]===a[0]?' on':'')+'" data-k="'+key+'" data-v="'+a[0]+'">'+a[1]+'</button>'})}
-  chips('구분',FG,'g');h+='<br>';chips('입주',FY,'y');h+='<br><span class="fl">정렬</span><select id="fs">';
-  FS.forEach(function(a){h+='<option value="'+a[0]+'"'+(F.s===a[0]?' selected':'')+'>'+a[1]+'</option>'});
-  h+='</select><input id="fq" placeholder="단지명 검색" value="'+F.q.replace(/"/g,'')+'">';
+  var h='<span class="fl">구분</span>';
+  FG.forEach(function(a){h+='<button class="fc'+(F.g===a[0]?' on':'')+'" data-v="'+a[0]+'">'+a[1]+'</button>'});
+  h+='<button class="fc" id="frs">필터 초기화</button>';
   $('flt').innerHTML=h;
-  [].forEach.call($('flt').querySelectorAll('.fc'),function(b){b.onclick=function(){F[b.getAttribute('data-k')]=b.getAttribute('data-v');drawFlt();drawList()}});
-  $('fs').onchange=function(){F.s=this.value;drawList()};
-  $('fq').oninput=function(){F.q=this.value;drawList()};
+  [].forEach.call($('flt').querySelectorAll('.fc[data-v]'),function(b){b.onclick=function(){F.g=b.getAttribute('data-v');drawFlt();drawList()}});
+  $('frs').onclick=function(){F={g:'',q:'',r:{},s:'pp',d:-1};drawFlt();drawList()};
+  var t='<tr>';
+  COLS.forEach(function(c){t+='<th class="sh" data-k="'+c[0]+'">'+c[1]+'<span class="ar">'+(F.s===c[0]?(F.d>0?'▲':'▼'):'↕')+'</span></th>'});
+  t+='</tr><tr class="fr">';
+  COLS.forEach(function(c){var k=c[0];
+    if(k==='q')t+='<td><input class="fi" data-k="q" placeholder="검색" value="'+F.q.replace(/"/g,'')+'"></td>';
+    else{var r=F.r[k]||['',''];t+='<td><input class="fi h" data-k="'+k+'" data-e="0" placeholder="≥" value="'+r[0]+'"><input class="fi h" data-k="'+k+'" data-e="1" placeholder="≤" value="'+r[1]+'"></td>'}});
+  t+='</tr>';
+  $('th').innerHTML=t;
+  [].forEach.call($('th').querySelectorAll('.sh'),function(e){e.onclick=function(){var k=e.getAttribute('data-k');if(k==='q'){F.s='q'}else if(F.s===k){F.d=-F.d}else{F.s=k;F.d=(k==='no'||k==='q')?1:-1}if(k==='q'&&F.s==='q'&&F.d===0)F.d=1;drawFlt();drawList()}});
+  [].forEach.call($('th').querySelectorAll('.fi'),function(e){e.oninput=function(){var k=e.getAttribute('data-k');if(k==='q'){F.q=e.value}else{var r=F.r[k]||['',''];r[+e.getAttribute('data-e')]=e.value;F.r[k]=r}drawList()}});
 }
 function drawList(){
-  var L=D.map(function(c,i){return {c:c,i:i}}).filter(function(x){var c=x.c;return (!F.g||c.group===F.g)&&ychk(c,F.y)&&(!F.q||(c.short+c.name).indexOf(F.q)>=0)});
-  var s=F.s;
-  L.sort(function(a,b){var A1=a.c,B1=b.c;
-    if(s==='no')return N(A1)-N(B1);
-    if(s==='new')return A1.appr<B1.appr?1:-1;
-    if(s==='hh')return hhn(B1)-hhn(A1);
-    var pa=A1.overall?A1.overall.ppAvg:null,pb=B1.overall?B1.overall.ppAvg:null;
-    if(pa==null&&pb==null)return A1.appr<B1.appr?-1:1;if(pa==null)return 1;if(pb==null)return -1;
-    return s==='ppa'?pa-pb:pb-pa});
-  var h='<div class="note" style="margin:6px 0 0">'+L.length+'개 단지</div><table class="st"><colgroup><col style="width:40px"><col><col style="width:64px"><col style="width:62px"><col style="width:78px"><col style="width:78px"></colgroup><tr><th>번호</th><th>단지</th><th>입주</th><th>세대수</th><th>평균 평당</th><th>중앙 평당</th></tr>';
-  L.forEach(function(x){var c=x.c,i=x.i;
-    if(c.group==='A'){var o=c.overall;h+='<tr class="go" data-i="'+i+'"><td><span class="no A">'+N(c)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+c.dong+' · 매물 '+o.n+'건</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh.replace(/\(.*\)/,'')+'</td><td class="v m">'+f0(o.ppAvg)+'</td><td class="o">'+f0(o.ppMed)+'</td></tr>'}
+  var L=D.map(function(c,i){return {c:c,i:i}}).filter(function(x){var c=x.c;
+    if(F.g&&c.group!==F.g)return false;
+    if(F.q&&(c.short+c.name).indexOf(F.q)<0)return false;
+    for(var k in F.r){var r=F.r[k],lo=num(r[0]),hi=num(r[1]);if(lo==null&&hi==null)continue;
+      var v=k==='y'?ykey(c):val(c,k);if(v==null)return false;if(lo!=null&&v<lo)return false;if(hi!=null&&v>hi)return false}
+    return true});
+  var s=F.s,d=F.d;
+  L.sort(function(a,b){var x=val(a.c,s),y=val(b.c,s);
+    if(x==null&&y==null)return a.c.appr<b.c.appr?-1:1;if(x==null)return 1;if(y==null)return -1;
+    if(x===y)return N(a.c)-N(b.c);return (x<y?-1:1)*d});
+  $('cnt').textContent=L.length+'개 단지';
+  var h='';
+  L.forEach(function(x){var c=x.c,i=x.i,lk=c.lk?'<span class="lk">'+c.lk+'</span>':'';
+    if(c.group==='A'){var o=c.overall;h+='<tr class="go" data-i="'+i+'"><td><span class="no A">'+N(c)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+c.dong+' · 매물 '+o.n+'건</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh.replace(/\(.*\)/,'')+'</td><td class="v m">'+f0(o.ppAvg)+'</td></tr>'}
     else{var b=c.types.filter(function(t){return t.bunPP}), bp=b.length?Math.round(b.reduce(function(s2,t){return s2+t.bunPP*t.hh},0)/b.reduce(function(s2,t){return s2+t.hh},0)):null;
-      h+='<tr class="go" data-i="'+i+'"><td><span class="no B">'+N(c)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+c.dong+(bp?' · 분양가 평균 평당 '+f0(bp):'')+'</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh+'</td><td class="na" colspan="2">호가 없음</td></tr>'}});
-  h+='</table>';
-  $('lst').innerHTML=h;wire();
+      h+='<tr class="go" data-i="'+i+'"><td><span class="no B">'+N(c)+'</span></td><td class="nm">'+c.short+lk+'<span class="cat">'+c.dong+(bp?' · 분양가 평균 평당 '+f0(bp):'')+'</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh+'</td><td class="na">'+(c.nv?(c.nv.sale?'네이버 매매 '+c.nv.sale.length+'건<small>평당 '+f0(c.nv.sale.reduce(function(a,x){return a+x.pp},0)/c.nv.sale.length)+'</small>':'매매 없음')+(c.nv.jw?'<small>전세 평당 '+f0(c.nv.jw.pp)+'</small>':''):'호가 없음')+'</td></tr>'}});
+  $('tb').innerHTML=h||'<tr><td colspan="5" class="na">조건에 맞는 단지가 없습니다</td></tr>';wire();
 }
 function wire(){[].forEach.call(document.querySelectorAll('[data-i]'),function(e){e.onclick=function(){render(+e.getAttribute('data-i'));if(window.__go)window.__go(+e.getAttribute('data-i'))}});var b=document.querySelector('[data-back]');if(b)b.onclick=function(){render(-1)}}
+function rg(a,b,fn){return fn(a)+(b>a?' ~ '+fn(b):'')}
+function mo(v){return f0(v)+'만'}
+function nvBlock(c){var n=c.nv;if(!n)return '';var h='';
+  if(n.sale){h+='<h3>매매 호가 (네이버) <span class="x">· 전매제한 여부 확인 필요</span></h3><table><tr><th>타입</th><th>전용㎡</th><th>호가</th><th>전용 평당</th><th>확인일</th></tr>';
+    n.sale.forEach(function(x){h+='<tr><td>'+x.type+(x.co?' <span class="x">(협회매물)</span>':'')+'</td><td>'+x.ex.toFixed(1)+'</td><td>'+f0(x.p)+' ('+eok(x.p)+')</td><td><b>'+f0(x.pp)+'</b></td><td>'+x.dt+'</td></tr>'});h+='</table>'}
+  if(n.jw){h+='<h3>전세 호가 (네이버) <span class="x">· 매물 '+n.jw.n+'건</span></h3><table><tr><th>타입</th><th>전용㎡</th><th>건수</th><th>평균 전세</th><th>최저~최고</th><th>전용 평당</th></tr>';
+    n.jw.types.forEach(function(t){h+='<tr><td>'+t.type+'</td><td>'+t.ex.toFixed(1)+'</td><td>'+t.n+'</td><td>'+f0(t.avg)+' ('+eok(t.avg)+')</td><td>'+rg(t.lo,t.hi,eok)+'</td><td><b>'+f0(t.pp)+'</b></td></tr>'});
+    h+='<tr class="avg"><td colspan="2">전체</td><td>'+n.jw.n+'</td><td>'+f0(n.jw.avg)+' ('+eok(n.jw.avg)+')</td><td></td><td>'+f0(n.jw.pp)+'</td></tr></table>'}
+  if(n.wo){h+='<h3>월세 호가 (네이버) <span class="x">· 매물 '+n.wo.n+'건 · 보증금 / 월세, 만원</span></h3><table><tr><th>타입</th><th>전용㎡</th><th>건수</th><th>평균 보증금</th><th>보증금 범위</th><th>평균 월세</th><th>월세 범위</th></tr>';
+    n.wo.types.forEach(function(t){h+='<tr><td>'+t.type+'</td><td>'+t.ex.toFixed(1)+'</td><td>'+t.n+'</td><td>'+f0(t.dAvg)+' ('+eok(t.dAvg)+')</td><td>'+rg(t.dLo,t.dHi,eok)+'</td><td><b>'+mo(t.mAvg)+'</b></td><td>'+rg(t.mLo,t.mHi,mo)+'</td></tr>'});h+='</table>'}
+  return h+'<div class="note">네이버 부동산 호가 ('+n.dt+'). 카드 1개를 1건으로 집계(같은 매물을 여러 중개사가 올린 경우 합침), 가격 범위로 표기된 매물은 중간값 사용. 건수가 적은 타입은 참고용입니다.</div>'}
 function render(i){
   if(i<0){cur=-1;overview();if(window.__lab)window.__lab();return}
   cur=i;var c=D[i],G=c.group;
   var h='<button class="back" data-back="1">← 전체 목록</button><div class="dh"><span class="no '+G+'">'+N(c)+'</span><h2>'+c.name+'</h2></div>';
-  h+='<table class="ov"><tr><th>주소</th><td>경기 파주시 '+c.jibun+(c.road?' ('+c.road+')':'')+'</td><th>총 세대수</th><td><b>'+c.hh+'</b>세대'+(c.dongN?' · '+c.dongN+'개동':'')+'</td></tr><tr><th>사용승인</th><td>'+c.appr+'</td><th>시공</th><td>'+c.builder+'</td></tr><tr><th>개요</th><td colspan="3">'+[c.floors,c.struct,c.heat,c.far&&'용적률 '+c.far,c.bcr&&'건폐율 '+c.bcr,c.park&&'주차 '+c.park].filter(Boolean).join(' · ')+'</td></tr></table>';
+  h+='<table class="ov"><tr><th>주소</th><td>경기 파주시 '+c.jibun+(c.road?' ('+c.road+')':'')+'</td><th>총 세대수</th><td><b>'+c.hh+'</b>세대'+(c.dongN?' · '+c.dongN+'개동':'')+'</td></tr><tr><th>사용승인</th><td>'+c.appr+'</td><th>시공</th><td>'+c.builder+'</td></tr>'+(c.lock?'<tr><th>전매·거주</th><td colspan="3">'+c.lock+'</td></tr>':'')+'<tr><th>개요</th><td colspan="3">'+[c.floors,c.struct,c.heat,c.far&&'용적률 '+c.far,c.bcr&&'건폐율 '+c.bcr,c.park&&'주차 '+c.park].filter(Boolean).join(' · ')+'</td></tr></table>';
   var ts=c.types,tot=ts.reduce(function(s,t){return s+t.hh},0),o=c.overall;
   if(o){
     var mt=ts.filter(function(t){return t.main&&t.n});var mp=wmean(mt,function(t){return t.ppEx});
@@ -156,7 +179,8 @@ function render(i){
   });
   h+='<tr class="avg"><td colspan="2">합계</td><td>'+tot.toLocaleString()+'</td><td colspan="5"></td></tr></table>';
   (c.extra||[]).forEach(function(t){h+='<div class="note">· '+t+'</div>'});
-  h+='<div class="note">출처: KB부동산 매매 호가(26.10 조회, 같은 매물 합침), 분양가는 호갱노노(청약 공고). 호가는 실거래가보다 높을 수 있습니다.</div>';
+  h+=nvBlock(c);
+  h+='<div class="note">출처: KB부동산 매매 호가(26.10 조회, 같은 매물 합침), 신축 단지의 전세·월세·일부 매매는 네이버 부동산, 분양가는 호갱노노(청약 공고). 호가는 실거래가보다 높을 수 있습니다.</div>';
   $('panel').innerHTML=h;wire();if(window.__lab)window.__lab();
 }
 render(-1);
