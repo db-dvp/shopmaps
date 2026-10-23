@@ -90,8 +90,7 @@ summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:12.5px}
   <h2>수지표 시뮬레이션 — 프라디움 분양가를 적용하면</h2>
   <p class="sub">· 수지표 분양가(2,500만원/평) → 프라디움 분양가 적용 시 영업이익</p>
   <div id="sim"></div>
-  <table id="sim2" style="margin-top:10px"></table>
-  <div class="note" id="simnote"></div>
+    <div class="note" id="simnote"></div>
 
   <h2>타입별 면적 · 분양가<span class="seg" id="basis2"></span></h2>
   <p class="sub">· 행 클릭 → 도면 비교 (평 = ㎡÷3.3058)</p>
@@ -174,12 +173,12 @@ function drawOv(){
   row('타입 구성',function(c){return c.types.map(function(t){return t.k}).join(' · ')});
   row('공급 구성',function(c){return c.id.charAt(0)==='p'?'사전당첨 우선 '+c.pre+' · 특공 '+c.sp+' · 일반 '+c.gen+'<small>(특공은 일반분양에 포함 표기)</small>':'일반분양 '+c.hh+'세대'});
   row('부대',function(c){return c.extra||'공고문 외 상가 별도'});
-  row('입주 예정',function(c){return c.id.charAt(0)==='p'?'2030.07':'2031.01 ~ 02<small>착공 2027.06~07 + 공사 43개월</small>'});
+  row('입주 예정',function(c){return c.id.charAt(0)==='p'?'2030.07':'2031.01<small>착공 2027.06 + 43개월</small>'});
   row('평균 평당 ('+BN[BASIS]+')',function(c){if(c.id.charAt(0)==='o')return '<b>'+f0(ourStat(c).pq)+'</b>만원<small>수지표 기준</small>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=pp(x.avg,t)*x.n});return '<b>'+f0(s/n)+'</b>만원'});
   $('ov').innerHTML=h;
 }
 /* ---------- 면적대 비교 ---------- */
-var BANDS=[['59~61㎡',{o:['61A'],p:['60']}],['84~85㎡',{o:['84B'],p:['84A','84B','84']}],['88~90㎡',{o:['89A','89B'],p:['88']}],['108~115㎡',{o:['108A'],p:['115']}]];
+var BANDS=[['61A ↔ 60<small>전용 62 · 61㎡</small>',{o:['61A'],p:['60']}],['84B ↔ 84<small>전용 85㎡</small>',{o:['84B'],p:['84A','84B','84']}],['89A·89B ↔ 88<small>전용 90 · 88.5㎡</small>',{o:['89A','89B'],p:['88']}],['108A ↔ 115<small>전용 109 · 115㎡</small>',{o:['108A'],p:['115']}]];
 function groupCell(c,ks,our){
   var ts=c.types.filter(function(t){return ks.indexOf(t.k)>=0});if(!ts.length)return '<td>—</td>';
   var n=0,sp=0,sa=0,names=[];
@@ -239,7 +238,7 @@ function drawSim(){
   var g='<tr><th class="l">타입</th><th>세대수</th><th>매칭 프라디움</th><th>프라디움<small>공급평당</small></th><th>세대당 분양가<small>현 → 적용</small></th><th>수입 변동</th></tr>';
   cs.forEach(function(r,i){g+='<tr class="grp our"><td colspan="6">'+OUR[i].name+'</td></tr>';
     r.rows.forEach(function(x){g+='<tr><td class="l tp">'+x.t.k+'</td><td>'+x.t.hh+'</td><td>'+MAPK[x.t.k].join("·")+'</td><td>'+f0(x.x)+'만원</td><td>'+eok(x.cur)+' → <b>'+eok(x.nw)+'</b></td><td>'+sg(x.d*10,e1)+'</td></tr>'})});
-  $('sim2').innerHTML=g;
+  
   $('simnote').innerHTML='· 매칭: 61A↔60 / 84B↔84 / 89A·89B↔88 / 108A↔115<br>· 광고비 0.5%, 부가세 10%(85㎡ 초과) 차감 추정<br>· 기준값은 수지표 스냅샷 (수정 시 수동 갱신)';
 }
 /* ---------- 층별 ---------- */
