@@ -73,7 +73,7 @@ summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:12.5px}
   <table class="ov" id="ov"></table>
 
   <h2>면적대별 분양가 비교<span class="seg" id="basis"></span></h2>
-  <p class="sub">같은 면적대끼리 비교. 분양가는 발코니 확장비 별도(공급금액 기준), 평균은 세대수 가중. 파주운정3 주복 분양가는 사업수지표 가정(공급평당 2,500만원, 분양가상한제 예상, 확장비 별도)이며 아래 타입표에서 직접 바꿀 수 있습니다.</p>
+  <p class="sub">같은 면적대끼리 비교. 분양가는 발코니 확장비 별도(공급금액 기준), 평균은 세대수 가중. 파주운정3 주복 분양가는 사업수지표 기준(공급평당 2,500만원, 분양가상한제 예상, 확장비 별도)이며 수지표를 고치면 이 값은 직접 다시 맞춰야 합니다(자동 연동 아님). 아래 타입표에서 직접 바꿀 수 있습니다.</p>
   <table class="band" id="band"></table>
 
   <h2>타입별 면적 · 분양가<span class="seg" id="basis2"></span></h2>
@@ -158,9 +158,9 @@ function drawOv(){
   row('공급 구성',function(c){return c.id.charAt(0)==='p'?'사전당첨 우선 '+c.pre+' · 특공 '+c.sp+' · 일반 '+c.gen+'<small>(특공은 일반분양에 포함 표기)</small>':'일반분양 '+c.hh+'세대<small>수지표: 분양 13개월 완료 가정</small>'});
   row('부대',function(c){return c.extra||'공고문 외 상가 별도'});
   row('입주 예정',function(c){return c.id.charAt(0)==='p'?'2030.07':'공사기간 43개월<small>분양 오픈 2027.07.27 (수지표)</small>'});
-  row('분양가 범위',function(c){if(c.id.charAt(0)==='o'){var o=ourStat(c);return eok(o.mn)+' ~ '+eok(o.mx)+'<small>수지표 가정</small>'}var mn=1e9,mx=0;c.types.forEach(function(t){var s=stat(t);mn=Math.min(mn,s.mn);mx=Math.max(mx,s.mx)});return eok(mn)+' ~ '+eok(mx)});
-  row('평균 분양가',function(c){if(c.id.charAt(0)==='o')return eok(ourStat(c).avg)+'<small>수지표 가정</small>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=x.avg*x.n});return eok(s/n)});
-  row('평균 평당 ('+BN[BASIS]+')',function(c){if(c.id.charAt(0)==='o')return '<b>'+f0(ourStat(c).pq)+'</b>만원<small>수지표 가정</small>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=pp(x.avg,t)*x.n});return '<b>'+f0(s/n)+'</b>만원'});
+  row('분양가 범위',function(c){if(c.id.charAt(0)==='o'){var o=ourStat(c);return eok(o.mn)+' ~ '+eok(o.mx)+'<small>수지표 기준</small>'}var mn=1e9,mx=0;c.types.forEach(function(t){var s=stat(t);mn=Math.min(mn,s.mn);mx=Math.max(mx,s.mx)});return eok(mn)+' ~ '+eok(mx)});
+  row('평균 분양가',function(c){if(c.id.charAt(0)==='o')return eok(ourStat(c).avg)+'<small>수지표 기준</small>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=x.avg*x.n});return eok(s/n)});
+  row('평균 평당 ('+BN[BASIS]+')',function(c){if(c.id.charAt(0)==='o')return '<b>'+f0(ourStat(c).pq)+'</b>만원<small>수지표 기준</small>';var n=0,s=0;c.types.forEach(function(t){var x=stat(t);n+=x.n;s+=pp(x.avg,t)*x.n});return '<b>'+f0(s/n)+'</b>만원'});
   $('ov').innerHTML=h;
 }
 /* ---------- 면적대 비교 ---------- */
@@ -185,7 +185,7 @@ function slotIdx(id,k){for(var i=0;i<2;i++)if(slots[i]&&slots[i].id===id&&slots[
 function drawTypes(){
   var h='<tr><th class="l">타입</th><th>전용㎡<small>(평)</small></th><th>공급㎡<small>(평)</small></th><th>계약㎡</th><th>세대수</th><th>분양가<small>최저~최고</small></th><th>평균<small>분양가</small></th><th>평당<small>('+BN[BASIS]+')</small></th><th>도면</th></tr>';
   PD.concat(OUR).forEach(function(c){var our=c.id.charAt(0)==='o';
-    h+='<tr class="grp'+(our?' our':'')+'"><td colspan="9">'+c.name+' · '+c.hh+'세대'+(our?' (분양가: 수지표 가정 공급평당 2,500만원 · 직접 입력 가능)':'')+'</td></tr>';
+    h+='<tr class="grp'+(our?' our':'')+'"><td colspan="9">'+c.name+' · '+c.hh+'세대'+(our?' (분양가: 수지표 기준 공급평당 2,500만원 · 직접 입력 가능)':'')+'</td></tr>';
     c.types.forEach(function(t){var i=slotIdx(c.id,t.k),has=our?!!(OURIMG[c.id+'_'+t.k]||tmpImg[c.id+'_'+t.k]):!!t.img;
       var rng='—',avg='—',pq='—';
       if(!our){var s=stat(t);rng=eok(s.mn)+' ~ '+eok(s.mx);avg='<b>'+eok(s.avg)+'</b>';pq='<b>'+f0(pp(s.avg,t))+'</b>'}
