@@ -155,7 +155,7 @@ function drawOv(){
   row('용적률',function(c){return c.far});
   row('공동주택',function(c){return c.hh+'세대'});
   row('타입 구성',function(c){return c.types.map(function(t){return t.k}).join(' · ')});
-  row('공급 구성',function(c){return c.id.charAt(0)==='p'?'사전당첨 우선 '+c.pre+' · 특공 '+c.sp+' · 일반 '+c.gen+'<small>(특공은 일반분양에 포함 표기)</small>':'일반분양 '+c.hh+'세대<small>수지표: 분양 13개월 완료 가정</small>'});
+  row('공급 구성',function(c){return c.id.charAt(0)==='p'?'사전당첨 우선 '+c.pre+' · 특공 '+c.sp+' · 일반 '+c.gen+'<small>(특공은 일반분양에 포함 표기)</small>':'일반분양 '+c.hh+'세대'});
   row('부대',function(c){return c.extra||'공고문 외 상가 별도'});
   row('입주 예정',function(c){return c.id.charAt(0)==='p'?'2030.07':'공사기간 43개월<small>분양 오픈 2027.07.27 (수지표)</small>'});
   row('분양가 범위',function(c){if(c.id.charAt(0)==='o'){var o=ourStat(c);return eok(o.mn)+' ~ '+eok(o.mx)+'<small>수지표 기준</small>'}var mn=1e9,mx=0;c.types.forEach(function(t){var s=stat(t);mn=Math.min(mn,s.mn);mx=Math.max(mx,s.mx)});return eok(mn)+' ~ '+eok(mx)});
