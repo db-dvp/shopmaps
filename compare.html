@@ -79,21 +79,21 @@ summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:12.5px}
 <div id="wrap">
 <div id="left">
   <h2>단지 개요 비교</h2>
-  <p class="sub">파주운정3 주복 5BL·6BL(설계개요 261013 · 사업수지표) vs 시티프라디움 = GTX 운정중앙역 시티프라디움 3·4단지(2026.10.22 모집공고).</p>
+  <p class="sub">· 출처: 설계개요(261013)·사업수지표 / 프라디움 모집공고(26.10.22)</p>
   <table class="ov" id="ov"></table>
 
   <h2>면적대별 분양가 비교<span class="seg" id="basis"></span></h2>
-  <p class="sub">같은 면적대 비교 · 발코니 확장비 별도 · 세대수 가중 평균 · 파주운정3 분양가는 수지표 기준(공급평당 2,500만원, 타입표에서 수정 가능)</p>
+  <p class="sub">· 같은 면적대 비교 (확장비 별도 · 세대수 가중평균)<br>· 파주운정3: 수지표 기준 공급평당 2,500만원 (타입표에서 수정 가능)</p>
   <table class="band" id="band"></table>
 
   <h2>수지표 시뮬레이션 — 프라디움 분양가를 적용하면</h2>
-  <p class="sub">수지표 분양가(공급평당 2,500만원) 대신 같은 면적대 프라디움 분양가를 넣었을 때의 영업이익</p>
+  <p class="sub">· 수지표 분양가(2,500만원/평) → 프라디움 분양가 적용 시 영업이익</p>
   <div id="sim"></div>
   <table id="sim2" style="margin-top:10px"></table>
   <div class="note" id="simnote"></div>
 
   <h2>타입별 면적 · 분양가<span class="seg" id="basis2"></span></h2>
-  <p class="sub">행을 누르면 도면 비교판에 올라갑니다 (평 = ㎡÷3.3058)</p>
+  <p class="sub">· 행 클릭 → 도면 비교 (평 = ㎡÷3.3058)</p>
   <table id="types"></table>
 
   <h2>층별 분양가 (시티프라디움)</h2>
@@ -101,11 +101,11 @@ summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:12.5px}
 
   <h2>발코니 확장비 (시티프라디움, VAT 포함)</h2>
   <table id="bal"></table>
-  <div class="note">분양가는 모집공고 기준(옵션·확장·취득세 제외). 프라디움 도면은 공식 홈페이지에서 불러옵니다.</div>
+  <div class="note">· 분양가: 모집공고 기준 (옵션·확장·취득세 제외)</div>
 </div>
 <aside id="right">
   <h3>도면 비교</h3>
-  <div class="sub">표에서 평면을 클릭하면 두 칸에 올라갑니다. 이미지를 누르면 확대.</div>
+  <div class="sub">· 표에서 평면 클릭 → 비교 / 이미지 클릭 → 확대</div>
   <div id="slots"></div>
 </aside>
 </div>
@@ -228,13 +228,13 @@ function drawSim(){
   var h='';
   cs.forEach(function(r,i){var b=r.b;h+='<div class="sc-h"><b>'+OUR[i].name+'</b><span>아파트 평균 공급평당 '+f0(PCUR)+' → <b>'+f0(r.avg)+'</b>만원 · 총 수입 '+e1(b.R)+' → '+e1(r.R2)+' ('+sg(r.dR,e1)+')</span></div><div class="sc">';
     [['상가·업무시설 전량 분양 (미분양 0%)',0],['비주거 30% 미분양',1],['비주거 50% 미분양',2],['비주거 80% 미분양',3]].forEach(function(x,j){var p0=b.S[x[1]],p1=p0+r.dP,m0=p0/b.R*100,m1=p1/r.R2*100;h+='<div class="scd'+(j?'':' on')+'"><div class="l">'+x[0]+'</div><div class="v">'+e1(p1)+'</div><div class="m">'+m1.toFixed(2)+'%</div><div class="w">현 수지표 '+e1(p0)+' ('+m0.toFixed(2)+'%)<br>증감 '+sg(p1-p0,e1)+' · '+sg(m1-m0,function(z){return z.toFixed(2)+'%p'})+'</div></div>'});h+='</div>'});
-  h+='<div class="sub" style="margin:6px 0 0">중도금 이자후불제 기준 · 큰 숫자 = 프라디움 분양가 적용 시</div>';
+  h+='<div class="sub" style="margin:6px 0 0">· 중도금 이자후불제 기준</div>';
   $('sim').innerHTML=h;
   var g='<tr><th class="l">타입</th><th>세대수</th><th>매칭 프라디움</th><th>프라디움<small>공급평당</small></th><th>세대당 분양가<small>현 → 적용</small></th><th>수입 변동</th></tr>';
   cs.forEach(function(r,i){g+='<tr class="grp our"><td colspan="6">'+OUR[i].name+'</td></tr>';
     r.rows.forEach(function(x){g+='<tr><td class="l tp">'+x.t.k+'</td><td>'+x.t.hh+'</td><td>'+MAPK[x.t.k].join("·")+'</td><td>'+f0(x.x)+'만원</td><td>'+eok(x.cur)+' → <b>'+eok(x.nw)+'</b></td><td>'+sg(x.d*10,e1)+'</td></tr>'})});
   $('sim2').innerHTML=g;
-  $('simnote').innerHTML='프라디움 공급평당 분양가를 같은 면적대에 적용 (61A↔60, 84B↔84, 89A·89B↔88, 108A↔115). 분양광고비·부가세 차감 추정. 수지표 값은 스냅샷이라 수정 시 직접 갱신.';
+  $('simnote').innerHTML='· 매칭: 61A↔60 / 84B↔84 / 89A·89B↔88 / 108A↔115<br>· 광고비 0.5%, 부가세 10%(85㎡ 초과) 차감 추정<br>· 기준값은 수지표 스냅샷 (수정 시 수동 갱신)';
 }
 /* ---------- 층별 ---------- */
 function drawFloors(){
