@@ -60,6 +60,7 @@ table.st td.nm .cat{font-size:10.5px}
 .bar{display:inline-block;height:8px;background:#9db2e6;border-radius:4px;vertical-align:1px}
 .mn td{font-weight:800;background:#f1faf8}
 .chip{display:inline-block;background:#e3e8f3;color:var(--navy);border-radius:9px;padding:0 6px;font-size:10.5px;font-weight:700;margin-left:4px}
+.flt{margin:8px 0 2px;line-height:2}.flt .fl{display:inline-block;width:34px;font-size:11px;color:var(--mut);font-weight:700}.fc{border:1px solid var(--line);background:#fff;border-radius:12px;padding:2px 10px;font-size:12px;cursor:pointer;font-family:inherit;margin-right:4px}.fc.on{background:var(--navy);color:#fff;border-color:var(--navy)}#fs,#fq{font:inherit;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:3px 8px;margin-right:6px}#fq{width:120px}
 .ov{width:100%;border-collapse:collapse;font-size:12px;margin:6px 0}.ov th,.ov td{border:1px solid var(--line);padding:5px 7px;text-align:left}.ov th{background:var(--bg);width:84px;color:var(--navy)}
 </style>
 </head>
@@ -74,7 +75,9 @@ var RAW=window.APT_DATA||[];
 function pp(c){return c.overall?c.overall.ppAvg:-1}
 var A=RAW.filter(function(c){return c.group==='A'}).sort(function(a,b){return pp(b)-pp(a)});
 var B=RAW.filter(function(c){return c.group==='B'}).sort(function(a,b){return a.appr<b.appr?-1:1});
-var D=A.concat(B), cur=-1;
+var D=A.concat(B), cur=-1, F={g:'',y:'',q:'',s:'pp'};
+var NO={556054:13,1028889:5,2147431:16,2148664:15,1077216:10,1095862:9,658235:2,1027762:1,1097534:7,32313:6,32117:8,40137:11,489087:4,46086:12,46900:20,46084:18,47952:19,433593:14,491116:17,352637:3};
+function N(c){return NO[c.id]||0}
 $('title').textContent='운정3지구 인근 아파트 최근 호가 · 평당가'; $('src').textContent='호가: KB부동산 26.10 / 분양가: 호갱노노';
 function eok(v){return (v/10000).toFixed(2)+'억'}
 function f0(v){return Math.round(v).toLocaleString()}
@@ -97,22 +100,47 @@ function overview(){
     h+='<tr><td class="l">'+b[0]+'</td><td>'+p.n+'</td><td>'+f0(pr.v)+' ('+eok(pr.v)+')</td><td><b>'+f0(p.v)+'</b></td><td>'+f0(Math.min.apply(null,vs))+' ~ '+f0(Math.max.apply(null,vs))+'</td></tr>';
   });
   h+='</table>';
-  h+='<table class="st"><colgroup><col style="width:40px"><col><col style="width:64px"><col style="width:62px"><col style="width:78px"><col style="width:78px"></colgroup>';
-  h+='<tr class="rg"><td colspan="6">호가 형성 단지<small>매매 매물 확인 · 평당가순</small></td></tr><tr><th>번호</th><th>단지</th><th>입주</th><th>세대수</th><th>평균 평당</th><th>중앙 평당</th></tr>';
-  D.forEach(function(c,i){
-    if(c.group==='A'){var o=c.overall;h+='<tr class="go" data-i="'+i+'"><td><span class="no A">'+(i+1)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+c.dong+' · 매물 '+o.n+'건</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh.replace(/\(.*\)/,'')+'</td><td class="v m">'+f0(o.ppAvg)+'</td><td class="o">'+f0(o.ppMed)+'</td></tr>'}});
-  h+='<tr class="rg"><td colspan="6">입주 초기 · 매매 호가 거의 없음<small>분양가 참고</small></td></tr>';
-  D.forEach(function(c,i){
-    if(c.group==='B'){var b=c.types.filter(function(t){return t.bunPP}), bp=b.length?Math.round(b.reduce(function(s,t){return s+t.bunPP*t.hh},0)/b.reduce(function(s,t){return s+t.hh},0)):null;
-      h+='<tr class="go" data-i="'+i+'"><td><span class="no B">'+(i+1)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+c.dong+(bp?' · 분양가 평균 평당 '+f0(bp):'')+'</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh+'</td><td class="na" colspan="2">호가 없음</td></tr>'}});
-  h+='</table><div class="note">평당가 = 호가 ÷ (전용㎡ ÷ 3.3058). 단지 평균은 타입별 평균 호가의 매물수 가중 평균, 중앙값은 타입별 중앙값의 가중 중앙값입니다. 중개사 중복 등록과 호가 특성상 실거래가보다 높을 수 있습니다. 입주 초기 단지는 KB부동산에 매매 호가가 거의 없어 평균에서 제외했습니다.</div>';
-  $('panel').innerHTML=h; wire();
+  h+='<div class="flt" id="flt"></div><div id="lst"></div>';
+  h+='<div class="note">평당가 = 호가 ÷ (전용㎡ ÷ 3.3058). 단지 평균은 타입별 평균 호가의 매물수 가중 평균, 중앙값은 타입별 중앙값의 가중 중앙값입니다. 번호는 지도에서 위(북)→아래(남) 순서입니다. 중개사 중복 등록과 호가 특성상 실거래가보다 높을 수 있습니다. 입주 초기 단지는 KB부동산에 매매 호가가 거의 없어 평균에서 제외했습니다.</div>';
+  $('panel').innerHTML=h; drawFlt(); drawList();
+}
+var FG=[['','전체'],['A','호가 형성'],['B','입주 초기']],FY=[['','전체'],['<=2020','~2020'],['2021-2022','2021~22'],['2023-2024','2023~24'],['>=2025','2025~']],FS=[['pp','평균 평당 높은순'],['ppa','평균 평당 낮은순'],['no','지도 번호순'],['new','입주 최신순'],['hh','세대수 많은순']];
+function ychk(c,y){var v=parseInt(c.appr);if(!y)return true;if(y==='<=2020')return v<=2020;if(y==='>=2025')return v>=2025;var p=y.split('-');return v>=+p[0]&&v<=+p[1]}
+function hhn(c){return +c.hh.replace(/\(.*\)/,'').replace(/,/g,'')}
+function drawFlt(){
+  var h='';
+  function chips(lab,arr,key){h+='<span class="fl">'+lab+'</span>';arr.forEach(function(a){h+='<button class="fc'+(F[key]===a[0]?' on':'')+'" data-k="'+key+'" data-v="'+a[0]+'">'+a[1]+'</button>'})}
+  chips('구분',FG,'g');h+='<br>';chips('입주',FY,'y');h+='<br><span class="fl">정렬</span><select id="fs">';
+  FS.forEach(function(a){h+='<option value="'+a[0]+'"'+(F.s===a[0]?' selected':'')+'>'+a[1]+'</option>'});
+  h+='</select><input id="fq" placeholder="단지명 검색" value="'+F.q.replace(/"/g,'')+'">';
+  $('flt').innerHTML=h;
+  [].forEach.call($('flt').querySelectorAll('.fc'),function(b){b.onclick=function(){F[b.getAttribute('data-k')]=b.getAttribute('data-v');drawFlt();drawList()}});
+  $('fs').onchange=function(){F.s=this.value;drawList()};
+  $('fq').oninput=function(){F.q=this.value;drawList()};
+}
+function drawList(){
+  var L=D.map(function(c,i){return {c:c,i:i}}).filter(function(x){var c=x.c;return (!F.g||c.group===F.g)&&ychk(c,F.y)&&(!F.q||(c.short+c.name).indexOf(F.q)>=0)});
+  var s=F.s;
+  L.sort(function(a,b){var A1=a.c,B1=b.c;
+    if(s==='no')return N(A1)-N(B1);
+    if(s==='new')return A1.appr<B1.appr?1:-1;
+    if(s==='hh')return hhn(B1)-hhn(A1);
+    var pa=A1.overall?A1.overall.ppAvg:null,pb=B1.overall?B1.overall.ppAvg:null;
+    if(pa==null&&pb==null)return A1.appr<B1.appr?-1:1;if(pa==null)return 1;if(pb==null)return -1;
+    return s==='ppa'?pa-pb:pb-pa});
+  var h='<div class="note" style="margin:6px 0 0">'+L.length+'개 단지</div><table class="st"><colgroup><col style="width:40px"><col><col style="width:64px"><col style="width:62px"><col style="width:78px"><col style="width:78px"></colgroup><tr><th>번호</th><th>단지</th><th>입주</th><th>세대수</th><th>평균 평당</th><th>중앙 평당</th></tr>';
+  L.forEach(function(x){var c=x.c,i=x.i;
+    if(c.group==='A'){var o=c.overall;h+='<tr class="go" data-i="'+i+'"><td><span class="no A">'+N(c)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+c.dong+' · 매물 '+o.n+'건</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh.replace(/\(.*\)/,'')+'</td><td class="v m">'+f0(o.ppAvg)+'</td><td class="o">'+f0(o.ppMed)+'</td></tr>'}
+    else{var b=c.types.filter(function(t){return t.bunPP}), bp=b.length?Math.round(b.reduce(function(s2,t){return s2+t.bunPP*t.hh},0)/b.reduce(function(s2,t){return s2+t.hh},0)):null;
+      h+='<tr class="go" data-i="'+i+'"><td><span class="no B">'+N(c)+'</span></td><td class="nm">'+c.short+'<span class="cat">'+c.dong+(bp?' · 분양가 평균 평당 '+f0(bp):'')+'</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh+'</td><td class="na" colspan="2">호가 없음</td></tr>'}});
+  h+='</table>';
+  $('lst').innerHTML=h;wire();
 }
 function wire(){[].forEach.call(document.querySelectorAll('[data-i]'),function(e){e.onclick=function(){render(+e.getAttribute('data-i'));if(window.__go)window.__go(+e.getAttribute('data-i'))}});var b=document.querySelector('[data-back]');if(b)b.onclick=function(){render(-1)}}
 function render(i){
   if(i<0){cur=-1;overview();if(window.__lab)window.__lab();return}
   cur=i;var c=D[i],G=c.group;
-  var h='<button class="back" data-back="1">← 전체 목록</button><div class="dh"><span class="no '+G+'">'+(i+1)+'</span><h2>'+c.name+'</h2></div>';
+  var h='<button class="back" data-back="1">← 전체 목록</button><div class="dh"><span class="no '+G+'">'+N(c)+'</span><h2>'+c.name+'</h2></div>';
   h+='<table class="ov"><tr><th>주소</th><td>경기 파주시 '+c.jibun+(c.road?' ('+c.road+')':'')+'</td><th>총 세대수</th><td><b>'+c.hh+'</b>세대'+(c.dongN?' · '+c.dongN+'개동':'')+'</td></tr><tr><th>사용승인</th><td>'+c.appr+'</td><th>시공</th><td>'+c.builder+'</td></tr><tr><th>개요</th><td colspan="3">'+[c.floors,c.struct,c.heat,c.far&&'용적률 '+c.far,c.bcr&&'건폐율 '+c.bcr,c.park&&'주차 '+c.park].filter(Boolean).join(' · ')+'</td></tr></table>';
   var ts=c.types,tot=ts.reduce(function(s,t){return s+t.hh},0),o=c.overall;
   if(o){
@@ -156,7 +184,7 @@ function initMap(){
   }
   D.forEach(function(c,i){locate(c,function(res){
     if(!res)return;var pos=new kakao.maps.LatLng(res[0].y,res[0].x);pts[i]=pos;bounds.extend(pos);
-    var el=document.createElement('div');el.className='pin '+c.group;el.innerHTML='<span class="n">'+(i+1)+'</span><span class="t"></span>';el.onclick=function(){render(i)};
+    var el=document.createElement('div');el.className='pin '+c.group;el.innerHTML='<span class="n">'+N(c)+'</span><span class="t"></span>';el.onclick=function(){render(i)};
     var iw=new kakao.maps.CustomOverlay({position:pos,xAnchor:0.5,yAnchor:0.5,content:el,clickable:true,zIndex:1});
     el.onmouseenter=function(){iw.setZIndex(20)};el.onmouseleave=function(){iw.setZIndex(i===cur?10:1)};
     ovs[i]=iw;els[i]=el;iw.setMap(map);map.setBounds(bounds,60,40,40,40);if(window.__lab)window.__lab();relax();
