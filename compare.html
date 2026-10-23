@@ -178,7 +178,7 @@ function drawOv(){
   $('ov').innerHTML=h;
 }
 /* ---------- 면적대 비교 ---------- */
-var BANDS=[['61A ↔ 60<small>전용 62 · 61㎡</small>',{o:['61A'],p:['60']}],['84B ↔ 84<small>전용 85㎡</small>',{o:['84B'],p:['84A','84B','84']}],['89A·89B ↔ 88<small>전용 90 · 88.5㎡</small>',{o:['89A','89B'],p:['88']}],['108A ↔ 115<small>전용 109 · 115㎡</small>',{o:['108A'],p:['115']}]];
+var BANDS=[['61A','전용 62㎡','60','전용 61㎡',{o:['61A'],p:['60']}],['84B','전용 85㎡','84','전용 85㎡',{o:['84B'],p:['84A','84B','84']}],['89A·89B','전용 90㎡','88','전용 88.5㎡',{o:['89A','89B'],p:['88']}],['108A','전용 109㎡','115','전용 115㎡',{o:['108A'],p:['115']}]];
 function groupCell(c,ks,our){
   var ts=c.types.filter(function(t){return ks.indexOf(t.k)>=0});if(!ts.length)return '<td>—</td>';
   var n=0,sp=0,sa=0,names=[];
@@ -187,10 +187,14 @@ function groupCell(c,ks,our){
   return '<td class="'+(our?'c2':'c1')+'">'+'<b>'+eok(sp/n)+'</b> · 평당 <b>'+f0(sa/n)+'</b><small>'+names.join(' · ')+'</small></td>';
 }
 function drawBand(){
-  var cs=OUR.concat(PD),h='<tr><th>면적대</th>';
-  cs.forEach(function(c){h+='<th class="'+(c.id.charAt(0)==='o'?'our':'pd')+'">'+c.name+'</th>'});h+='</tr>';
-  BANDS.forEach(function(b){h+='<tr><td style="font-weight:700;background:#f7f8fc">'+b[0]+'</td>';
-    cs.forEach(function(c){h+=groupCell(c,c.id.charAt(0)==='o'?b[1].o:b[1].p,c.id.charAt(0)==='o')});h+='</tr>'});
+  var h='<tr><th>면적</th>';
+  OUR.forEach(function(c){h+='<th class="our">'+c.name+'</th>'});h+='<th>면적</th>';
+  PD.forEach(function(c){h+='<th class="pd">'+c.name+'</th>'});h+='</tr>';
+  var lab='font-weight:700;background:#f7f8fc;line-height:1.4';
+  BANDS.forEach(function(b){h+='<tr><td style="'+lab+'">'+b[0]+'<small>'+b[1]+'</small></td>';
+    OUR.forEach(function(c){h+=groupCell(c,b[4].o,true)});
+    h+='<td style="'+lab+'">'+b[2]+'<small>'+b[3]+'</small></td>';
+    PD.forEach(function(c){h+=groupCell(c,b[4].p,false)});h+='</tr>'});
   $('band').innerHTML=h;
 }
 /* ---------- 타입표 ---------- */
