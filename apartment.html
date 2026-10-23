@@ -156,13 +156,13 @@ function render(i){
   if(i<0){cur=-1;overview();if(window.__lab)window.__lab();return}
   cur=i;var c=D[i],G=c.group;
   var h='<button class="back" data-back="1">← 전체 목록</button><div class="dh"><span class="no '+G+'">'+N(c)+'</span><h2>'+c.name+'</h2></div>';
-  h+='<table class="ov"><tr><th>주소</th><td>경기 파주시 '+c.jibun+(c.road?' ('+c.road+')':'')+'</td><th>총 세대수</th><td><b>'+c.hh+'</b>세대'+(c.dongN?' · '+c.dongN+'개동':'')+'</td></tr><tr><th>사용승인</th><td>'+c.appr+'</td><th>시공</th><td>'+c.builder+'</td></tr>'+(c.lock?'<tr><th>전매·거주</th><td colspan="3">'+c.lock+'</td></tr>':'')+'<tr><th>개요</th><td colspan="3">'+[c.floors,c.struct,c.heat,c.far&&'용적률 '+c.far,c.bcr&&'건폐율 '+c.bcr,c.park&&'주차 '+c.park].filter(Boolean).join(' · ')+'</td></tr></table>';
+  h+='<table class="ov"><tr><th>주소</th><td>경기 파주시 '+c.jibun+(c.road?' ('+c.road+')':'')+'</td><th>총 세대수</th><td><b>'+c.hh+'</b>세대'+(c.dongN?' · '+c.dongN+'개동':'')+'</td></tr><tr><th>사용승인</th><td>'+c.appr+'</td><th>시공</th><td>'+c.builder+'</td></tr>'+'<tr><th>전매·거주</th><td colspan="3">'+(c.lock||'-')+'</td></tr>'+'<tr><th>개요</th><td colspan="3">'+[c.floors,c.struct,c.heat,c.far&&'용적률 '+c.far,c.bcr&&'건폐율 '+c.bcr,c.park&&'주차 '+c.park].filter(Boolean).join(' · ')+'</td></tr></table>';
   var ts=c.types,tot=ts.reduce(function(s,t){return s+t.hh},0),o=c.overall;
-  if(o){
-    var mt=ts.filter(function(t){return t.main&&t.n});var mp=wmean(mt,function(t){return t.ppEx});
-    h+='<div class="big"><div><span class="k">주력 타입 평균 평당 (매매 호가)</span><b>'+(mp?f0(mp.v):'-')+'</b><span class="u">만원/평 · '+(mp?mp.n:0)+'건</span></div><div><span class="k">단지 전체 평균 평당</span><b>'+f0(o.ppAvg)+'</b><span class="u">만원/평 · '+o.n+'건 · 중앙 '+f0(o.ppMed)+'</span></div></div>';
-    if(o.n<30)h+='<div class="warn">※ 표본 '+o.n+'건, 대표성 낮음.</div>';
-  }
+  var nv=c.nv||{},v1='-',u1='매매 호가 없음',v2='-',u2='매매 호가 없음';
+  if(o){var mt=ts.filter(function(t){return t.main&&t.n});var mp=wmean(mt,function(t){return t.ppEx});v1=mp?f0(mp.v):'-';u1='만원/평 · '+(mp?mp.n:0)+'건';v2=f0(o.ppAvg);u2='만원/평 · '+o.n+'건 · 중앙 '+f0(o.ppMed)}
+  else if(nv.sale){v1=v2=f0(nv.sale.pp);u1=u2='만원/평 · '+nv.sale.n+'건 (네이버)'}
+  h+='<div class="big"><div><span class="k">주력 타입 평균 평당 (매매 호가)</span><b>'+v1+'</b><span class="u">'+u1+'</span></div><div><span class="k">단지 전체 평균 평당</span><b>'+v2+'</b><span class="u">'+u2+'</span></div></div>';
+  h+=o&&o.n<30?'<div class="warn">※ 표본 '+o.n+'건, 대표성 낮음.</div>':'';
   var nv=c.nv||{},sj={},sw={},ss={};
   ((nv.jw||{}).types||[]).forEach(function(t){sj[t.type]=t});((nv.wo||{}).types||[]).forEach(function(t){sw[t.type]=t});((nv.sale||{}).types||[]).forEach(function(t){ss[t.type]=t});
   h+='<h3>타입별 세대수 · 호가 <span class="x">(굵은 행=주력)</span></h3><table class="ty"><colgroup><col style="width:11%"><col style="width:19%"><col style="width:14%"><col style="width:22%"><col style="width:16%"><col style="width:18%"></colgroup><tr><th>타입</th><th>전용/공급㎡</th><th>세대수</th><th>매매</th><th>전세</th><th>월세 (보증/월)</th></tr>';
