@@ -71,6 +71,12 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
   <h3>② 가산율 (%, 마이너스 = 할인)</h3>
   <div id="items"></div>
   <div style="margin-top:8px"><button class="rs" id="reset">근거값으로 되돌리기</button> <button class="rs" id="zero">모두 0으로</button></div>
+
+  <h3>③ 상가 분양 (사업수지 연동)</h3>
+  <div class="row"><span class="nm">상가 전용면적</span><input id="sain" class="inp w" type="number" step="0.01"><span style="color:var(--mute);font-size:11px">평</span></div>
+  <div class="row"><span class="nm">상가 전용평당</span><input id="spin" class="inp w" type="number" step="10"><span style="color:var(--mute);font-size:11px">만원/평</span></div>
+  <div id="srev" class="note" style="margin-top:3px"></div>
+  <div style="margin-top:6px"><button class="rs" id="sreset">상가 기본값으로</button></div>
 </div>
 <div id="split" title="드래그해서 폭 조절 · 더블클릭 = 원래대로"></div>
 <div id="right">
@@ -118,6 +124,8 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
   try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv) { st = sv; } } catch (e) {}
   if (typeof st.t36 !== "number") st.t36 = 1200; if (typeof st.t51 !== "number") st.t51 = 1200;
   ITEMS.forEach(function (it) { if (typeof st.pct[it.k] !== "number") st.pct[it.k] = it.d || 0; });
+  var SA0 = QBL === "6" ? 137.94 : 112.07, SP0 = 5200;
+  if (typeof st.sa !== "number" || st.sa < 0) st.sa = SA0; if (typeof st.sp !== "number" || st.sp < 0) st.sp = SP0;
   if (!st.m8) { st.m8 = 1; if (st.pct && st.pct.low === -2) st.pct.low = 0; }
 
   function $(id) { return document.getElementById(id); }
@@ -155,6 +163,12 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     [].forEach.call(document.querySelectorAll("#items input"), function (el) { el.value = st.pct[el.getAttribute("data-k")]; });
     save(); calc();
   }
+  $("sain").value = st.sa; $("spin").value = st.sp;
+  function srev() { $("srev").textContent = "상가 분양수입 " + fmt(st.sa * st.sp * 10) + " 천원 (" + (st.sa * st.sp / 10000).toFixed(2) + "억) = 전용면적 × 전용평당"; }
+  srev();
+  $("sain").oninput = function () { st.sa = Math.max(0, +this.value || 0); srev(); save(); calc(); };
+  $("spin").oninput = function () { st.sp = Math.max(0, +this.value || 0); srev(); save(); calc(); };
+  $("sreset").onclick = function () { st.sa = SA0; st.sp = SP0; $("sain").value = SA0; $("spin").value = SP0; srev(); save(); calc(); };
   $("reset").onclick = function () { setAll(true); };
   $("zero").onclick = function () { setAll(false); };
 
@@ -195,9 +209,9 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     var p = pfFetch(n).then(function (m) { delete PFL[n]; if (m) PFM[n] = m; return m; }, function () { delete PFL[n]; return null; });
     PFL[n] = p; return p;
   }
-  function pfCalc(m, a, b) {
+  function pfCalc(m, a, b, S, P) {
     var memo = {};
-    function v(id) { if (id in memo) return memo[id]; var c = m.idx[id], r; if (!c) r = m.consts[id] || 0; else if (c.k === "L") r = c.c[0] + c.c[1] * a + c.c[2] * b; else r = c.fn(v); memo[id] = r; return r; }
+    function v(id) { if (id in memo) return memo[id]; var c = m.idx[id], r; if (!c) r = m.consts[id] || 0; else if (c.k === "L") r = c.c[0] + c.c[1] * a + c.c[2] * b + (c.c[3] || 0) * S + (c.c[4] || 0) * P + (c.c[5] || 0) * S * P; else r = c.fn(v); memo[id] = r; return r; }
     return v;
   }
   function renderPF() {
@@ -207,7 +221,7 @@ button.rs{border:0;background:var(--head);color:var(--navy);font:inherit;font-we
     var html = "", any = false;
     BLS.forEach(function (bl) {
       var m = PFM[bl.id.charAt(0)]; if (!m) return; any = true;
-      var v = pfCalc(m, st.t36 * 10, st.t51 * 10);
+      var v = pfCalc(m, st.t36 * 10, st.t51 * 10, st.sa, st.sp * 10);
       html += '<div class="pfb">' + bl.id + '</div><div class="pfg">';
       rows.forEach(function (r) {
         html += '<div class="pfc' + (r[4] ? " hot" : "") + '"><span class="pl">' + r[2] + (r[3] ? " (" + r[3] + ")" : "") + '</span><b>' + (v(r[0]) / 100000).toFixed(1) + '억</b><em>' + (v(r[1]) * 100).toFixed(2) + '%</em><small>' + fmt(v(r[0]) / 10) + '만원</small></div>';
