@@ -54,6 +54,7 @@ table.st tr.go.b25 td{background:#f1faf8}
 .plans{display:flex;gap:10px;margin:8px 0 2px}.pl{flex:1;margin:0;border:1px solid var(--line);border-radius:8px;background:#fbfbfb;padding:6px;cursor:zoom-in;text-align:center}.pl:hover{border-color:var(--navy)}.pl img{display:block;width:100%;height:150px;object-fit:contain}.pl figcaption{font-size:11.5px;font-weight:700;color:var(--navy);margin-top:3px}
 #lb{position:fixed;inset:0;background:rgba(10,14,30,.88);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:zoom-out}#lb img{max-width:94vw;max-height:86vh;object-fit:contain;background:#fbfbfb;border-radius:10px}#lb div{color:#fff;font-size:14px;font-weight:700}
 table.st td.nm{font-size:13.5px;font-weight:600;color:#1d2433}table.st td.nm .cat{font-size:11px;font-weight:400;color:#6b7280;margin-top:2px}table.st td.c{color:#4b5468;font-size:12px}table.st td.na{color:#7d869a;font-size:11.5px;line-height:1.45}table.st td.na small{color:#2f3a55;font-size:12px;font-weight:600;margin-top:1px}table.st tr.go td{padding:10px 3px}table.st tr.gh td{font-size:12px;padding:6px 8px}.lk{font-size:10.5px!important;font-weight:700!important}
+table.st td.nm{padding-left:16px;padding-right:8px}table.st td.nm .cat{margin-top:3px}table.st td.na{padding-right:8px}table.st td.na small{font-weight:500;color:#6b7280;white-space:nowrap;font-size:11.5px;margin-top:2px}table.st td.na small b{color:#1d2433;font-weight:700;margin-left:3px;font-size:12.5px}table.st td.c,table.st td.v{padding-left:4px;padding-right:4px}
 </style>
 <style>
 .pin.A{--c:#12a39c}.pin.B{--c:#e08a1e}.no.A{background:#12a39c}.no.B{background:#e08a1e}.bd.A{background:#12a39c}.bd.B{background:#e08a1e}
@@ -102,7 +103,7 @@ function overview(){
     h+='<tr><td class="l">'+b[0]+'</td><td>'+p.n+'</td><td>'+f0(pr.v)+' ('+eok(pr.v)+')</td><td><b>'+f0(p.v)+'</b></td><td>'+f0(Math.min.apply(null,vs))+' ~ '+f0(Math.max.apply(null,vs))+'</td></tr>';
   });
   h+='</table>';
-  h+='<div class="flt" id="flt"></div><div class="note" id="cnt" style="margin:4px 0 0"></div><table class="st" id="tbl"><colgroup><col><col style="width:70px"><col style="width:74px"><col style="width:84px"></colgroup><thead id="th"></thead><tbody id="tb"></tbody></table>';
+  h+='<div class="flt" id="flt"></div><div class="note" id="cnt" style="margin:4px 0 0"></div><table class="st" id="tbl"><colgroup><col><col style="width:64px"><col style="width:66px"><col style="width:116px"></colgroup><thead id="th"></thead><tbody id="tb"></tbody></table>';
   h+='<div class="note">평당 = 호가÷(전용㎡÷3.3058) · 열 제목 클릭=정렬, 아래 칸=필터</div>';
   $('panel').innerHTML=h; drawFlt(); drawList();
 }
@@ -146,7 +147,7 @@ function drawList(){
   var pg='';L.forEach(function(x){var c=x.c,i=x.i,lk=c.lk?'<span class="lk">'+c.lk+'</span>':'';if(F.s==='pp'&&F.d<0&&c.group==='B'&&pg==='A')h+='<tr class="gh"><td colspan="4">입주 초기 단지 · 매매 호가 없음 (전세 평당 참고)</td></tr>';pg=c.group;
     if(c.group==='A'){var o=c.overall;h+='<tr class="go" data-i="'+i+'"><td class="nm">'+c.short+'<span class="cat">'+c.dong+' · 매물 '+o.n+'건</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh.replace(/\(.*\)/,'')+'</td><td class="v m">'+f0(o.ppAvg)+'</td></tr>'}
     else{var b=c.types.filter(function(t){return t.bunPP}), bp=b.length?Math.round(b.reduce(function(s2,t){return s2+t.bunPP*t.hh},0)/b.reduce(function(s2,t){return s2+t.hh},0)):null;
-      h+='<tr class="go" data-i="'+i+'"><td class="nm">'+c.short+lk+'<span class="cat">'+c.dong+'</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh+'</td><td class="na">'+(c.nv?(c.nv.sale?'네이버 매매 '+c.nv.sale.n+'건<small>평당 '+f0(c.nv.sale.pp)+'</small>':'매매 없음')+(c.nv.jw?'<small>전세 평당 '+f0(c.nv.jw.pp)+'</small>':''):'호가 없음')+'</td></tr>'}});
+      h+='<tr class="go" data-i="'+i+'"><td class="nm">'+c.short+lk+'<span class="cat">'+c.dong+'</span></td><td class="c">'+yr(c)+'</td><td class="c">'+c.hh+'</td><td class="na">'+(c.nv?(c.nv.sale?'네이버 매매 '+c.nv.sale.n+'건<small>평당 '+f0(c.nv.sale.pp)+'</small>':'매매 없음')+(c.nv.jw?'<small>전세 평당 <b>'+f0(c.nv.jw.pp)+'</b></small>':''):'호가 없음')+'</td></tr>'}});
   $('tb').innerHTML=h||'<tr><td colspan="4" class="na">조건에 맞는 단지가 없습니다</td></tr>';wire();
 }
 function wire(){[].forEach.call(document.querySelectorAll('[data-i]'),function(e){e.onclick=function(){render(+e.getAttribute('data-i'));if(window.__go)window.__go(+e.getAttribute('data-i'))}});var b=document.querySelector('[data-back]');if(b)b.onclick=function(){render(-1)}}
