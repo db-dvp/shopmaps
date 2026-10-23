@@ -37,15 +37,15 @@ try{var z0=parseFloat(localStorage.getItem(ZK));if(z0>0)setZ(z0)}catch(e){}
 function b64(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
 /* ---- 시뮬레이터 연동 계산 (엑셀 수지분석과 동일한 결과) ---- */
 function build(m){var idx={};m.cells.forEach(function(c){idx[c.id]=c;if(c.k==="F")c.fn=new Function("v","return "+c.js)});m.idx=idx;return m}
-function calc(m,a,b){var memo={};function v(id){if(id in memo)return memo[id];var c=m.idx[id],r;if(!c)r=m.consts[id]||0;else if(c.k==="L")r=c.c[0]+c.c[1]*a+c.c[2]*b;else r=c.fn(v);memo[id]=r;return r}var o={};m.cells.forEach(function(c){o[c.id]=v(c.id)});return o}
+function calc(m,a,b,S,P){var memo={};function v(id){if(id in memo)return memo[id];var c=m.idx[id],r;if(!c)r=m.consts[id]||0;else if(c.k==="L")r=c.c[0]+c.c[1]*a+c.c[2]*b+(c.c[3]||0)*S+(c.c[4]||0)*P+(c.c[5]||0)*S*P;else r=c.fn(v);memo[id]=r;return r}var o={};m.cells.forEach(function(c){o[c.id]=v(c.id)});return o}
 function fmt(f,x){var neg=x<0,ax=Math.abs(x),s;if(f.pct){s=(Math.round(ax*Math.pow(10,f.dec+2)+1e-9)/Math.pow(10,f.dec)).toFixed(f.dec)+"%"}else{s=Math.round(ax+1e-9).toString().replace(/\B(?=(\d{3})+(?!\d))/g,",")}return f.pre+(neg?"-":"")+s+f.suf}
-function readP(){var p={t36:1200,t51:1200};try{var s=JSON.parse(localStorage.getItem(PK)||"null");if(s&&+s.t36>0)p.t36=+s.t36;if(s&&+s.t51>0)p.t51=+s.t51}catch(e){}return p}
+function readP(){var p={t36:1200,t51:1200,sa:bl==="6"?137.94:112.07,sp:5200};try{var s=JSON.parse(localStorage.getItem(PK)||"null");if(s&&+s.t36>0)p.t36=+s.t36;if(s&&+s.t51>0)p.t51=+s.t51;if(s&&typeof s.sa==="number"&&s.sa>=0)p.sa=s.sa;if(s&&typeof s.sp==="number"&&s.sp>=0)p.sp=s.sp}catch(e){}return p}
 function apply(){
   if(!M)return;
-  var p=readP(),key=p.t36+"|"+p.t51;if(key===last)return;last=key;
-  var a=p.t36*10,b=p.t51*10,o=calc(M,a,b),sh=document.getElementById("sheet");
+  var p=readP(),key=p.t36+"|"+p.t51+"|"+p.sa+"|"+p.sp;if(key===last)return;last=key;
+  var a=p.t36*10,b=p.t51*10,o=calc(M,a,b,p.sa,p.sp*10),sh=document.getElementById("sheet");
   M.cells.forEach(function(c){var td=sh.querySelector("#"+c.id);if(td)td.textContent=fmt(M.fmt[c.id],o[c.id])});
-  document.getElementById("lk").textContent="분양가 시뮬레이터 "+bl+"BL 연동 · 36OA "+p.t36.toLocaleString("en-US")+"만원/평 · 51OA "+p.t51.toLocaleString("en-US")+"만원/평 (전용평당 "+a.toLocaleString("en-US")+" / "+b.toLocaleString("en-US")+" 천원) — 시뮬레이터 값을 바꾸면 자동 반영";
+  document.getElementById("lk").textContent="분양가 시뮬레이터 "+bl+"BL 연동 · 36OA "+p.t36.toLocaleString("en-US")+"만원/평 · 51OA "+p.t51.toLocaleString("en-US")+"만원/평 (전용평당 "+a.toLocaleString("en-US")+" / "+b.toLocaleString("en-US")+" 천원) · 상가 "+p.sa.toLocaleString("en-US")+"평 × "+p.sp.toLocaleString("en-US")+"만원/평 — 시뮬레이터 값을 바꾸면 자동 반영";
 }
 async function run(){
   if(done)return;
