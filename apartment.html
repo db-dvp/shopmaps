@@ -61,7 +61,7 @@ table.st td.nm .cat{font-size:10.5px}
 .mn td{font-weight:800;background:#f1faf8}
 .chip{display:inline-block;background:#e3e8f3;color:var(--navy);border-radius:9px;padding:0 6px;font-size:10.5px;font-weight:700;margin-left:4px}
 .flt{margin:8px 0 2px;line-height:2}.flt .fl{display:inline-block;width:34px;font-size:11px;color:var(--mut);font-weight:700}.fc{border:1px solid var(--line);background:#fff;border-radius:12px;padding:2px 10px;font-size:12px;cursor:pointer;font-family:inherit;margin-right:4px}.fc.on{background:var(--navy);color:#fff;border-color:var(--navy)}#fs,#fq{font:inherit;font-size:12px;border:1px solid var(--line);border-radius:8px;padding:3px 8px;margin-right:6px}#fq{width:120px}
-.sh{cursor:pointer;user-select:none}.sh .ar{font-size:9px;color:#9aa3b8;margin-left:2px}tr.fr td{background:#f7f8fc;padding:3px 2px}.fi{font:inherit;font-size:11px;width:100%;border:1px solid var(--line);border-radius:5px;padding:2px 3px;text-align:center}.fi.h{width:50%}.fi.h:first-child{border-right:0}.ty{table-layout:fixed;width:100%}.ty th,.ty td{text-align:center;vertical-align:middle;padding:6px 4px}.ov{table-layout:fixed}.lk{display:inline-block;background:#fdeed7;color:#a35a00;border-radius:8px;padding:0 6px;font-size:10px;font-weight:700;margin-left:5px;vertical-align:1px}
+.sh{cursor:pointer;user-select:none}.sh .ar{font-size:9px;color:#9aa3b8;margin-left:2px}tr.fr td{background:#f7f8fc;padding:3px 2px}.fi{font:inherit;font-size:11px;width:100%;border:1px solid var(--line);border-radius:5px;padding:2px 3px;text-align:center}.fi.h{width:50%}.fi.h:first-child{border-right:0}.ty{table-layout:fixed;width:100%}.ty th,.ty td{text-align:center;vertical-align:middle;padding:0 4px;height:46px;line-height:1.35}.ty th{height:34px}.ty tr.avg td{height:34px}.ov{table-layout:fixed}.lk{display:inline-block;background:#fdeed7;color:#a35a00;border-radius:8px;padding:0 6px;font-size:10px;font-weight:700;margin-left:5px;vertical-align:1px}
 .ov{width:100%;border-collapse:collapse;font-size:12px;margin:6px 0}.ov th,.ov td{border:1px solid var(--line);padding:5px 7px;text-align:left}.ov th{background:var(--bg);width:84px;color:var(--navy)}
 </style>
 </head>
@@ -151,7 +151,7 @@ function drawList(){
 function wire(){[].forEach.call(document.querySelectorAll('[data-i]'),function(e){e.onclick=function(){render(+e.getAttribute('data-i'));if(window.__go)window.__go(+e.getAttribute('data-i'))}});var b=document.querySelector('[data-back]');if(b)b.onclick=function(){render(-1)}}
 function rg(a,b,fn){return fn(a)+(b>a?'~'+fn(b):'')}
 function mo(v){return f0(v)+'만'}
-function ct(o,k){if(!o)return '-';var h='';if(k==='w')h='<b>'+eok(o.dAvg)+' / '+mo(o.mAvg)+'</b><br><span class="x">'+o.n+'건 · 월 '+rg(o.mLo,o.mHi,mo)+'</span>';else h='<b>'+eok(o.avg)+'</b><br><span class="x">평당 '+f0(o.pp)+' · '+o.n+'건'+(o.hi>o.lo?'<br>'+rg(o.lo,o.hi,eok):'')+'</span>';return h}
+function ct(o,k){if(!o)return '-';var h='';if(k==='w')h='<b>'+eok(o.dAvg)+' / '+mo(o.mAvg)+'</b><br><span class="x">'+o.n+'건 · 월 '+rg(o.mLo,o.mHi,mo)+'</span>';else h='<b title="'+rg(o.lo,o.hi,eok)+'">'+eok(o.avg)+'</b><br><span class="x">평당 '+f0(o.pp)+' · '+o.n+'건'+'</span>';return h}
 function render(i){
   if(i<0){cur=-1;overview();if(window.__lab)window.__lab();return}
   cur=i;var c=D[i],G=c.group;
